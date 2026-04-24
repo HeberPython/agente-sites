@@ -241,6 +241,21 @@ def obter_imagem(termos):
     return None, None
 
 
+def wp_urlopen(req, timeout=60, tentativas=4):
+    for tentativa in range(tentativas):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                espera = 30 * (2 ** tentativa)
+                log(f"  WordPress 429. Aguardando {espera}s...")
+                time.sleep(espera)
+            else:
+                raise
+    raise Exception(f"WordPress 429 persistente após {tentativas} tentativas")
+
+
 def upload_imagem(site, dados_imagem, nome_arquivo):
     if not dados_imagem:
         return None
@@ -254,9 +269,8 @@ def upload_imagem(site, dados_imagem, nome_arquivo):
         req.add_header("Authorization", auth["Authorization"])
         req.add_header("Content-Type", "image/jpeg")
         req.add_header("Content-Disposition", f'attachment; filename="{nome_arquivo}"')
-        with urllib.request.urlopen(req, timeout=60) as r:
-            media = json.loads(r.read())
-            return media.get("id")
+        media = wp_urlopen(req, timeout=60)
+        return media.get("id")
     except Exception as e:
         log(f"Upload imagem erro: {e}")
         return None
@@ -311,8 +325,7 @@ def publicar_post(site, topico, artigo, media_id):
         method="POST",
         headers=headers
     )
-    with urllib.request.urlopen(req, timeout=30) as r:
-        post = json.loads(r.read())
+    post = wp_urlopen(req, timeout=30)
 
     post_id = post.get("id")
     post_link = post.get("link", "")
@@ -401,7 +414,7 @@ def rodar_agente():
         publicados, erros = rodar_site(site)
         resumo_total.append({"site": site["name"], "publicados": publicados, "erros": erros})
         erros_total += erros
-        time.sleep(5)
+        time.sleep(45)
 
     linhas = [f"<b>Relatório do Agente — {datetime.datetime.now().strftime('%d/%m/%Y')}</b>\n"]
     for r in resumo_total:
