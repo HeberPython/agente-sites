@@ -78,14 +78,24 @@ def http_get(url, headers=None):
         return json.loads(r.read())
 
 
-def http_post(url, data, headers=None):
+def http_post(url, data, headers=None, tentativas=4):
     body = json.dumps(data).encode("utf-8") if isinstance(data, dict) else data
     h = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
     if headers:
         h.update(headers)
-    req = urllib.request.Request(url, data=body, method="POST", headers=h)
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return json.loads(r.read())
+    for tentativa in range(tentativas):
+        try:
+            req = urllib.request.Request(url, data=body, method="POST", headers=h)
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                espera = 30 * (2 ** tentativa)  # 30s, 60s, 120s, 240s
+                log(f"Rate limit (429). Aguardando {espera}s antes de tentar novamente...")
+                time.sleep(espera)
+            else:
+                raise
+    raise Exception(f"Falhou após {tentativas} tentativas (429 persistente)")
 
 
 def wp_auth(site):
@@ -367,7 +377,7 @@ def rodar_site(site):
 
             titulos_existentes.append(topico["titulo"])
             publicados.append({"titulo": topico["titulo"], "link": post_link})
-            time.sleep(3)
+            time.sleep(20)  # pausa entre artigos para evitar rate limit
 
         except Exception as e:
             msg = f"Erro no artigo {i+1}: {e}"
@@ -382,6 +392,7 @@ def rodar_agente():
     log("\n" + "="*60)
     log(f"AGENTE INICIADO — {datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}")
     log("="*60)
+    log(f"Imagens Unsplash: {'ATIVO' if UNSPLASH_KEY else 'DESATIVADO (UNSPLASH_KEY não configurado)'}")
 
     resumo_total = []
     erros_total = []
