@@ -1,0 +1,31 @@
+name: Agente de Conteúdo
+
+on:
+  schedule:
+    # Toda segunda-feira às 09:00 horário de Brasília (12:00 UTC)
+    - cron: "0 12 * * 1"
+  workflow_dispatch:  # Permite rodar manualmente pelo GitHub
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Rodar agente
+        env:
+          ANTHROPIC_KEY:    ${{ secrets.ANTHROPIC_KEY }}
+          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          UNSPLASH_KEY:     ${{ secrets.UNSPLASH_KEY }}
+          OEP_WP_PASS:      ${{ secrets.OEP_WP_PASS }}
+          TR_WP_PASS:       ${{ secrets.TR_WP_PASS }}
+        run: python agente_sites.py
