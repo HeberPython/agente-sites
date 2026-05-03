@@ -144,7 +144,7 @@ def claude(prompt, max_tokens=4000):
 
 def gerar_topico(site, titulos_existentes):
     existentes = "\n".join(f"- {t}" for t in titulos_existentes[:30]) or "Nenhum ainda"
-    prompt = f"""Você é um estrategista de SEO para o blog "{site['name']}".
+    prompt = f"""Você é um estrategista de SEO sênior especializado em conteúdo para o blog "{site['name']}".
 
 Nicho: {site['nicho']}
 Público: {site['publico']}
@@ -152,19 +152,22 @@ Público: {site['publico']}
 Artigos já publicados (NÃO sugerir estes):
 {existentes}
 
-Sugira UM tópico novo com alto potencial de busca no Google Brasil.
-O tópico deve ser específico, prático e ainda não coberto.
+Sugira UM tópico novo seguindo estes critérios:
+- Palavra-chave de cauda longa (long-tail) com intenção INFORMACIONAL clara
+- Específico o suficiente para cobrir em profundidade (não genérico demais)
+- Com potencial real de busca no Google Brasil
+- Que resolva uma dúvida concreta ou problema prático do público
 
 Responda APENAS com JSON válido:
 {{
-  "titulo": "Título do artigo (máx 65 chars)",
+  "titulo": "Título do artigo em formato 'Como fazer X', 'Guia completo de X', 'X passo a passo' ou similar (máx 65 chars)",
   "categoria_slug": "uma das categorias disponíveis: {list(site['categorias'].keys())}",
   "termos_imagem": [
     "termo mais específico em inglês descrevendo o objeto/ação principal do artigo",
     "termo médio em inglês mais abrangente",
     "termo genérico da categoria em inglês"
   ],
-  "palavra_chave": "frase de busca principal que as pessoas digitariam no Google"
+  "palavra_chave": "frase exata de busca que o público digitaria no Google (4-7 palavras)"
 }}"""
     texto = claude(prompt, max_tokens=400)
     inicio = texto.find("{")
@@ -175,30 +178,45 @@ Responda APENAS com JSON válido:
     return topico
 
 
-def gerar_artigo(site, topico):
-    prompt = f"""Você é redator especializado em SEO para o blog "{site['name']}".
+DISCLOSURE_HTML = """<div style="background:#f8f9fa;border-left:4px solid #6c757d;padding:14px 18px;margin:32px 0;font-size:0.88em;color:#555;">
+<strong>Transparência editorial:</strong> Este conteúdo é produzido de forma independente com base em pesquisa técnica e fontes especializadas. Alguns artigos podem conter links de parceiros — isso não influencia nossa linha editorial nem tem custo adicional para você.</div>"""
 
-Escreva um artigo completo sobre: "{topico['titulo']}"
+
+def gerar_artigo(site, topico):
+    prompt = f"""Você é um especialista com mais de 10 anos de experiência prática em {site['nicho']}, escrevendo para o blog "{site['name']}".
+
+Escreva um artigo COMPLETO, DETALHADO e ORIGINAL sobre: "{topico['titulo']}"
 Palavra-chave principal: {topico['palavra_chave']}
 Tom: {site['tom']}
 Público: {site['publico']}
 
-ESTRUTURA OBRIGATÓRIA:
-- Parágrafo de introdução (2-3 linhas chamando atenção)
-- 4 a 5 seções com títulos H2 práticos
-- Cada seção com 2-3 parágrafos
-- Seção final "Conclusão" resumindo o que foi aprendido
-- 3 perguntas frequentes (FAQ) ao final
+REQUISITOS DE QUALIDADE (TODOS OBRIGATÓRIOS):
+- Mínimo de 1800 palavras no corpo do texto
+- Informações específicas e verificáveis: medidas reais, especificações técnicas, etapas numeradas e detalhadas
+- Perspectiva de quem já fez isso na prática: inclua exemplos reais, situações comuns e soluções concretas
+- Linguagem natural e fluída, com variação de estrutura de frases — evitar texto repetitivo ou genérico
+- Conteúdo único: evite afirmações óbvias; vá além do que qualquer busca rápida retornaria
+
+ESTRUTURA OBRIGATÓRIA (nessa ordem):
+1. Introdução (3 parágrafos sólidos: contexto real, por que o leitor precisa disso agora, o que vai aprender)
+2. 5 a 7 seções H2 com títulos práticos e específicos — cada uma com 3 a 4 parágrafos densos
+3. Pelo menos 1 bloco de atenção/aviso importante usando <blockquote> ou lista com <strong>Atenção:</strong>
+4. Seção H2 "Erros Comuns e Como Evitar" — com pelo menos 4 erros reais e suas soluções
+5. Seção H2 "Perguntas Frequentes" — com 5 perguntas e respostas completas (mínimo 3 linhas cada)
+6. Seção H2 "Conclusão" — resumo prático com próximos passos concretos para o leitor
 
 FORMATO: Retorne APENAS JSON válido (sem markdown, sem texto fora do JSON):
 {{
-  "meta_description": "Descrição SEO de 120-155 chars incluindo a palavra-chave",
-  "conteudo_html": "HTML completo do artigo com tags <h2>, <p>, <ul>, <li> etc."
+  "meta_description": "Descrição SEO de 130-155 chars com a palavra-chave principal inserida naturalmente",
+  "excerpt": "Resumo do artigo em 2 frases diretas, sem spoilers, que instiguem a leitura (máx 200 chars)",
+  "conteudo_html": "HTML completo do artigo usando <h2>, <h3>, <p>, <ul>, <ol>, <li>, <blockquote>, <strong> — sem <html>, <head> ou <body>"
 }}"""
-    texto = claude(prompt, max_tokens=4000)
+    texto = claude(prompt, max_tokens=6000)
     inicio = texto.find("{")
     fim = texto.rfind("}") + 1
-    return json.loads(texto[inicio:fim])
+    artigo = json.loads(texto[inicio:fim])
+    artigo["conteudo_html"] = artigo["conteudo_html"] + DISCLOSURE_HTML
+    return artigo
 
 
 # ============================================================
@@ -311,6 +329,7 @@ def publicar_post(site, topico, artigo, media_id):
     payload = {
         "title": topico["titulo"],
         "content": artigo["conteudo_html"],
+        "excerpt": artigo.get("excerpt", ""),
         "status": "publish",
         "categories": [categoria_id],
         "meta": {},
