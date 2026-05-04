@@ -23,7 +23,7 @@ def log(msg):
 
 def claude(prompt, max_tokens=2500):
     data = json.dumps({
-        "model": "claude-haiku-4-5-20251001",
+        "model": "claude-sonnet-4-6",
         "max_tokens": max_tokens,
         "stream": True,
         "messages": [{"role": "user", "content": prompt}]

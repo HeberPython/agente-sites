@@ -159,7 +159,7 @@ def claude(prompt, max_tokens=4000):
     import http.client
 
     data = json.dumps({
-        "model": "claude-haiku-4-5-20251001",
+        "model": "claude-sonnet-4-6",
         "max_tokens": max_tokens,
         "stream": True,
         "messages": [{"role": "user", "content": prompt}]
@@ -318,96 +318,99 @@ def gerar_artigo_review(site, topico):
 
     prompt = f"""You are a hands-on product expert with 10+ years of experience in {site['nicho']}, writing for "{site['name']}".
 
-Write a COMPLETE, AUTHORITATIVE product review article titled: "{topico['titulo']}"
+Write a COMPLETE product review article titled: "{topico['titulo']}"
 Primary keyword: {topico['palavra_chave']}
 Tone: {site['tom']}
 Audience: {site['publico']}
 
-Products to feature (real Amazon products):
+Products to feature:
 {produtos_str}
 
-QUALITY REQUIREMENTS (ALL MANDATORY):
-- Minimum 1800 words of body text
-- Specific, verifiable details: specs, measurements, real use cases, tested scenarios
-- Write as someone who has actually used/tested these products
-- Balanced view: pros AND cons for each product
-- Natural, varied sentence structure — no generic filler text
-- Add original insight that goes beyond what a quick search would return
+REQUIREMENTS (ALL MANDATORY):
+- 900-1200 words of body text (concise but authoritative — no filler)
+- Specific details: specs, real use cases, honest pros & cons
+- Write as someone who actually used these products
+- E-E-A-T: include testing methodology and buying criteria
 
-REQUIRED STRUCTURE (in this order):
-1. Introduction (2-3 solid paragraphs: hook with a real problem, why this category matters, what this article covers)
-2. H2 "Quick Summary: Top Picks at a Glance" — a concise table or bullet summary of all products with star ratings
-3. For each product: H2 with product name + brief verdict, then:
-   - Specs overview
-   - What we liked
-   - What could be better
-   - Who it's best for
-   - [PRODUCT CARD PLACEHOLDER for {tag}]
-4. H2 "How We Tested" — brief methodology (adds E-E-A-T credibility)
-5. H2 "What to Look For When Buying" — 4-6 key buying criteria
-6. H2 "Frequently Asked Questions" — 5 Q&As (minimum 3 sentences each)
-7. H2 "Final Verdict" — clear recommendation and summary
+REQUIRED STRUCTURE:
+1. Introduction (2 paragraphs: hook + what this article covers)
+2. H2 "Quick Comparison" — short table or bullets with star ratings for each product
+3. For each product: H2 with name, then specs, pros, cons, best for, then [PRODUCT CARD for: Name]
+4. H2 "What to Look For" — 3-4 key buying criteria
+5. H2 "FAQ" — 4 Q&As (2-3 sentences each)
+6. H2 "Final Verdict" — clear recommendation
 
-IMPORTANT: Where you see [PRODUCT CARD PLACEHOLDER for {tag}], I will insert the affiliate card automatically.
-
-FORMAT: Return ONLY valid JSON (no markdown, no text outside JSON):
+FORMAT: Return ONLY valid JSON (no markdown outside JSON):
 {{
-  "meta_description": "SEO description 130-155 chars with primary keyword naturally included",
-  "excerpt": "2-sentence teaser that makes readers want to read more (max 200 chars)",
-  "conteudo_html": "Full article HTML using <h2>, <h3>, <p>, <ul>, <ol>, <li>, <table>, <strong> — NO <html>/<head>/<body> tags. Put [PRODUCT CARD for: Product Name] exactly where each affiliate card should appear."
+  "meta_description": "SEO description 130-155 chars with primary keyword",
+  "excerpt": "2-sentence teaser (max 180 chars)",
+  "conteudo_html": "Full HTML using <h2>, <h3>, <p>, <ul>, <ol>, <li>, <table>, <strong> — no <html>/<head>/<body>. Put [PRODUCT CARD for: Product Name] where each card goes."
 }}"""
 
-    texto = claude(prompt, max_tokens=7000)
-    inicio = texto.find("{")
-    fim = texto.rfind("}") + 1
-    artigo = json.loads(texto[inicio:fim])
-
-    html = artigo["conteudo_html"]
-    for produto in produtos:
-        placeholder = f"[PRODUCT CARD for: {produto}]"
-        card = amazon_card_html(produto, tag, f"Top pick in our {topico['titulo']} review")
-        html = html.replace(placeholder, card)
-
-    html = AFFILIATE_DISCLOSURE_EN + html
-    artigo["conteudo_html"] = html
-    return artigo
+    for tentativa in range(3):
+        try:
+            texto = claude(prompt, max_tokens=3500)
+            inicio = texto.find("{")
+            fim = texto.rfind("}") + 1
+            artigo = json.loads(texto[inicio:fim])
+            html = artigo["conteudo_html"]
+            for produto in produtos:
+                placeholder = f"[PRODUCT CARD for: {produto}]"
+                card = amazon_card_html(produto, tag, f"Top pick in our {topico['titulo']} review")
+                html = html.replace(placeholder, card)
+            html = AFFILIATE_DISCLOSURE_EN + html
+            artigo["conteudo_html"] = html
+            return artigo
+        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            if tentativa < 2:
+                log(f"  JSON inválido (tentativa {tentativa+1}/3): {e}. Retentando...")
+                time.sleep(10)
+            else:
+                raise Exception(f"Falha ao gerar review após 3 tentativas: {e}")
 
 
 def gerar_artigo(site, topico):
     prompt = f"""Você é um especialista com mais de 10 anos de experiência prática em {site['nicho']}, escrevendo para o blog "{site['name']}".
 
-Escreva um artigo COMPLETO, DETALHADO e ORIGINAL sobre: "{topico['titulo']}"
+Escreva um artigo COMPLETO e ORIGINAL sobre: "{topico['titulo']}"
 Palavra-chave principal: {topico['palavra_chave']}
 Tom: {site['tom']}
 Público: {site['publico']}
 
-REQUISITOS DE QUALIDADE (TODOS OBRIGATÓRIOS):
-- Mínimo de 1800 palavras no corpo do texto
-- Informações específicas e verificáveis: medidas reais, especificações técnicas, etapas numeradas e detalhadas
-- Perspectiva de quem já fez isso na prática: inclua exemplos reais, situações comuns e soluções concretas
-- Linguagem natural e fluída, com variação de estrutura de frases — evitar texto repetitivo ou genérico
-- Conteúdo único: evite afirmações óbvias; vá além do que qualquer busca rápida retornaria
+REQUISITOS (TODOS OBRIGATÓRIOS):
+- Entre 1000 e 1300 palavras no corpo do texto (seja conciso e denso, sem fluff)
+- Informações específicas: medidas reais, especificações técnicas, etapas numeradas
+- Perspectiva prática de quem fez isso: exemplos reais, situações comuns, soluções concretas
+- E-E-A-T: demonstre experiência e autoridade com detalhes que só quem fez sabe
 
-ESTRUTURA OBRIGATÓRIA (nessa ordem):
-1. Introdução (3 parágrafos sólidos: contexto real, por que o leitor precisa disso agora, o que vai aprender)
-2. 5 a 7 seções H2 com títulos práticos e específicos — cada uma com 3 a 4 parágrafos densos
-3. Pelo menos 1 bloco de atenção/aviso importante usando <blockquote> ou lista com <strong>Atenção:</strong>
-4. Seção H2 "Erros Comuns e Como Evitar" — com pelo menos 4 erros reais e suas soluções
-5. Seção H2 "Perguntas Frequentes" — com 5 perguntas e respostas completas (mínimo 3 linhas cada)
-6. Seção H2 "Conclusão" — resumo prático com próximos passos concretos para o leitor
+ESTRUTURA (nessa ordem):
+1. Introdução (2 parágrafos: contexto real + o que o leitor vai aprender)
+2. 4 a 5 seções H2 práticas — cada uma com 2 a 3 parágrafos densos
+3. Um aviso/atenção importante com <blockquote> ou <strong>Atenção:</strong>
+4. H2 "Erros Comuns" — 3 erros reais com solução
+5. H2 "Perguntas Frequentes" — 4 Q&As completas (2-3 linhas cada)
+6. H2 "Conclusão" — próximos passos concretos
 
-FORMATO: Retorne APENAS JSON válido (sem markdown, sem texto fora do JSON):
+FORMATO: Retorne APENAS JSON válido (sem markdown fora do JSON):
 {{
-  "meta_description": "Descrição SEO de 130-155 chars com a palavra-chave principal inserida naturalmente",
-  "excerpt": "Resumo do artigo em 2 frases diretas, sem spoilers, que instiguem a leitura (máx 200 chars)",
-  "conteudo_html": "HTML completo do artigo usando <h2>, <h3>, <p>, <ul>, <ol>, <li>, <blockquote>, <strong> — sem <html>, <head> ou <body>"
+  "meta_description": "Descrição SEO de 130-155 chars com a palavra-chave incluída",
+  "excerpt": "2 frases que instigam a leitura (máx 180 chars)",
+  "conteudo_html": "HTML completo usando <h2>, <h3>, <p>, <ul>, <ol>, <li>, <blockquote>, <strong> — sem <html>/<head>/<body>"
 }}"""
-    texto = claude(prompt, max_tokens=6000)
-    inicio = texto.find("{")
-    fim = texto.rfind("}") + 1
-    artigo = json.loads(texto[inicio:fim])
-    artigo["conteudo_html"] = artigo["conteudo_html"] + DISCLOSURE_HTML
-    return artigo
+    for tentativa in range(3):
+        try:
+            texto = claude(prompt, max_tokens=3500)
+            inicio = texto.find("{")
+            fim = texto.rfind("}") + 1
+            artigo = json.loads(texto[inicio:fim])
+            artigo["conteudo_html"] = artigo["conteudo_html"] + DISCLOSURE_HTML
+            return artigo
+        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            if tentativa < 2:
+                log(f"  JSON inválido (tentativa {tentativa+1}/3): {e}. Retentando...")
+                time.sleep(10)
+            else:
+                raise Exception(f"Falha ao gerar artigo após 3 tentativas: {e}")
 
 
 # ============================================================
