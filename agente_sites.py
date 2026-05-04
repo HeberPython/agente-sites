@@ -109,15 +109,23 @@ def http_post(url, data, headers=None, tentativas=4, timeout=60):
         try:
             req = urllib.request.Request(url, data=body, method="POST", headers=h)
             with urllib.request.urlopen(req, timeout=timeout) as r:
-                return json.loads(r.read())
+                raw = r.read()
+                if not raw:
+                    raise Exception("Resposta vazia do servidor")
+                return json.loads(raw)
         except urllib.error.HTTPError as e:
-            if e.code == 429:
-                espera = 30 * (2 ** tentativa)  # 30s, 60s, 120s, 240s
-                log(f"Rate limit (429). Aguardando {espera}s antes de tentar novamente...")
+            if e.code in (429, 529):
+                espera = 30 * (2 ** tentativa)
+                log(f"Rate limit ({e.code}). Aguardando {espera}s antes de tentar novamente...")
+                time.sleep(espera)
+            elif e.code >= 500:
+                espera = 20 * (tentativa + 1)
+                raw_err = e.read()
+                log(f"Erro servidor {e.code}: {raw_err[:120]}. Aguardando {espera}s...")
                 time.sleep(espera)
             else:
                 raise
-    raise Exception(f"Falhou após {tentativas} tentativas (429 persistente)")
+    raise Exception(f"Falhou após {tentativas} tentativas")
 
 
 def wp_auth(site):
@@ -147,22 +155,47 @@ def telegram_send(msg):
 # ============================================================
 
 def claude(prompt, max_tokens=4000):
-    data = {
+    """Chama a API da Anthropic com streaming para evitar timeout em respostas longas."""
+    import http.client
+    import ssl
+
+    data = json.dumps({
         "model": "claude-haiku-4-5-20251001",
         "max_tokens": max_tokens,
+        "stream": True,
         "messages": [{"role": "user", "content": prompt}]
-    }
-    result = http_post(
-        "https://api.anthropic.com/v1/messages",
-        data,
-        headers={
-            "x-api-key": ANTHROPIC_KEY,
-            "anthropic-version": "2023-06-01",
-            "Content-Type": "application/json",
-        },
-        timeout=300,
-    )
-    return result["content"][0]["text"]
+    }).encode("utf-8")
+
+    conn = http.client.HTTPSConnection("api.anthropic.com", timeout=120)
+    conn.request("POST", "/v1/messages", body=data, headers={
+        "x-api-key": ANTHROPIC_KEY,
+        "anthropic-version": "2023-06-01",
+        "Content-Type": "application/json",
+    })
+    resp = conn.getresponse()
+
+    if resp.status != 200:
+        body = resp.read()
+        conn.close()
+        raise Exception(f"Anthropic {resp.status}: {body[:200]}")
+
+    texto = []
+    for line in resp:
+        line = line.decode("utf-8").rstrip("\n")
+        if line.startswith("data: "):
+            payload = line[6:]
+            if payload == "[DONE]":
+                break
+            try:
+                ev = json.loads(payload)
+                if ev.get("type") == "content_block_delta":
+                    texto.append(ev["delta"].get("text", ""))
+                elif ev.get("type") == "message_stop":
+                    break
+            except json.JSONDecodeError:
+                pass
+    conn.close()
+    return "".join(texto)
 
 
 def gerar_topico(site, titulos_existentes):
