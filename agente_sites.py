@@ -155,9 +155,8 @@ def telegram_send(msg):
 # ============================================================
 
 def claude(prompt, max_tokens=4000):
-    """Chama a API da Anthropic com streaming para evitar timeout em respostas longas."""
+    """Chama a API da Anthropic com streaming (SSE) para evitar timeout em respostas longas."""
     import http.client
-    import ssl
 
     data = json.dumps({
         "model": "claude-haiku-4-5-20251001",
@@ -167,35 +166,48 @@ def claude(prompt, max_tokens=4000):
     }).encode("utf-8")
 
     conn = http.client.HTTPSConnection("api.anthropic.com", timeout=120)
-    conn.request("POST", "/v1/messages", body=data, headers={
-        "x-api-key": ANTHROPIC_KEY,
-        "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json",
-    })
-    resp = conn.getresponse()
+    try:
+        conn.request("POST", "/v1/messages", body=data, headers={
+            "x-api-key": ANTHROPIC_KEY,
+            "anthropic-version": "2023-06-01",
+            "Content-Type": "application/json",
+        })
+        resp = conn.getresponse()
 
-    if resp.status != 200:
-        body = resp.read()
-        conn.close()
-        raise Exception(f"Anthropic {resp.status}: {body[:200]}")
+        if resp.status != 200:
+            body_err = resp.read()
+            raise Exception(f"Anthropic {resp.status}: {body_err[:200]}")
 
-    texto = []
-    for line in resp:
-        line = line.decode("utf-8").rstrip("\n")
-        if line.startswith("data: "):
-            payload = line[6:]
-            if payload == "[DONE]":
+        texto = []
+        buf = b""
+        done = False
+        while not done:
+            chunk = resp.read(8192)
+            if not chunk:
                 break
-            try:
-                ev = json.loads(payload)
-                if ev.get("type") == "content_block_delta":
-                    texto.append(ev["delta"].get("text", ""))
-                elif ev.get("type") == "message_stop":
+            buf += chunk
+            while b"\n" in buf:
+                line_b, buf = buf.split(b"\n", 1)
+                line = line_b.decode("utf-8").rstrip("\r")
+                if not line.startswith("data: "):
+                    continue
+                payload = line[6:].strip()
+                if not payload or payload == "[DONE]":
+                    done = True
                     break
-            except json.JSONDecodeError:
-                pass
-    conn.close()
-    return "".join(texto)
+                try:
+                    ev = json.loads(payload)
+                    etype = ev.get("type", "")
+                    if etype == "content_block_delta":
+                        texto.append(ev.get("delta", {}).get("text", ""))
+                    elif etype == "message_stop":
+                        done = True
+                        break
+                except json.JSONDecodeError:
+                    pass
+        return "".join(texto)
+    finally:
+        conn.close()
 
 
 def gerar_topico(site, titulos_existentes):
