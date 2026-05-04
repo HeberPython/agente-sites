@@ -100,7 +100,7 @@ def http_get(url, headers=None):
         return json.loads(r.read())
 
 
-def http_post(url, data, headers=None, tentativas=4):
+def http_post(url, data, headers=None, tentativas=4, timeout=60):
     body = json.dumps(data).encode("utf-8") if isinstance(data, dict) else data
     h = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
     if headers:
@@ -108,7 +108,7 @@ def http_post(url, data, headers=None, tentativas=4):
     for tentativa in range(tentativas):
         try:
             req = urllib.request.Request(url, data=body, method="POST", headers=h)
-            with urllib.request.urlopen(req, timeout=60) as r:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
             if e.code == 429:
@@ -159,7 +159,8 @@ def claude(prompt, max_tokens=4000):
             "x-api-key": ANTHROPIC_KEY,
             "anthropic-version": "2023-06-01",
             "Content-Type": "application/json",
-        }
+        },
+        timeout=300,
     )
     return result["content"][0]["text"]
 
