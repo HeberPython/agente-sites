@@ -1,0 +1,18 @@
+name: Fix Privacy Policy slug (one-shot)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Corrigir slug
+        env:
+          HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
+        run: python fix_privacy_slug.py
