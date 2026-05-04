@@ -30,4 +30,5 @@ jobs:
           UNSPLASH_KEY:     ${{ secrets.UNSPLASH_KEY }}
           OEP_WP_PASS:      ${{ secrets.OEP_WP_PASS }}
           TR_WP_PASS:       ${{ secrets.TR_WP_PASS }}
+          HT_WP_PASS:       ${{ secrets.HT_WP_PASS }}
         run: python agente_sites.py

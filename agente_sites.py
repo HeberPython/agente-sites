@@ -1,5 +1,5 @@
 """
-Agente autônomo de conteúdo — obraepratica.com.br + temrazao.com.br
+Agente autônomo de conteúdo — obraepratica.com.br + temrazao.com.br + handytested.com
 Executa via GitHub Actions (semanal)
 Credenciais lidas de variáveis de ambiente (GitHub Secrets)
 """
@@ -31,6 +31,7 @@ SITES = [
         "wp_user": "hebergravano@gmail.com",
         "wp_pass": os.environ["OEP_WP_PASS"],
         "artigos_por_rodada": 2,
+        "tipo": "informativo",
         "nicho": "faça você mesmo, instalação elétrica residencial, automação residencial, manutenção preventiva, reformas e construção",
         "tom": "técnico mas acessível, direto ao ponto, voltado para quem vai colocar a mão na massa",
         "publico": "brasileiros que fazem reparos, instalações e reformas em casa",
@@ -49,6 +50,7 @@ SITES = [
         "wp_user": "hebergravano@gmail.com",
         "wp_pass": os.environ["TR_WP_PASS"],
         "artigos_por_rodada": 2,
+        "tipo": "informativo",
         "nicho": "curiosidades científicas, como as coisas funcionam, tecnologia do dia a dia, ciência explicada de forma simples",
         "tom": "curioso, acessível, levemente informal, explica conceitos complexos de forma simples",
         "publico": "brasileiros curiosos sobre ciência e tecnologia",
@@ -58,6 +60,26 @@ SITES = [
             "curiosidades": 7,
             "como-funciona": 8,
         },
+        "topicos_evitar": [],
+    },
+    {
+        "id": "handytested",
+        "name": "HandyTested",
+        "url": "https://handytested.com",
+        "wp_user": "hebergravano@gmail.com",
+        "wp_pass": os.environ.get("HT_WP_PASS", ""),
+        "artigos_por_rodada": 2,
+        "tipo": "review",
+        "idioma": "en",
+        "nicho": "electronics reviews, power tools, hand tools, DIY projects, home improvement gadgets",
+        "tom": "honest, practical, hands-on expert — like a knowledgeable friend who has actually tested the products",
+        "publico": "English-speaking consumers looking for trustworthy product reviews before buying on Amazon",
+        "categorias": {
+            "electronics": 0,
+            "tools": 0,
+            "diy": 0,
+        },
+        "amazon_tag": "amazonrev089f-20",
         "topicos_evitar": [],
     },
 ]
@@ -180,6 +202,133 @@ Responda APENAS com JSON válido:
 
 DISCLOSURE_HTML = """<div style="background:#f8f9fa;border-left:4px solid #6c757d;padding:14px 18px;margin:32px 0;font-size:0.88em;color:#555;">
 <strong>Transparência editorial:</strong> Este conteúdo é produzido de forma independente com base em pesquisa técnica e fontes especializadas. Alguns artigos podem conter links de parceiros — isso não influencia nossa linha editorial nem tem custo adicional para você.</div>"""
+
+
+AFFILIATE_DISCLOSURE_EN = """<div style="background:#fff8e1;border-left:4px solid #ffc107;padding:14px 18px;margin:24px 0;font-size:0.88em;color:#555;">
+<strong>Affiliate Disclosure:</strong> HandyTested is reader-supported. When you buy through links on our site, we may earn an affiliate commission at no extra cost to you. Our reviews are always independent and based on real testing criteria.</div>"""
+
+
+def amazon_card_html(product_name, tag, description="", price_range=""):
+    query = urllib.parse.quote(product_name)
+    url = f"https://www.amazon.com/s?k={query}&tag={tag}"
+    price_text = f"<span style='color:#b12704;font-weight:bold;'>{price_range}</span>" if price_range else ""
+    return f"""<div style="border:1px solid #ddd;border-radius:8px;padding:16px 20px;margin:20px 0;background:#fafafa;">
+<strong style="font-size:1.1em;">🛒 {product_name}</strong><br>
+{price_text}
+<p style="margin:8px 0;color:#555;">{description}</p>
+<a href="{url}" rel="sponsored nofollow noopener" target="_blank"
+   style="display:inline-block;background:#ff9900;color:#000;padding:8px 18px;border-radius:4px;text-decoration:none;font-weight:bold;margin-top:6px;">
+   Check Price on Amazon →
+</a>
+</div>"""
+
+
+def gerar_topico_review(site, titulos_existentes):
+    existentes = "\n".join(f"- {t}" for t in titulos_existentes[:30]) or "None yet"
+    cats = list(site["categorias"].keys())
+    prompt = f"""You are a senior SEO strategist for the product review blog "{site['name']}".
+
+Niche: {site['nicho']}
+Audience: {site['publico']}
+
+Already published (DO NOT repeat these topics):
+{existentes}
+
+Suggest ONE new article topic following these criteria:
+- Long-tail keyword with clear COMMERCIAL INVESTIGATION or INFORMATIONAL intent
+- Format: "Best X for Y", "X vs Y: Which One Is Better?", "Top 5 X Under $Z", "How to Choose X", "X Review: Is It Worth It?"
+- High search volume potential in the US market
+- Covers 3-5 real Amazon products the reader can buy today
+- Specific enough to be covered in depth (not too broad)
+
+Return ONLY valid JSON:
+{{
+  "titulo": "Article title in English (max 65 chars, compelling and keyword-rich)",
+  "categoria_slug": "one of: {cats}",
+  "termos_imagem": [
+    "specific English term for the main product/tool in the article",
+    "broader category term in English",
+    "generic English keyword for the niche"
+  ],
+  "palavra_chave": "exact search phrase a buyer would type on Google (4-7 words)",
+  "produtos_sugeridos": ["Product Name 1", "Product Name 2", "Product Name 3"]
+}}"""
+    texto = claude(prompt, max_tokens=500)
+    inicio = texto.find("{")
+    fim = texto.rfind("}") + 1
+    topico = json.loads(texto[inicio:fim])
+    if "termo_imagem" in topico and "termos_imagem" not in topico:
+        topico["termos_imagem"] = [topico["termo_imagem"]]
+    if "produtos_sugeridos" not in topico:
+        topico["produtos_sugeridos"] = []
+    return topico
+
+
+def gerar_artigo_review(site, topico):
+    tag = site.get("amazon_tag", "amazonrev089f-20")
+    produtos = topico.get("produtos_sugeridos", [])
+    produtos_str = "\n".join(f"- {p}" for p in produtos) if produtos else "- (use your expertise to pick 3-5 real Amazon products)"
+
+    cards_html = "\n".join(
+        amazon_card_html(p, tag, f"One of our top picks for {topico['titulo']}")
+        for p in produtos
+    )
+
+    prompt = f"""You are a hands-on product expert with 10+ years of experience in {site['nicho']}, writing for "{site['name']}".
+
+Write a COMPLETE, AUTHORITATIVE product review article titled: "{topico['titulo']}"
+Primary keyword: {topico['palavra_chave']}
+Tone: {site['tom']}
+Audience: {site['publico']}
+
+Products to feature (real Amazon products):
+{produtos_str}
+
+QUALITY REQUIREMENTS (ALL MANDATORY):
+- Minimum 1800 words of body text
+- Specific, verifiable details: specs, measurements, real use cases, tested scenarios
+- Write as someone who has actually used/tested these products
+- Balanced view: pros AND cons for each product
+- Natural, varied sentence structure — no generic filler text
+- Add original insight that goes beyond what a quick search would return
+
+REQUIRED STRUCTURE (in this order):
+1. Introduction (2-3 solid paragraphs: hook with a real problem, why this category matters, what this article covers)
+2. H2 "Quick Summary: Top Picks at a Glance" — a concise table or bullet summary of all products with star ratings
+3. For each product: H2 with product name + brief verdict, then:
+   - Specs overview
+   - What we liked
+   - What could be better
+   - Who it's best for
+   - [PRODUCT CARD PLACEHOLDER for {tag}]
+4. H2 "How We Tested" — brief methodology (adds E-E-A-T credibility)
+5. H2 "What to Look For When Buying" — 4-6 key buying criteria
+6. H2 "Frequently Asked Questions" — 5 Q&As (minimum 3 sentences each)
+7. H2 "Final Verdict" — clear recommendation and summary
+
+IMPORTANT: Where you see [PRODUCT CARD PLACEHOLDER for {tag}], I will insert the affiliate card automatically.
+
+FORMAT: Return ONLY valid JSON (no markdown, no text outside JSON):
+{{
+  "meta_description": "SEO description 130-155 chars with primary keyword naturally included",
+  "excerpt": "2-sentence teaser that makes readers want to read more (max 200 chars)",
+  "conteudo_html": "Full article HTML using <h2>, <h3>, <p>, <ul>, <ol>, <li>, <table>, <strong> — NO <html>/<head>/<body> tags. Put [PRODUCT CARD for: Product Name] exactly where each affiliate card should appear."
+}}"""
+
+    texto = claude(prompt, max_tokens=7000)
+    inicio = texto.find("{")
+    fim = texto.rfind("}") + 1
+    artigo = json.loads(texto[inicio:fim])
+
+    html = artigo["conteudo_html"]
+    for produto in produtos:
+        placeholder = f"[PRODUCT CARD for: {produto}]"
+        card = amazon_card_html(produto, tag, f"Top pick in our {topico['titulo']} review")
+        html = html.replace(placeholder, card)
+
+    html = AFFILIATE_DISCLOSURE_EN + html
+    artigo["conteudo_html"] = html
+    return artigo
 
 
 def gerar_artigo(site, topico):
@@ -385,15 +534,23 @@ def rodar_site(site):
     titulos_existentes = listar_titulos_publicados(site)
     log(f"Posts existentes: {len(titulos_existentes)}")
 
+    tipo = site.get("tipo", "informativo")
+
     for i in range(site["artigos_por_rodada"]):
         log(f"\n--- Artigo {i+1}/{site['artigos_por_rodada']} ---")
         try:
             log("Gerando tópico...")
-            topico = gerar_topico(site, titulos_existentes)
+            if tipo == "review":
+                topico = gerar_topico_review(site, titulos_existentes)
+            else:
+                topico = gerar_topico(site, titulos_existentes)
             log(f"Tópico: {topico['titulo']}")
 
             log("Gerando conteúdo...")
-            artigo = gerar_artigo(site, topico)
+            if tipo == "review":
+                artigo = gerar_artigo_review(site, topico)
+            else:
+                artigo = gerar_artigo(site, topico)
             log(f"Artigo gerado: {len(artigo.get('conteudo_html',''))} chars")
 
             termos = topico.get("termos_imagem") or [topico.get("termo_imagem", "")]
@@ -430,6 +587,9 @@ def rodar_agente():
     erros_total = []
 
     for site in SITES:
+        if not site.get("wp_pass"):
+            log(f"Pulando {site['name']}: credenciais não configuradas")
+            continue
         publicados, erros = rodar_site(site)
         resumo_total.append({"site": site["name"], "publicados": publicados, "erros": erros})
         erros_total += erros
