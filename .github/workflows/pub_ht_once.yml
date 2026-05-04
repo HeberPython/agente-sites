@@ -1,0 +1,29 @@
+name: HandyTested — publicação única
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Publicar artigo
+        env:
+          ANTHROPIC_KEY:    ${{ secrets.ANTHROPIC_KEY }}
+          HT_WP_PASS:       ${{ secrets.HT_WP_PASS }}
+          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          UNSPLASH_KEY:     ${{ secrets.UNSPLASH_KEY }}
+        run: python pub_ht_once.py
