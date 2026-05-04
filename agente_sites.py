@@ -7,9 +7,11 @@ Credenciais lidas de variáveis de ambiente (GitHub Secrets)
 import urllib.request
 import urllib.error
 import urllib.parse
+import http.client
 import json
 import base64
 import os
+import re
 import time
 import datetime
 import random
@@ -154,10 +156,8 @@ def telegram_send(msg):
 #  ANTHROPIC (GERAÇÃO DE CONTEÚDO)
 # ============================================================
 
-def claude(prompt, max_tokens=4000):
+def claude(prompt, max_tokens=2800):
     """Chama a API da Anthropic com streaming SSE linha-a-linha."""
-    import http.client
-
     data = json.dumps({
         "model": "claude-sonnet-4-6",
         "max_tokens": max_tokens,
@@ -306,108 +306,134 @@ Return ONLY valid JSON:
     return topico
 
 
+def _gerar_meta(titulo, palavra_chave, idioma="pt"):
+    """Chamada pequena: gera apenas meta_description + excerpt em JSON."""
+    if idioma == "en":
+        prompt = f"""For the article "{titulo}" (keyword: "{palavra_chave}"):
+Return ONLY valid JSON, no explanation:
+{{"meta_description":"148-158 chars with keyword","excerpt":"2 sentences max 155 chars with keyword"}}"""
+    else:
+        prompt = f"""Para o artigo "{titulo}" (palavra-chave: "{palavra_chave}"):
+Retorne APENAS JSON válido, sem explicação:
+{{"meta_description":"130-155 chars com palavra-chave","excerpt":"2 frases máx 180 chars com palavra-chave"}}"""
+    try:
+        texto = claude(prompt, max_tokens=200)
+        inicio = texto.find("{"); fim = texto.rfind("}") + 1
+        if inicio == -1 or fim == 0:
+            return {"meta_description": titulo, "excerpt": titulo}
+        return json.loads(texto[inicio:fim])
+    except Exception:
+        return {"meta_description": titulo, "excerpt": titulo}
+
+
+def _validar_html(html, min_palavras=600):
+    """Valida e limpa HTML gerado diretamente pelo modelo."""
+    html = re.sub(r"^```[a-z]*\s*", "", html.strip(), flags=re.IGNORECASE)
+    html = re.sub(r"\s*```$", "", html)
+    if not html.strip().startswith("<"):
+        raise ValueError(f"Resposta não começa com HTML: {html[:80]!r}")
+    if "<h2>" not in html:
+        raise ValueError("HTML sem h2 — estrutura inválida")
+    palavras = len(re.sub(r"<[^>]+>", "", html).split())
+    return html, palavras
+
+
 def gerar_artigo_review(site, topico):
+    """Gera review em inglês em 2 chamadas: HTML direto + meta separado."""
     tag = site.get("amazon_tag", "amazonrev089f-20")
     produtos = topico.get("produtos_sugeridos", [])
-    produtos_str = "\n".join(f"- {p}" for p in produtos) if produtos else "- (use your expertise to pick 3-5 real Amazon products)"
+    produtos_str = "\n".join(f"- {p}" for p in produtos) if produtos else "- (pick 3-4 real Amazon products)"
 
-    cards_html = "\n".join(
-        amazon_card_html(p, tag, f"One of our top picks for {topico['titulo']}")
-        for p in produtos
-    )
+    prompt_html = f"""You are a hands-on product expert writing for "{site['name']}".
 
-    prompt = f"""You are a hands-on product expert with 10+ years of experience in {site['nicho']}, writing for "{site['name']}".
+ARTICLE: "{topico['titulo']}"
+KEYWORD: {topico['palavra_chave']}
+PRODUCTS: {produtos_str}
 
-Write a COMPLETE product review article titled: "{topico['titulo']}"
-Primary keyword: {topico['palavra_chave']}
-Tone: {site['tom']}
-Audience: {site['publico']}
+OUTPUT: ONLY valid HTML — no JSON, no markdown, no explanation.
+Start immediately with <p>. Use: <p> <h2> <h3> <ul> <li> <strong> <table> <thead> <tbody> <tr> <th> <td>
+Where each product card goes write exactly: [PRODUCT CARD for: ProductName]
 
-Products to feature:
-{produtos_str}
-
-REQUIREMENTS (ALL MANDATORY):
-- 900-1200 words of body text (concise but authoritative — no filler)
-- Specific details: specs, real use cases, honest pros & cons
-- Write as someone who actually used these products
-- E-E-A-T: include testing methodology and buying criteria
-
-REQUIRED STRUCTURE:
-1. Introduction (2 paragraphs: hook + what this article covers)
-2. H2 "Quick Comparison" — short table or bullets with star ratings for each product
-3. For each product: H2 with name, then specs, pros, cons, best for, then [PRODUCT CARD for: Name]
-4. H2 "What to Look For" — 3-4 key buying criteria
-5. H2 "FAQ" — 4 Q&As (2-3 sentences each)
-6. H2 "Final Verdict" — clear recommendation
-
-FORMAT: Return ONLY valid JSON (no markdown outside JSON):
-{{
-  "meta_description": "SEO description 130-155 chars with primary keyword",
-  "excerpt": "2-sentence teaser (max 180 chars)",
-  "conteudo_html": "Full HTML using <h2>, <h3>, <p>, <ul>, <ol>, <li>, <table>, <strong> — no <html>/<head>/<body>. Put [PRODUCT CARD for: Product Name] where each card goes."
-}}"""
+STRUCTURE (900-1100 words):
+<p>Intro 80-100 words. Include keyword in first 60 words.</p>
+<h2>Quick Comparison</h2>
+[table: Product | Price | Best For | Rating ★]
+<h2>Our Top Picks</h2>
+<ul><li><strong>Best Overall:</strong> name — reason</li>...</ul>
+[For each product:]
+<h2>[Product Name]</h2>
+<p>120 words: specs, performance, hands-on feel</p>
+<h3>What We Like</h3><ul>...</ul>
+<h3>What Could Be Better</h3><ul>...</ul>
+<p><strong>Best for:</strong> specific buyer</p>
+[PRODUCT CARD for: ProductName]
+<h2>What to Look For</h2>
+<p>150 words: 3-4 buying criteria</p>
+<h2>FAQ</h2>
+<h3>Question?</h3><p>Answer</p> [×3]
+<h2>Final Verdict</h2>
+<p>100 words: winner + runner-up + budget pick</p>"""
 
     for tentativa in range(3):
         try:
-            texto = claude(prompt, max_tokens=3500)
-            inicio = texto.find("{")
-            fim = texto.rfind("}") + 1
-            artigo = json.loads(texto[inicio:fim])
-            html = artigo["conteudo_html"]
+            html_bruto = claude(prompt_html, max_tokens=2800)
+            html, palavras = _validar_html(html_bruto, min_palavras=600)
+            log(f"  HTML review: {palavras} palavras | {len(html)} chars")
+            # Substituir placeholders
             for produto in produtos:
-                placeholder = f"[PRODUCT CARD for: {produto}]"
                 card = amazon_card_html(produto, tag, f"Top pick in our {topico['titulo']} review")
-                html = html.replace(placeholder, card)
-            html = AFFILIATE_DISCLOSURE_EN + html
-            artigo["conteudo_html"] = html
-            return artigo
-        except (json.JSONDecodeError, ValueError, KeyError) as e:
+                html = html.replace(f"[PRODUCT CARD for: {produto}]", card)
+            meta = _gerar_meta(topico["titulo"], topico["palavra_chave"], idioma="en")
+            return {
+                "meta_description": meta["meta_description"],
+                "excerpt":          meta["excerpt"],
+                "conteudo_html":    AFFILIATE_DISCLOSURE_EN + html,
+            }
+        except Exception as e:
             if tentativa < 2:
-                log(f"  JSON inválido (tentativa {tentativa+1}/3): {e}. Retentando...")
+                log(f"  Review tentativa {tentativa+1}/3 falhou: {e}. Retry em 10s...")
                 time.sleep(10)
             else:
                 raise Exception(f"Falha ao gerar review após 3 tentativas: {e}")
 
 
 def gerar_artigo(site, topico):
-    prompt = f"""Você é um especialista com mais de 10 anos de experiência prática em {site['nicho']}, escrevendo para o blog "{site['name']}".
+    """Gera artigo PT-BR em 2 chamadas: HTML direto + meta separado."""
+    prompt_html = f"""Você é um especialista com mais de 10 anos de experiência em {site['nicho']}, escrevendo para "{site['name']}".
 
-Escreva um artigo COMPLETO e ORIGINAL sobre: "{topico['titulo']}"
-Palavra-chave principal: {topico['palavra_chave']}
-Tom: {site['tom']}
-Público: {site['publico']}
+ARTIGO: "{topico['titulo']}"
+PALAVRA-CHAVE: {topico['palavra_chave']}
+TOM: {site['tom']}
+PÚBLICO: {site['publico']}
 
-REQUISITOS (TODOS OBRIGATÓRIOS):
-- Entre 1000 e 1300 palavras no corpo do texto (seja conciso e denso, sem fluff)
-- Informações específicas: medidas reais, especificações técnicas, etapas numeradas
-- Perspectiva prática de quem fez isso: exemplos reais, situações comuns, soluções concretas
-- E-E-A-T: demonstre experiência e autoridade com detalhes que só quem fez sabe
+SAÍDA: APENAS HTML válido — sem JSON, sem markdown, sem explicação.
+Comece imediatamente com <p>. Use: <p> <h2> <h3> <ul> <ol> <li> <blockquote> <strong>
 
-ESTRUTURA (nessa ordem):
-1. Introdução (2 parágrafos: contexto real + o que o leitor vai aprender)
-2. 4 a 5 seções H2 práticas — cada uma com 2 a 3 parágrafos densos
-3. Um aviso/atenção importante com <blockquote> ou <strong>Atenção:</strong>
-4. H2 "Erros Comuns" — 3 erros reais com solução
-5. H2 "Perguntas Frequentes" — 4 Q&As completas (2-3 linhas cada)
-6. H2 "Conclusão" — próximos passos concretos
+ESTRUTURA (900-1100 palavras):
+<p>Introdução: 2 parágrafos — contexto real + o que o leitor vai aprender. Inclua a palavra-chave nas primeiras 60 palavras.</p>
+[4-5 seções H2 práticas — cada uma com 2-3 parágrafos densos com informações específicas, medidas, etapas]
+<strong>Atenção:</strong> [aviso importante relevante ao tema]
+<h2>Erros Comuns</h2>
+[3 erros reais com solução objetiva]
+<h2>Perguntas Frequentes</h2>
+<h3>Pergunta real?</h3><p>Resposta completa 2-3 linhas</p> [×4]
+<h2>Conclusão</h2>
+<p>Próximos passos concretos para o leitor</p>"""
 
-FORMATO: Retorne APENAS JSON válido (sem markdown fora do JSON):
-{{
-  "meta_description": "Descrição SEO de 130-155 chars com a palavra-chave incluída",
-  "excerpt": "2 frases que instigam a leitura (máx 180 chars)",
-  "conteudo_html": "HTML completo usando <h2>, <h3>, <p>, <ul>, <ol>, <li>, <blockquote>, <strong> — sem <html>/<head>/<body>"
-}}"""
     for tentativa in range(3):
         try:
-            texto = claude(prompt, max_tokens=3500)
-            inicio = texto.find("{")
-            fim = texto.rfind("}") + 1
-            artigo = json.loads(texto[inicio:fim])
-            artigo["conteudo_html"] = artigo["conteudo_html"] + DISCLOSURE_HTML
-            return artigo
-        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            html_bruto = claude(prompt_html, max_tokens=2800)
+            html, palavras = _validar_html(html_bruto, min_palavras=600)
+            log(f"  HTML artigo: {palavras} palavras | {len(html)} chars")
+            meta = _gerar_meta(topico["titulo"], topico["palavra_chave"], idioma="pt")
+            return {
+                "meta_description": meta["meta_description"],
+                "excerpt":          meta["excerpt"],
+                "conteudo_html":    html + DISCLOSURE_HTML,
+            }
+        except Exception as e:
             if tentativa < 2:
-                log(f"  JSON inválido (tentativa {tentativa+1}/3): {e}. Retentando...")
+                log(f"  Artigo tentativa {tentativa+1}/3 falhou: {e}. Retry em 10s...")
                 time.sleep(10)
             else:
                 raise Exception(f"Falha ao gerar artigo após 3 tentativas: {e}")
