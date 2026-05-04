@@ -192,113 +192,134 @@ Return ONLY valid JSON (no explanation, no markdown):
     fim = texto.rfind("}") + 1
     return json.loads(texto[inicio:fim])
 
-def gerar_artigo(topico):
-    """Gera artigo de alta qualidade 1500-1800 palavras, padrão The Wirecutter."""
+def gerar_html_artigo(topico):
+    """Chamada 1 de 2: gera o HTML do artigo diretamente (sem JSON wrapper)."""
     produtos = topico.get("produtos", [])
     produtos_str = "\n".join(
         f"- {p['nome']} (~{p.get('preco','?')}) — best for: {p.get('melhor_para','general use')}"
         for p in produtos
     )
+    prompt = f"""You are a senior product reviewer at HandyTested, a trusted American review site.
 
-    prompt = f"""You are a senior product reviewer at HandyTested, an expert American review publication.
-
-ARTICLE: "{topico['titulo']}"
+WRITE THIS ARTICLE: "{topico['titulo']}"
 PRIMARY KEYWORD: {topico['palavra_chave']}
 ANGLE: {topico.get('angulo', 'comprehensive comparison')}
 
-PRODUCTS TO REVIEW:
+PRODUCTS:
 {produtos_str}
 
 {REVIEW_STANDARDS}
 
-TARGET: 1500-1800 words. American English. Expert, conversational, authoritative tone.
+TARGET: 1200-1500 words. American English. Expert, conversational tone.
 
-EXACT STRUCTURE TO FOLLOW:
+OUTPUT RULES:
+- Output ONLY valid HTML — no JSON, no markdown, no explanation, no code fences
+- Start immediately with <p> — do not write anything before the first tag
+- Use only: <p> <h2> <h3> <ul> <li> <strong>
+- Where each Amazon product card goes, write exactly: [PRODUCT CARD: ProductName]
+  (use the exact product name from the list above)
 
-<p>[Intro: 100-130 words. Open with the buyer's problem or decision. Include the primary keyword in the first 60 words. End with: "Here are the best options we found."]</p>
+STRUCTURE:
+<p>Intro 100-120 words. Include keyword in first 60 words. End: "Here are the best options we tested."</p>
 
-<h2>Our Top Picks</h2>
+<h2>Our Top Picks at a Glance</h2>
 <ul>
-<li><strong>Best Overall:</strong> [Product Name] — [one sharp reason]</li>
-<li><strong>Best Budget Pick:</strong> [Product Name] — [one sharp reason]</li>
-<li><strong>Best for Professionals:</strong> [Product Name] — [one sharp reason]</li>
-<li><strong>Best for Beginners:</strong> [Product Name] — [one sharp reason]</li>
+<li><strong>Best Overall:</strong> [name] — [one-line reason]</li>
+<li><strong>Best Budget:</strong> [name] — [one-line reason]</li>
+<li><strong>Best for Pros:</strong> [name] — [one-line reason]</li>
 </ul>
 
-<h2>How We Evaluated These Products</h2>
-<p>[70-90 words: specific testing methodology — what tasks, how long, what criteria scored]</p>
+<h2>How We Tested</h2>
+<p>60-80 words: specific testing criteria and methodology.</p>
 
-[REPEAT THE FOLLOWING BLOCK FOR EACH PRODUCT — 4 products total:]
+[For EACH of the {len(produtos)} products — full block below:]
 <h2>[Full Product Name]</h2>
-<p>[130-160 words: specific performance details, real specs, what makes it stand out or fall short — write like you held it in your hands]</p>
+<p>120-150 words: specific performance, real specs, hands-on feel.</p>
 <h3>What We Like</h3>
-<ul><li>[Specific, concrete pro]</li><li>[Specific, concrete pro]</li><li>[Specific, concrete pro]</li></ul>
+<ul><li>Specific pro</li><li>Specific pro</li><li>Specific pro</li></ul>
 <h3>What Could Be Better</h3>
-<ul><li>[Real con that affects buyers]</li><li>[Real con that affects buyers]</li></ul>
-<p><strong>Best for:</strong> [Specific buyer persona with context]</p>
-[PRODUCT CARD: ExactProductName]
-[END PRODUCT BLOCK]
+<ul><li>Real con</li><li>Real con</li></ul>
+<p><strong>Best for:</strong> Specific buyer persona.</p>
+[PRODUCT CARD: ProductName]
 
-<h2>How to Choose the Right [Product Type]</h2>
-<p>[200-250 words: 4 key buying criteria with brief technical context each. No padding.]</p>
+<h2>Buying Guide: What to Look For</h2>
+<p>180-220 words covering 4 key purchase criteria with context.</p>
 
 <h2>Frequently Asked Questions</h2>
-<h3>[Specific question real buyers ask]</h3>
-<p>[Specific, helpful 2-3 sentence answer]</p>
-<h3>[Another specific buyer question]</h3>
-<p>[Answer]</p>
-<h3>[Another specific buyer question]</h3>
-<p>[Answer]</p>
-<h3>[Another specific buyer question]</h3>
-<p>[Answer]</p>
+<h3>Question buyers actually ask?</h3>
+<p>Specific 2-3 sentence answer.</p>
+<h3>Another real question?</h3>
+<p>Answer.</p>
+<h3>Another real question?</h3>
+<p>Answer.</p>
 
 <h2>The Bottom Line</h2>
-<p>[120-150 words: name the winner and runner-up with specific reasons tied to who should buy each one. Give a budget recommendation. End with one clear action sentence.]</p>
-
-Return ONLY valid JSON (no markdown fences, no explanation):
-{{
-  "meta_description": "148-158 chars — includes keyword, compelling for click-through",
-  "excerpt": "Two sentences, max 155 chars, includes keyword",
-  "conteudo_html": "Complete HTML following the structure above — [PRODUCT CARD: Name] placeholders must use the exact product name"
-}}"""
+<p>100-120 words: name winner, runner-up, budget pick with specific reasons. Clear final recommendation.</p>"""
 
     for tentativa in range(3):
         try:
-            texto = claude(prompt, max_tokens=2800)
-            inicio = texto.find("{")
-            fim = texto.rfind("}") + 1
-            if inicio == -1 or fim == 0:
-                raise ValueError("No JSON found in response")
-            artigo = json.loads(texto[inicio:fim])
-
-            html = artigo["conteudo_html"]
+            html = claude(prompt, max_tokens=2800)
+            # Strip markdown fences if model wraps output
+            html = re.sub(r"^```[a-z]*\s*", "", html.strip(), flags=re.IGNORECASE)
+            html = re.sub(r"\s*```$", "", html)
+            # Validate: must start with < and contain h2 tags
+            if not html.strip().startswith("<"):
+                raise ValueError(f"Resposta não começa com HTML: {html[:80]!r}")
+            if "<h2>" not in html:
+                raise ValueError("HTML sem h2 — estrutura inválida")
             word_count = len(re.sub(r"<[^>]+>", "", html).split())
             log(f"  Palavras: {word_count} | Chars: {len(html)}")
-
             if word_count < MIN_WORDS and tentativa < 2:
-                raise ValueError(f"Artigo muito curto: {word_count} palavras (mín {MIN_WORDS})")
-
-            # Substituir placeholders pelos cards Amazon
-            for p in produtos:
-                nome = p["nome"]
-                preco = p.get("preco", "")
-                melhor = p.get("melhor_para", "most users")
-                placeholder = f"[PRODUCT CARD: {nome}]"
-                if placeholder in html:
-                    html = html.replace(
-                        placeholder,
-                        amazon_card(nome, f"Our pick for {melhor}", preco)
-                    )
-
-            artigo["conteudo_html"] = AFFILIATE_DISCLOSURE + html
-            return artigo
-
-        except (json.JSONDecodeError, KeyError, ValueError) as e:
+                raise ValueError(f"Curto demais: {word_count} palavras (mín {MIN_WORDS})")
+            return html, word_count
+        except (ValueError, Exception) as e:
             if tentativa < 2:
-                log(f"  Tentativa {tentativa + 1}/3 falhou: {e}. Retry em 12s...")
-                time.sleep(12)
+                log(f"  HTML tentativa {tentativa+1}/3 falhou: {e}. Retry em 10s...")
+                time.sleep(10)
             else:
-                raise Exception(f"Artigo falhou após 3 tentativas: {e}")
+                raise Exception(f"HTML falhou após 3 tentativas: {e}")
+
+def gerar_meta(topico):
+    """Chamada 2 de 2: gera meta_description + excerpt como JSON pequeno."""
+    prompt = f"""For a product review article titled "{topico['titulo']}" (keyword: "{topico['palavra_chave']}"):
+
+Return ONLY valid JSON — no explanation, no markdown:
+{{
+  "meta_description": "148-158 chars — includes keyword, compelling for search click-through",
+  "excerpt": "Two sentences, max 150 chars total, includes keyword naturally"
+}}"""
+    texto = claude(prompt, max_tokens=200)
+    inicio = texto.find("{")
+    fim = texto.rfind("}") + 1
+    if inicio == -1 or fim == 0:
+        return {"meta_description": topico["titulo"], "excerpt": topico["titulo"]}
+    return json.loads(texto[inicio:fim])
+
+def gerar_artigo(topico):
+    """Gera artigo completo em 2 chamadas separadas (HTML + meta)."""
+    produtos = topico.get("produtos", [])
+
+    log("  Gerando HTML do artigo...")
+    html, word_count = gerar_html_artigo(topico)
+
+    log("  Gerando meta/excerpt...")
+    meta = gerar_meta(topico)
+
+    # Substituir placeholders pelos cards Amazon
+    for p in produtos:
+        nome = p["nome"]
+        preco = p.get("preco", "")
+        melhor = p.get("melhor_para", "most users")
+        placeholder = f"[PRODUCT CARD: {nome}]"
+        if placeholder in html:
+            html = html.replace(placeholder, amazon_card(nome, f"Our pick for {melhor}", preco))
+
+    return {
+        "meta_description": meta.get("meta_description", topico["titulo"]),
+        "excerpt":          meta.get("excerpt", ""),
+        "conteudo_html":    AFFILIATE_DISCLOSURE + html,
+        "word_count":       word_count,
+    }
 
 # ── Imagem inteligente via Unsplash ───────────────────────────────────────
 UNSPLASH_TERMS = [
@@ -449,7 +470,7 @@ log(f"Produtos: {[p['nome'] for p in topico.get('produtos', [])]}")
 
 log("Gerando artigo (1500-1800 palavras, padrão The Wirecutter)...")
 artigo = gerar_artigo(topico)
-word_count = len(re.sub(r"<[^>]+>", "", artigo.get("conteudo_html", "")).split())
+word_count = artigo.get("word_count", 0)
 log(f"Artigo pronto: {word_count} palavras | {len(artigo.get('conteudo_html', ''))} chars")
 
 log("Buscando imagem Unsplash relevante...")
