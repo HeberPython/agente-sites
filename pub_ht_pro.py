@@ -211,22 +211,37 @@ PRODUCTS:
 {REVIEW_STANDARDS}
 
 TARGET: 1200-1500 words. American English. Expert, conversational tone.
+PRICE FOCUS: Prioritize products in the $40-$150 range — best conversion rate on Amazon.
+PRODUCT QUALITY: Reference 4-star+ products with strong review counts.
 
 OUTPUT RULES:
 - Output ONLY valid HTML — no JSON, no markdown, no explanation, no code fences
 - Start immediately with <p> — do not write anything before the first tag
-- Use only: <p> <h2> <h3> <ul> <li> <strong>
+- Use only: <p> <h2> <h3> <ul> <li> <strong> <table> <thead> <tbody> <tr> <th> <td>
 - Where each Amazon product card goes, write exactly: [PRODUCT CARD: ProductName]
   (use the exact product name from the list above)
 
 STRUCTURE:
 <p>Intro 100-120 words. Include keyword in first 60 words. End: "Here are the best options we tested."</p>
 
-<h2>Our Top Picks at a Glance</h2>
+<h2>Quick Comparison</h2>
+<table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:0.9em">
+<thead><tr style="background:#1a1f36;color:#fff">
+<th style="padding:10px 14px;text-align:left">Product</th>
+<th style="padding:10px 14px;text-align:center">Price</th>
+<th style="padding:10px 14px;text-align:center">Best For</th>
+<th style="padding:10px 14px;text-align:center">Rating</th>
+</tr></thead>
+<tbody>
+[One <tr> per product: <td style="padding:10px 14px;border-bottom:1px solid #eee"> for each cell. Rating column: use ★ characters.]
+</tbody>
+</table>
+
+<h2>Our Top Picks</h2>
 <ul>
-<li><strong>Best Overall:</strong> [name] — [one-line reason]</li>
-<li><strong>Best Budget:</strong> [name] — [one-line reason]</li>
-<li><strong>Best for Pros:</strong> [name] — [one-line reason]</li>
+<li><strong>Best Overall:</strong> [name] — [one sharp reason]</li>
+<li><strong>Best Budget Pick:</strong> [name] — [one sharp reason]</li>
+<li><strong>Best for Professionals:</strong> [name] — [one sharp reason]</li>
 </ul>
 
 <h2>How We Tested</h2>

@@ -1,0 +1,36 @@
+name: HandyTested Social — Reddit
+
+on:
+  workflow_run:
+    workflows: ["HandyTested PRO — Publicação Inteligente"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  compartilhar:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    timeout-minutes: 10
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compartilhar no Reddit
+        env:
+          ANTHROPIC_KEY:    ${{ secrets.ANTHROPIC_KEY }}
+          HT_WP_PASS:       ${{ secrets.HT_WP_PASS }}
+          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_SECRET:    ${{ secrets.REDDIT_SECRET }}
+          REDDIT_USERNAME:  ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD:  ${{ secrets.REDDIT_PASSWORD }}
+        run: python social_ht.py
