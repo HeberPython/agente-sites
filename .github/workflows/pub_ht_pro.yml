@@ -1,0 +1,33 @@
+name: HandyTested PRO — Publicação Inteligente
+
+on:
+  schedule:
+    - cron: "0 13 * * 1"   # Segunda-feira 10h (Brasília)
+    - cron: "0 13 * * 3"   # Quarta-feira  10h (Brasília)
+    - cron: "0 13 * * 5"   # Sexta-feira   10h (Brasília)
+  workflow_dispatch:
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Publicar artigo PRO
+        env:
+          ANTHROPIC_KEY:    ${{ secrets.ANTHROPIC_KEY }}
+          HT_WP_PASS:       ${{ secrets.HT_WP_PASS }}
+          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          UNSPLASH_KEY:     ${{ secrets.UNSPLASH_KEY }}
+        run: python pub_ht_pro.py
