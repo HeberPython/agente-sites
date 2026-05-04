@@ -155,7 +155,7 @@ def telegram_send(msg):
 # ============================================================
 
 def claude(prompt, max_tokens=4000):
-    """Chama a API da Anthropic com streaming (SSE) para evitar timeout em respostas longas."""
+    """Chama a API da Anthropic com streaming SSE linha-a-linha."""
     import http.client
 
     data = json.dumps({
@@ -179,33 +179,29 @@ def claude(prompt, max_tokens=4000):
             raise Exception(f"Anthropic {resp.status}: {body_err[:200]}")
 
         texto = []
-        buf = b""
-        done = False
-        while not done:
-            chunk = resp.read(8192)
-            if not chunk:
+        while True:
+            line_b = resp.readline()
+            if not line_b:
                 break
-            buf += chunk
-            while b"\n" in buf:
-                line_b, buf = buf.split(b"\n", 1)
-                line = line_b.decode("utf-8").rstrip("\r")
-                if not line.startswith("data: "):
-                    continue
-                payload = line[6:].strip()
-                if not payload or payload == "[DONE]":
-                    done = True
+            line = line_b.decode("utf-8").rstrip("\r\n")
+            if not line.startswith("data: "):
+                continue
+            payload = line[6:].strip()
+            if not payload or payload == "[DONE]":
+                break
+            try:
+                ev = json.loads(payload)
+                etype = ev.get("type", "")
+                if etype == "content_block_delta":
+                    texto.append(ev.get("delta", {}).get("text", ""))
+                elif etype == "message_stop":
                     break
-                try:
-                    ev = json.loads(payload)
-                    etype = ev.get("type", "")
-                    if etype == "content_block_delta":
-                        texto.append(ev.get("delta", {}).get("text", ""))
-                    elif etype == "message_stop":
-                        done = True
-                        break
-                except json.JSONDecodeError:
-                    pass
-        return "".join(texto)
+            except json.JSONDecodeError:
+                pass
+        result = "".join(texto)
+        if not result:
+            raise Exception("Streaming retornou texto vazio")
+        return result
     finally:
         conn.close()
 
