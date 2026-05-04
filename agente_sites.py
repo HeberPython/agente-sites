@@ -75,9 +75,9 @@ SITES = [
         "tom": "honest, practical, hands-on expert — like a knowledgeable friend who has actually tested the products",
         "publico": "English-speaking consumers looking for trustworthy product reviews before buying on Amazon",
         "categorias": {
-            "electronics": 0,
-            "tools": 0,
-            "diy": 0,
+            "electronics": 2,
+            "tools": 3,
+            "diy": 4,
         },
         "amazon_tag": "amazonrev089f-20",
         "topicos_evitar": [],
