@@ -11,7 +11,8 @@ import urllib.request, urllib.error, urllib.parse
 import http.client, json, base64, os, time, datetime, re, random
 
 # ── Configuração ──────────────────────────────────────────────────────────
-ANTHROPIC_KEY    = os.environ["ANTHROPIC_KEY"]
+OPENAI_API_KEY   = os.environ["OPENAI_API_KEY"]
+OPENAI_MODEL     = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 TELEGRAM_TOKEN   = os.environ.get("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 UNSPLASH_KEY     = os.environ.get("UNSPLASH_KEY", "")
@@ -52,43 +53,24 @@ def log(msg):
 # ── Claude SSE streaming ──────────────────────────────────────────────────
 def claude(prompt, max_tokens=2800):
     data = json.dumps({
-        "model": "claude-sonnet-4-6",
+        "model": OPENAI_MODEL,
         "max_tokens": max_tokens,
-        "stream": True,
-        "messages": [{"role": "user", "content": prompt}]
+        "messages": [{"role": "user", "content": prompt}],
     }).encode()
-    conn = http.client.HTTPSConnection("api.anthropic.com", timeout=120)
+    conn = http.client.HTTPSConnection("api.openai.com", timeout=120)
     try:
-        conn.request("POST", "/v1/messages", body=data, headers={
-            "x-api-key": ANTHROPIC_KEY,
-            "anthropic-version": "2023-06-01",
+        conn.request("POST", "/v1/chat/completions", body=data, headers={
+            "Authorization": f"Bearer {OPENAI_API_KEY}",
             "Content-Type": "application/json",
         })
         resp = conn.getresponse()
+        body = resp.read()
         if resp.status != 200:
-            raise Exception(f"Anthropic {resp.status}: {resp.read()[:300]}")
-        chunks = []
-        while True:
-            line_b = resp.readline()
-            if not line_b:
-                break
-            line = line_b.decode("utf-8").rstrip("\r\n")
-            if not line.startswith("data: "):
-                continue
-            payload = line[6:].strip()
-            if not payload or payload == "[DONE]":
-                break
-            try:
-                ev = json.loads(payload)
-                if ev.get("type") == "content_block_delta":
-                    chunks.append(ev.get("delta", {}).get("text", ""))
-                elif ev.get("type") == "message_stop":
-                    break
-            except json.JSONDecodeError:
-                pass
-        result = "".join(chunks)
+            raise Exception(f"OpenAI {resp.status}: {body[:300]}")
+        payload = json.loads(body)
+        result = payload["choices"][0]["message"]["content"].strip()
         if not result:
-            raise Exception("Empty streaming response from Claude")
+            raise Exception("OpenAI retornou texto vazio")
         return result
     finally:
         conn.close()
