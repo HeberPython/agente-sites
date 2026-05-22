@@ -52,13 +52,18 @@ def obter_access_token():
                 "Content-Type": "application/x-www-form-urlencoded",
             },
         )
-        with urllib.request.urlopen(req, timeout=15) as r:
-            payload = json.loads(r.read())
-        token = payload.get("access_token", "")
-        if not token:
-            raise Exception(f"Pinterest nao retornou access_token: {payload}")
-        PINTEREST_ACCESS_TOKEN = token
-        return token
+        try:
+            with urllib.request.urlopen(req, timeout=15) as r:
+                payload = json.loads(r.read())
+            token = payload.get("access_token", "")
+            if not token:
+                raise Exception(f"Pinterest nao retornou access_token: {payload}")
+            PINTEREST_ACCESS_TOKEN = token
+            return token
+        except urllib.error.HTTPError as e:
+            if not PINTEREST_TOKEN:
+                raise
+            log(f"Refresh token falhou com HTTP {e.code}; usando PINTEREST_TOKEN fallback.")
 
     if PINTEREST_TOKEN:
         PINTEREST_ACCESS_TOKEN = PINTEREST_TOKEN
