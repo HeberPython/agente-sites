@@ -10,7 +10,11 @@ OPENAI_API_KEY   = os.environ["OPENAI_API_KEY"]
 OPENAI_MODEL     = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 TELEGRAM_TOKEN   = os.environ.get("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
-PINTEREST_TOKEN  = os.environ["PINTEREST_TOKEN"]
+PINTEREST_CLIENT_ID = os.environ.get("PINTEREST_CLIENT_ID", "1567646")
+PINTEREST_SECRET = os.environ.get("PINTEREST_CLIENT_SECRET", "")
+PINTEREST_REFRESH = os.environ.get("PINTEREST_REFRESH_TOKEN", "")
+PINTEREST_TOKEN = os.environ.get("PINTEREST_TOKEN", "")
+PINTEREST_ACCESS_TOKEN = ""
 
 WP_URL      = "https://handytested.com"
 WP_USER     = "hebergravano@gmail.com"
@@ -27,6 +31,43 @@ DEFAULT_BOARD = "HandyTested — Product Reviews"
 # ── Logging ───────────────────────────────────────────────────────────────
 def log(msg):
     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {msg}", flush=True)
+
+def obter_access_token():
+    """Gera access token novo via refresh token, com fallback para PINTEREST_TOKEN."""
+    global PINTEREST_ACCESS_TOKEN
+    if PINTEREST_ACCESS_TOKEN:
+        return PINTEREST_ACCESS_TOKEN
+
+    if PINTEREST_CLIENT_ID and PINTEREST_SECRET and PINTEREST_REFRESH:
+        cred = base64.b64encode(f"{PINTEREST_CLIENT_ID}:{PINTEREST_SECRET}".encode()).decode()
+        data = urllib.parse.urlencode({
+            "grant_type": "refresh_token",
+            "refresh_token": PINTEREST_REFRESH,
+        }).encode()
+        req = urllib.request.Request(
+            "https://api.pinterest.com/v5/oauth/token",
+            data=data,
+            headers={
+                "Authorization": f"Basic {cred}",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=15) as r:
+            payload = json.loads(r.read())
+        token = payload.get("access_token", "")
+        if not token:
+            raise Exception(f"Pinterest nao retornou access_token: {payload}")
+        PINTEREST_ACCESS_TOKEN = token
+        return token
+
+    if PINTEREST_TOKEN:
+        PINTEREST_ACCESS_TOKEN = PINTEREST_TOKEN
+        return PINTEREST_TOKEN
+
+    raise Exception(
+        "Configure PINTEREST_CLIENT_ID, PINTEREST_CLIENT_SECRET e "
+        "PINTEREST_REFRESH_TOKEN nos GitHub Secrets."
+    )
 
 # ── Claude SSE streaming ──────────────────────────────────────────────────
 def claude(prompt, max_tokens=150):
@@ -56,7 +97,7 @@ def pinterest_api(method, path, data=None):
     try:
         body = json.dumps(data).encode() if data else None
         conn.request(method, f"/v5{path}", body=body, headers={
-            "Authorization": f"Bearer {PINTEREST_TOKEN}",
+            "Authorization": f"Bearer {obter_access_token()}",
             "Content-Type": "application/json",
         })
         resp = conn.getresponse()

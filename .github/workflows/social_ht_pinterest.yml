@@ -29,5 +29,8 @@ jobs:
           HT_WP_PASS:       ${{ secrets.HT_WP_PASS }}
           TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          PINTEREST_TOKEN:  ${{ secrets.PINTEREST_TOKEN }}
+          PINTEREST_CLIENT_ID:     ${{ secrets.PINTEREST_CLIENT_ID }}
+          PINTEREST_CLIENT_SECRET: ${{ secrets.PINTEREST_CLIENT_SECRET }}
+          PINTEREST_REFRESH_TOKEN: ${{ secrets.PINTEREST_REFRESH_TOKEN }}
+          PINTEREST_TOKEN:         ${{ secrets.PINTEREST_TOKEN }}
         run: python social_ht_pinterest.py
