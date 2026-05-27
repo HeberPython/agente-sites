@@ -1,0 +1,21 @@
+name: Enviar Telegram
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: Mensagem a enviar
+        required: true
+        type: string
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enviar mensagem
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_MESSAGE: ${{ inputs.message }}
+        run: python send_telegram_message.py
