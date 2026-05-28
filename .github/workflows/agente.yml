@@ -2,8 +2,9 @@ name: Agente de Conteúdo
 
 on:
   schedule:
-    # Dias alternados às 09:00 horário de Brasília (12:00 UTC)
-    - cron: "0 12 * * 1,3,5,0"
+    # Acorda diariamente às 09:00 horário de Brasília (12:00 UTC).
+    # O script publica apenas em dias alternados para controlar consumo.
+    - cron: "0 12 * * *"
   workflow_dispatch:  # Permite rodar manualmente pelo GitHub
 
 jobs:
@@ -35,4 +36,6 @@ jobs:
           ARTICLES_PER_SITE: "1"
           MAX_TOTAL_ARTICLES: "2"
           MAX_UNSPLASH_DOWNLOADS: "2"
+          PUBLICATION_INTERVAL_DAYS: "2"
+          PUBLICATION_START_DATE: "2026-05-29"
         run: python agente_sites.py

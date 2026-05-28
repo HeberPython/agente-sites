@@ -33,6 +33,8 @@ TARGET_SITES = {
 ARTICLES_PER_SITE_OVERRIDE = os.environ.get("ARTICLES_PER_SITE")
 MAX_TOTAL_ARTICLES = int(os.environ.get("MAX_TOTAL_ARTICLES", "0") or "0")
 MAX_UNSPLASH_DOWNLOADS = int(os.environ.get("MAX_UNSPLASH_DOWNLOADS", "0") or "0")
+PUBLICATION_INTERVAL_DAYS = int(os.environ.get("PUBLICATION_INTERVAL_DAYS", "1") or "1")
+PUBLICATION_START_DATE = os.environ.get("PUBLICATION_START_DATE", "")
 UNSPLASH_DOWNLOADS_USED = 0
 TOTAL_ARTICLES_PUBLISHED = 0
 
@@ -113,6 +115,23 @@ if ARTICLES_PER_SITE_OVERRIDE:
 def log(msg):
     ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{ts}] {msg}", flush=True)
+
+
+def deve_publicar_hoje():
+    if PUBLICATION_INTERVAL_DAYS <= 1 or not PUBLICATION_START_DATE:
+        return True
+
+    inicio = datetime.date.fromisoformat(PUBLICATION_START_DATE)
+    hoje = datetime.datetime.now(datetime.timezone.utc).date()
+    dias = (hoje - inicio).days
+    if dias < 0:
+        log(f"Antes da data inicial de publicacao ({PUBLICATION_START_DATE}).")
+        return False
+    if dias % PUBLICATION_INTERVAL_DAYS != 0:
+        proxima = hoje + datetime.timedelta(days=PUBLICATION_INTERVAL_DAYS - (dias % PUBLICATION_INTERVAL_DAYS))
+        log(f"Dia de descanso editorial. Proxima publicacao: {proxima.isoformat()}.")
+        return False
+    return True
 
 
 def http_get(url, headers=None):
@@ -664,6 +683,9 @@ def rodar_agente():
     log("\n" + "="*60)
     log(f"AGENTE INICIADO — {datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}")
     log("="*60)
+    if not deve_publicar_hoje():
+        return
+
     log(f"Imagens Unsplash: {'ATIVO' if UNSPLASH_KEY else 'DESATIVADO (UNSPLASH_KEY não configurado)'}")
 
     resumo_total = []
