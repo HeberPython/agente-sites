@@ -10,8 +10,11 @@ This agent turns Amazon Associates promo emails sent or forwarded to
 3. Converts the promotion into an English HandyTested buying guide/review article.
 4. Uses Amazon.com affiliate search links with tag `amazonrev089f-20`.
 5. Publishes to WordPress as `draft` by default.
-6. Marks the email as seen only after processing.
-7. Sends a Telegram summary when it creates posts.
+6. Detects whether the campaign is seasonal/time-sensitive and stores an
+   internal expiration marker in the post.
+7. Moves expired published promo posts back to `draft` automatically.
+8. Marks the email as seen only after processing.
+9. Sends a Telegram summary when it creates or expires posts.
 
 ## Required GitHub Secrets
 
@@ -24,6 +27,8 @@ Optional:
 - `OPENAI_MODEL`
 - `TELEGRAM_TOKEN`
 - `TELEGRAM_CHAT_ID`
+- `PROMO_DEFAULT_EXPIRATION_DAYS`
+- `PROMO_EXPIRE_PUBLISHED_POSTS`
 
 ## Workflow
 
@@ -35,6 +40,8 @@ Schedule:
 
 Daily at 10:30 America/Sao_Paulo. It only acts on unread promo emails, so daily
 runs are safer than waiting a full week and missing time-sensitive campaigns.
+It also checks for expired promotional posts on every run, even when there are
+no new emails.
 
 ## Email Intake
 
@@ -62,9 +69,28 @@ draft quality is consistently good.
 - Never reuse Amazon promo images from the email.
 - Do not mention exact prices or discount percentages unless supplied live by
   Amazon tooling.
+- Treat seasonal Amazon campaigns as editorial signals first. Prefer evergreen
+  buyer-guidance titles instead of date-heavy promo titles.
+- Detect explicit campaign deadlines. If a campaign has an end date, the agent
+  stores an internal expiration marker and can move the post back to draft after
+  the promo ends.
+- If a campaign is clearly temporary but no end date is explicit, the default
+  expiration window is 21 days unless `PROMO_DEFAULT_EXPIRATION_DAYS` overrides it.
 - Keep the affiliate disclosure at the top.
 - Use `rel="nofollow sponsored noopener"` on Amazon links.
 - Default to Amazon.com because HandyTested targets US buyers.
+
+## Expiration Behavior
+
+Time-sensitive posts receive an invisible HTML comment like:
+
+```html
+<!-- handytested-promo-agent: {"expires_on":"2026-06-08", ...} -->
+```
+
+On each run, the agent fetches published posts, finds that marker, and changes
+expired posts to `draft`. This removes stale campaign pages from the public blog
+without deleting the content.
 
 ## Local Test With A Saved Email
 

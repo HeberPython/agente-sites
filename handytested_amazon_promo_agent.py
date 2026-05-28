@@ -42,6 +42,7 @@ import urllib.request
 from dataclasses import dataclass
 from email.message import Message
 from typing import Any
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
@@ -63,6 +64,19 @@ PROMO_MAX_EMAILS = int(os.environ.get("PROMO_MAX_EMAILS", "3"))
 PROMO_MARK_SEEN = os.environ.get("PROMO_MARK_SEEN", "1") == "1"
 PROMO_POST_STATUS = os.environ.get("PROMO_POST_STATUS", "draft")
 PROMO_SAMPLE_EMAIL_FILE = os.environ.get("PROMO_SAMPLE_EMAIL_FILE", "")
+PROMO_DEFAULT_EXPIRATION_DAYS = int(os.environ.get("PROMO_DEFAULT_EXPIRATION_DAYS", "21"))
+PROMO_EXPIRE_PUBLISHED_POSTS = os.environ.get("PROMO_EXPIRE_PUBLISHED_POSTS", "1") == "1"
+
+
+def load_local_tz() -> dt.tzinfo:
+    tz_name = os.environ.get("PROMO_LOCAL_TZ", "America/Sao_Paulo")
+    try:
+        return ZoneInfo(tz_name)
+    except ZoneInfoNotFoundError:
+        return dt.timezone(dt.timedelta(hours=-3), name="America/Sao_Paulo")
+
+
+LOCAL_TZ = load_local_tz()
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
@@ -72,6 +86,7 @@ CATEGORIES = {
     "tools": 3,
     "diy": 4,
 }
+PROMO_MARKER_PREFIX = "handytested-promo-agent:"
 
 AFFILIATE_DISCLOSURE = (
     '<div style="background:#fff8e1;border-left:4px solid #ffc107;padding:14px 18px;'
@@ -96,6 +111,10 @@ class PromoEmail:
 
 def log(message: str) -> None:
     print(f"[{dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {message}", flush=True)
+
+
+def today_local() -> dt.date:
+    return dt.datetime.now(LOCAL_TZ).date()
 
 
 def telegram_send(message: str) -> None:
@@ -334,10 +353,91 @@ def already_published(slug: str) -> bool:
     return bool(posts)
 
 
+def parse_iso_date(value: Any) -> dt.date | None:
+    if not value or not isinstance(value, str):
+        return None
+    value = value.strip()
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        return None
+    try:
+        return dt.date.fromisoformat(value)
+    except ValueError:
+        return None
+
+
+def campaign_expiration_date(campaign: dict[str, Any]) -> dt.date | None:
+    if not campaign.get("is_time_sensitive"):
+        return None
+    explicit_end = parse_iso_date(campaign.get("promotion_end_date"))
+    if explicit_end:
+        return explicit_end + dt.timedelta(days=1)
+    return today_local() + dt.timedelta(days=PROMO_DEFAULT_EXPIRATION_DAYS)
+
+
+def promo_marker(campaign: dict[str, Any], promo: PromoEmail) -> str:
+    expires_on = campaign_expiration_date(campaign)
+    marker = {
+        "version": 1,
+        "source": "handytested_amazon_promo_agent",
+        "time_sensitive": bool(campaign.get("is_time_sensitive")),
+        "promotion_end_date": campaign.get("promotion_end_date") or None,
+        "expires_on": expires_on.isoformat() if expires_on else None,
+        "expiration_reason": campaign.get("expiration_reason", ""),
+        "campaign_name": campaign.get("campaign_name", ""),
+        "source_email_date": promo.date,
+        "source_email_id": promo.message_id[:180],
+        "created_on": today_local().isoformat(),
+    }
+    return f"<!-- {PROMO_MARKER_PREFIX} {json.dumps(marker, ensure_ascii=False)} -->"
+
+
+def extract_promo_marker(content: str) -> dict[str, Any] | None:
+    pattern = re.escape(PROMO_MARKER_PREFIX) + r"\s*(\{.*?\})\s*-->"
+    match = re.search(pattern, content, flags=re.DOTALL)
+    if not match:
+        return None
+    try:
+        return json.loads(html.unescape(match.group(1)))
+    except json.JSONDecodeError:
+        return None
+
+
+def expire_due_posts() -> list[dict[str, Any]]:
+    if not PROMO_EXPIRE_PUBLISHED_POSTS:
+        return []
+
+    expired: list[dict[str, Any]] = []
+    page = 1
+    today = today_local()
+    while True:
+        posts = wp_get(
+            "/posts?status=publish&per_page=50&page="
+            f"{page}&context=edit&_fields=id,title,link,content"
+        )
+        if not posts:
+            break
+        for post in posts:
+            raw_content = post.get("content", {}).get("raw") or post.get("content", {}).get("rendered", "")
+            marker = extract_promo_marker(raw_content)
+            if not marker:
+                continue
+            expires_on = parse_iso_date(marker.get("expires_on"))
+            if not expires_on or expires_on > today:
+                continue
+            log(f"Expiring promo post {post['id']}: {post['title'].get('rendered', '')}")
+            updated = wp_post(f"/posts/{post['id']}", {"status": "draft"})
+            expired.append(updated)
+        if len(posts) < 50:
+            break
+        page += 1
+    return expired
+
+
 def classify_campaign(promo: PromoEmail) -> dict[str, Any]:
     prompt = f"""You are the editorial intake agent for HandyTested.com, an English-language Amazon affiliate review site for US buyers.
 
 Read this Amazon Associates promotional email. Do NOT copy promotional wording. Extract the useful editorial opportunity.
+Today's date in Sao Paulo timezone is {today_local().isoformat()}.
 
 EMAIL SUBJECT:
 {promo.subject}
@@ -360,6 +460,11 @@ Return ONLY valid JSON:
   "secondary_categories": ["electronics", "tools", "diy"],
   "buyer_intent_keyword": "4-7 word English keyword for US Google shoppers",
   "article_title": "SEO title, max 70 characters",
+  "is_time_sensitive": true,
+  "promotion_start_date": "YYYY-MM-DD or null",
+  "promotion_end_date": "YYYY-MM-DD or null",
+  "expiration_reason": "why this post should expire, or empty string",
+  "evergreen_fallback_angle": "evergreen article angle if no deadline is clear",
   "recommended_products_or_searches": [
     {{"name_or_query": "specific product type or model", "why_it_fits": "short reason"}},
     {{"name_or_query": "specific product type or model", "why_it_fits": "short reason"}},
@@ -374,6 +479,10 @@ Rules:
 - If the email is not about Amazon Associates promotions, set is_relevant false.
 - HandyTested uses Amazon.com US affiliate links. Convert Brazil-only campaign ideas into US-relevant product searches when needed.
 - Do not rely on fixed prices, fixed discount percentages, or copied Amazon creative assets.
+- Detect campaign deadlines carefully. Look for dates such as "until", "ends", "through", "valid until", "from X to Y", "6.6", "Prime Day", or explicit campaign periods.
+- Set is_time_sensitive true when the article would be misleading after a campaign/event ends.
+- Use ISO dates only when the date is explicit or can be safely inferred from the email date and campaign wording. If the end date is unclear but the promo is clearly temporary, set promotion_end_date null and explain in expiration_reason.
+- Avoid short-lived wording in article_title when possible. Prefer evergreen buyer-intent titles even when the post has an expiration date internally.
 """
     return openai_json(prompt, max_tokens=1200)
 
@@ -398,6 +507,9 @@ Strict rules:
 - Start with <p>.
 - Use only: <p>, <h2>, <h3>, <ul>, <li>, <strong>, <table>, <thead>, <tbody>, <tr>, <th>, <td>, <a>.
 - Do not mention exact prices or discount percentages.
+- Do not promise that a named campaign is still live unless the campaign data includes a clear future end date.
+- If the campaign is time-sensitive, write useful deal-checking guidance without making the article depend on the promotion being live.
+- Do not use phrases like "today only", "this week", or "limited time" unless the campaign data has a clear end date.
 - Do not say we physically tested products unless the article says "we look for", "we check", or "our review criteria".
 - Add Amazon links using placeholders exactly like this: [AMAZON SEARCH: search query]
 - Make it 900-1300 words.
@@ -432,7 +544,7 @@ def replace_amazon_placeholders(article: str) -> str:
 
 def publish_campaign_post(campaign: dict[str, Any], article_html: str, promo: PromoEmail) -> dict[str, Any]:
     title = campaign["article_title"]
-    week_stamp = dt.date.today().isoformat()
+    week_stamp = today_local().isoformat()
     slug = slugify(f"{title} {week_stamp}")
     if already_published(slug):
         log(f"Skipping duplicate slug: {slug}")
@@ -449,14 +561,15 @@ def publish_campaign_post(campaign: dict[str, Any], article_html: str, promo: Pr
         category_ids = [CATEGORIES["electronics"]]
 
     excerpt = (
-        f"HandyTested turns this week's Amazon Associates campaign into practical buying guidance "
+        f"HandyTested turns an Amazon Associates campaign into practical buying guidance "
         f"for {campaign['buyer_intent_keyword']}."
     )
+    content = promo_marker(campaign, promo) + "\n" + article_html
     payload = {
         "title": title,
         "slug": slug,
         "status": PROMO_POST_STATUS,
-        "content": article_html,
+        "content": content,
         "excerpt": excerpt,
         "categories": category_ids,
     }
@@ -467,6 +580,14 @@ def publish_campaign_post(campaign: dict[str, Any], article_html: str, promo: Pr
 
 
 def run() -> None:
+    expired = expire_due_posts()
+    if expired:
+        log(f"Expired {len(expired)} published promo post(s).")
+        lines = ["<b>HandyTested Amazon Promo Agent</b>", f"Expired {len(expired)} promo post(s):"]
+        for post in expired:
+            lines.append(f"- {html.escape(post['title']['rendered'])}")
+        telegram_send("\n".join(lines))
+
     log(f"Reading {PROMO_EMAIL_USER} via {PROMO_EMAIL_IMAP_HOST}")
     messages = fetch_promo_emails()
     if not messages:
