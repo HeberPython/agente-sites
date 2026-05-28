@@ -135,6 +135,35 @@ def obter_ou_criar_board(nome):
         return data["id"]
     raise Exception(f"Falha ao criar board '{nome}': {data}")
 
+def normalizar_url(url):
+    """Remove diferencas cosmeticas para comparar links ja pinados."""
+    parsed = urllib.parse.urlparse(url or "")
+    path = parsed.path.rstrip("/") or "/"
+    return urllib.parse.urlunparse((parsed.scheme, parsed.netloc.lower(), path, "", "", ""))
+
+def buscar_links_pinados(board_id):
+    """Lista links ja publicados em um board para evitar pins duplicados."""
+    links = set()
+    bookmark = ""
+    for _ in range(5):
+        path = f"/boards/{board_id}/pins?page_size=100"
+        if bookmark:
+            path += "&bookmark=" + urllib.parse.quote(bookmark)
+        status, data = pinterest_api("GET", path)
+        if status != 200:
+            log(f"  Aviso: nao consegui listar pins existentes ({status}); seguindo sem dedupe.")
+            return links
+
+        for pin in data.get("items", []):
+            link = pin.get("link")
+            if link:
+                links.add(normalizar_url(link))
+
+        bookmark = data.get("bookmark") or ""
+        if not bookmark:
+            break
+    return links
+
 # ── WordPress ─────────────────────────────────────────────────────────────
 def buscar_imagem_post(media_id):
     if not media_id:
@@ -200,7 +229,10 @@ Rules:
 - End with 4 relevant hashtags (no spaces in tags)
 
 Return ONLY the description text, nothing else."""
-    return claude(prompt, max_tokens=120).strip()
+    descricao = claude(prompt, max_tokens=120).strip()
+    if len(descricao) > 280:
+        descricao = descricao[:277].rstrip() + "..."
+    return descricao
 
 # ── Criar pin ─────────────────────────────────────────────────────────────
 def criar_pin(board_id, titulo, descricao, link, image_url):
@@ -270,11 +302,20 @@ except Exception as e:
     raise SystemExit(1)
 
 resultados = []
+links_pinados = {}
 for post in posts:
     cat = post["categoria"]
     board_id = boards.get(cat) or boards.get("default", "")
     if not board_id:
         log(f"Sem board para '{cat}', pulando")
+        continue
+
+    if board_id not in links_pinados:
+        links_pinados[board_id] = buscar_links_pinados(board_id)
+
+    if normalizar_url(post["link"]) in links_pinados[board_id]:
+        log(f"\nPulando pin ja existente: {post['titulo'][:65]}")
+        resultados.append({"titulo": post["titulo"], "ok": True, "skipped": True})
         continue
 
     log(f"\nPin: {post['titulo'][:65]}")
@@ -284,6 +325,7 @@ for post in posts:
     ok, result = criar_pin(board_id, post["titulo"], descricao, post["link"], post["image_url"])
     if ok:
         log(f"  ✅ Pin ID: {result}")
+        links_pinados[board_id].add(normalizar_url(post["link"]))
         resultados.append({"titulo": post["titulo"], "ok": True})
     else:
         log(f"  ⚠️ Falhou: {result}")
@@ -291,12 +333,16 @@ for post in posts:
     time.sleep(3)
 
 ok_count = sum(1 for r in resultados if r["ok"])
+skip_count = sum(1 for r in resultados if r.get("skipped"))
 linhas = [
     f"&#128204; <b>HandyTested Pinterest</b>",
-    f"&#9989; {ok_count}/{len(resultados)} pins publicados\n",
+    f"&#9989; {ok_count - skip_count}/{len(resultados)} pins publicados",
+    f"&#9193; {skip_count} ja existiam\n",
 ]
 for r in resultados:
-    if r["ok"]:
+    if r.get("skipped"):
+        linhas.append(f"&#9193; {r['titulo'][:60]}")
+    elif r["ok"]:
         linhas.append(f"&#128204; {r['titulo'][:60]}")
     else:
         linhas.append(f"&#10060; {r['titulo'][:50]}: {r.get('erro','erro')}")
@@ -304,5 +350,5 @@ if ok_count == 0:
     linhas.append("\n&#9888;&#65039; Verifique PINTEREST_TOKEN — expira em 30 dias")
 telegram("\n".join(linhas))
 
-log(f"\nConcluído: {ok_count}/{len(resultados)} pins publicados.")
+log(f"\nConcluido: {ok_count - skip_count}/{len(resultados)} pins publicados; {skip_count} ja existiam.")
 log("=" * 55)
