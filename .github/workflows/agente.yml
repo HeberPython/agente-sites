@@ -2,8 +2,8 @@ name: Agente de Conteúdo
 
 on:
   schedule:
-    # Toda segunda-feira às 09:00 horário de Brasília (12:00 UTC)
-    - cron: "0 12 * * 1"
+    # Dias alternados às 09:00 horário de Brasília (12:00 UTC)
+    - cron: "0 12 * * 1,3,5,0"
   workflow_dispatch:  # Permite rodar manualmente pelo GitHub
 
 jobs:
@@ -31,4 +31,8 @@ jobs:
           OEP_WP_PASS:      ${{ secrets.OEP_WP_PASS }}
           TR_WP_PASS:       ${{ secrets.TR_WP_PASS }}
           HT_WP_PASS:       ${{ secrets.HT_WP_PASS }}
+          TARGET_SITES:     obraepratica,temrazao
+          ARTICLES_PER_SITE: "1"
+          MAX_TOTAL_ARTICLES: "2"
+          MAX_UNSPLASH_DOWNLOADS: "2"
         run: python agente_sites.py

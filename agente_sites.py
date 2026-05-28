@@ -25,6 +25,16 @@ OPENAI_MODEL    = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 TELEGRAM_TOKEN  = os.environ["TELEGRAM_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 UNSPLASH_KEY    = os.environ.get("UNSPLASH_KEY", "")
+TARGET_SITES = {
+    item.strip()
+    for item in os.environ.get("TARGET_SITES", "").split(",")
+    if item.strip()
+}
+ARTICLES_PER_SITE_OVERRIDE = os.environ.get("ARTICLES_PER_SITE")
+MAX_TOTAL_ARTICLES = int(os.environ.get("MAX_TOTAL_ARTICLES", "0") or "0")
+MAX_UNSPLASH_DOWNLOADS = int(os.environ.get("MAX_UNSPLASH_DOWNLOADS", "0") or "0")
+UNSPLASH_DOWNLOADS_USED = 0
+TOTAL_ARTICLES_PUBLISHED = 0
 
 SITES = [
     {
@@ -86,6 +96,14 @@ SITES = [
         "topicos_evitar": [],
     },
 ]
+
+if TARGET_SITES:
+    SITES = [site for site in SITES if site["id"] in TARGET_SITES]
+
+if ARTICLES_PER_SITE_OVERRIDE:
+    artigos_por_site = max(0, int(ARTICLES_PER_SITE_OVERRIDE))
+    for site in SITES:
+        site["artigos_por_rodada"] = artigos_por_site
 
 
 # ============================================================
@@ -440,6 +458,12 @@ def buscar_imagem_unsplash(termo):
 
 
 def obter_imagem(termos):
+    global UNSPLASH_DOWNLOADS_USED
+
+    if MAX_UNSPLASH_DOWNLOADS and UNSPLASH_DOWNLOADS_USED >= MAX_UNSPLASH_DOWNLOADS:
+        log(f"  Limite de imagens atingido ({UNSPLASH_DOWNLOADS_USED}/{MAX_UNSPLASH_DOWNLOADS})")
+        return None, None
+
     if isinstance(termos, str):
         termos = [termos]
     for termo in termos:
@@ -450,6 +474,7 @@ def obter_imagem(termos):
                 req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
                 with urllib.request.urlopen(req, timeout=30) as r:
                     dados = r.read()
+                UNSPLASH_DOWNLOADS_USED += 1
                 log(f"  Imagem encontrada para '{termo}'")
                 return url, dados
             except Exception as e:
@@ -575,6 +600,8 @@ def publicar_post(site, topico, artigo, media_id):
 # ============================================================
 
 def rodar_site(site):
+    global TOTAL_ARTICLES_PUBLISHED
+
     log(f"\n{'='*50}")
     log(f"Iniciando: {site['name']}")
     log(f"{'='*50}")
@@ -588,6 +615,10 @@ def rodar_site(site):
     tipo = site.get("tipo", "informativo")
 
     for i in range(site["artigos_por_rodada"]):
+        if MAX_TOTAL_ARTICLES and TOTAL_ARTICLES_PUBLISHED >= MAX_TOTAL_ARTICLES:
+            log(f"Limite total de artigos atingido ({TOTAL_ARTICLES_PUBLISHED}/{MAX_TOTAL_ARTICLES})")
+            break
+
         log(f"\n--- Artigo {i+1}/{site['artigos_por_rodada']} ---")
         try:
             log("Gerando tópico...")
@@ -617,6 +648,7 @@ def rodar_site(site):
 
             titulos_existentes.append(topico["titulo"])
             publicados.append({"titulo": topico["titulo"], "link": post_link})
+            TOTAL_ARTICLES_PUBLISHED += 1
             time.sleep(20)  # pausa entre artigos para evitar rate limit
 
         except Exception as e:
