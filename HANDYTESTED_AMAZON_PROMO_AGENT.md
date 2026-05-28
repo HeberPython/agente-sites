@@ -1,6 +1,6 @@
 # HandyTested Amazon Promo Agent
 
-This agent turns Amazon Associates promo emails sent to
+This agent turns Amazon Associates promo emails sent or forwarded to
 `promoassociados@handytested.com` into HandyTested editorial drafts.
 
 ## What It Does
@@ -35,6 +35,20 @@ Schedule:
 
 Daily at 10:30 America/Sao_Paulo. It only acts on unread promo emails, so daily
 runs are safer than waiting a full week and missing time-sensitive campaigns.
+
+## Email Intake
+
+The current intake flow is manual forwarding:
+
+1. Amazon sends a promo/campaign email to the main inbox.
+2. Forward only the useful Associates promo emails to
+   `promoassociados@handytested.com`.
+3. Leave the forwarded email unread in that mailbox.
+4. The agent reads the forwarded content, including the original Amazon email
+   text and links, then creates a HandyTested draft.
+
+This is safer than giving the agent access to a personal inbox because it only
+sees the curated promotion emails that should become content.
 
 Manual run:
 
