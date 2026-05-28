@@ -1,0 +1,47 @@
+name: HandyTested Amazon Promo Agent
+
+on:
+  schedule:
+    # Runs daily at 10:30 America/Sao_Paulo. The mailbox filter keeps it quiet
+    # when Amazon has not sent a new Associates campaign.
+    - cron: "30 13 * * *"
+  workflow_dispatch:
+    inputs:
+      post_status:
+        description: "WordPress status: draft or publish"
+        required: false
+        default: "draft"
+
+jobs:
+  amazon-promos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run promo agent
+        env:
+          OPENAI_API_KEY:       ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL:         ${{ secrets.OPENAI_MODEL }}
+          HT_WP_PASS:           ${{ secrets.HT_WP_PASS }}
+          TELEGRAM_TOKEN:       ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID:     ${{ secrets.TELEGRAM_CHAT_ID }}
+          PROMO_EMAIL_USER:     promoassociados@handytested.com
+          PROMO_EMAIL_PASS:     ${{ secrets.PROMO_EMAIL_PASS }}
+          PROMO_EMAIL_IMAP_HOST: imap.hostinger.com
+          PROMO_EMAIL_IMAP_PORT: "993"
+          PROMO_EMAIL_FOLDER:   INBOX
+          PROMO_EMAIL_QUERY:    UNSEEN
+          PROMO_MAX_EMAILS:     "3"
+          PROMO_MARK_SEEN:      "1"
+          PROMO_POST_STATUS:    ${{ github.event.inputs.post_status || 'draft' }}
+        run: python handytested_amazon_promo_agent.py
