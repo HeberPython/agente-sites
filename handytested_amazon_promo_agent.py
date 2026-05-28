@@ -85,8 +85,25 @@ CATEGORIES = {
     "electronics": 2,
     "tools": 3,
     "diy": 4,
+    "smart-home": 8,
+    "kitchen": 9,
+    "outdoor": 10,
+    "cleaning": 11,
+    "office-gear": 12,
 }
 PROMO_MARKER_PREFIX = "handytested-promo-agent:"
+TERM_CACHE: dict[str, dict[str, int]] = {"categories": {}, "tags": {}}
+DEALS_CATEGORY = {
+    "slug": "amazon-deals",
+    "name": "Amazon Deals",
+    "description": "Time-sensitive Amazon deal roundups and promo-driven buying guidance.",
+}
+TAG_DEFS = {
+    "deal": "Deal",
+    "promo-email": "Promo Email",
+    "seasonal": "Seasonal",
+    "evergreen": "Evergreen",
+}
 
 AFFILIATE_DISCLOSURE = (
     '<div style="background:#fff8e1;border-left:4px solid #ffc107;padding:14px 18px;'
@@ -194,6 +211,45 @@ def wp_post(endpoint: str, payload: dict[str, Any]) -> Any:
     )
     with urllib.request.urlopen(req, timeout=40) as response:
         return json.loads(response.read().decode("utf-8"))
+
+
+def rank_math_update(post_id: int, meta: dict[str, Any]) -> Any:
+    req = urllib.request.Request(
+        f"{WP_URL}/wp-json/rankmath/v1/updateMeta",
+        data=json.dumps({"objectType": "post", "objectID": post_id, "meta": meta}).encode("utf-8"),
+        method="POST",
+        headers=wp_headers(),
+    )
+    with urllib.request.urlopen(req, timeout=40) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def ensure_term(taxonomy: str, slug: str, name: str, description: str = "") -> int:
+    cached = TERM_CACHE.setdefault(taxonomy, {}).get(slug)
+    if cached:
+        return cached
+
+    existing = wp_get(f"/{taxonomy}?slug={urllib.parse.quote(slug)}&_fields=id,slug")
+    if existing:
+        term_id = int(existing[0]["id"])
+        TERM_CACHE[taxonomy][slug] = term_id
+        return term_id
+
+    payload = {"name": name, "slug": slug}
+    if description:
+        payload["description"] = description
+    created = wp_post(f"/{taxonomy}", payload)
+    term_id = int(created["id"])
+    TERM_CACHE[taxonomy][slug] = term_id
+    return term_id
+
+
+def ensure_tag(slug: str, name: str | None = None) -> int:
+    return ensure_term("tags", slug, name or TAG_DEFS.get(slug, slug.replace("-", " ").title()))
+
+
+def ensure_category(slug: str, name: str, description: str = "") -> int:
+    return ensure_term("categories", slug, name, description)
 
 
 def decode_header_value(value: str | None) -> str:
@@ -434,6 +490,7 @@ def expire_due_posts() -> list[dict[str, Any]]:
 
 
 def classify_campaign(promo: PromoEmail) -> dict[str, Any]:
+    allowed_categories = ", ".join(CATEGORIES.keys())
     prompt = f"""You are the editorial intake agent for HandyTested.com, an English-language Amazon affiliate review site for US buyers.
 
 Read this Amazon Associates promotional email. Do NOT copy promotional wording. Extract the useful editorial opportunity.
@@ -456,8 +513,8 @@ Return ONLY valid JSON:
   "is_relevant": true,
   "campaign_name": "short human name",
   "campaign_angle": "what shoppers are being pushed toward",
-  "primary_category": "electronics OR tools OR diy",
-  "secondary_categories": ["electronics", "tools", "diy"],
+  "primary_category": "one of: {allowed_categories}",
+  "secondary_categories": ["zero or more of: {allowed_categories}"],
   "buyer_intent_keyword": "4-7 word English keyword for US Google shoppers",
   "article_title": "SEO title, max 70 characters",
   "is_time_sensitive": true,
@@ -553,12 +610,26 @@ def publish_campaign_post(campaign: dict[str, Any], article_html: str, promo: Pr
     category_slugs = [campaign.get("primary_category", "electronics")]
     category_slugs += campaign.get("secondary_categories", [])
     category_ids = []
+    deal_category_id = ensure_category(
+        DEALS_CATEGORY["slug"],
+        DEALS_CATEGORY["name"],
+        DEALS_CATEGORY["description"],
+    )
     for slug_name in category_slugs:
         cat_id = CATEGORIES.get(slug_name)
         if cat_id and cat_id not in category_ids:
             category_ids.append(cat_id)
+    if deal_category_id not in category_ids:
+        category_ids.append(deal_category_id)
     if not category_ids:
         category_ids = [CATEGORIES["electronics"]]
+
+    tag_slugs = ["deal", "promo-email"]
+    if campaign.get("is_time_sensitive"):
+        tag_slugs.append("seasonal")
+    else:
+        tag_slugs.append("evergreen")
+    tag_ids = [ensure_tag(slug) for slug in tag_slugs]
 
     excerpt = (
         f"HandyTested turns an Amazon Associates campaign into practical buying guidance "
@@ -572,9 +643,24 @@ def publish_campaign_post(campaign: dict[str, Any], article_html: str, promo: Pr
         "content": content,
         "excerpt": excerpt,
         "categories": category_ids,
+        "tags": tag_ids,
+        "comment_status": "closed",
     }
     try:
-        return wp_post("/posts", payload)
+        post = wp_post("/posts", payload)
+        try:
+            rank_math_update(int(post["id"]), {
+                "rank_math_title": title,
+                "rank_math_description": excerpt,
+                "rank_math_focus_keyword": campaign.get("buyer_intent_keyword", ""),
+                "rank_math_facebook_title": title,
+                "rank_math_facebook_description": excerpt,
+                "rank_math_twitter_title": title,
+                "rank_math_twitter_description": excerpt,
+            })
+        except Exception as meta_exc:
+            log(f"Rank Math meta warning for post {post.get('id')}: {meta_exc}")
+        return post
     except Exception as exc:
         raise RuntimeError(f"WordPress publish failed for '{title}': {exc}") from exc
 

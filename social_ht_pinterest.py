@@ -25,8 +25,14 @@ BOARD_NAMES = {
     "electronics": "Best Electronics & Gadgets — Reviews",
     "tools":       "Best Tools & DIY — Reviews",
     "diy":         "Home Improvement Reviews",
+    "smart-home":  "Smart Home Reviews",
+    "kitchen":     "Kitchen Gear Reviews",
+    "outdoor":     "Outdoor Gear Reviews",
+    "cleaning":    "Cleaning Gear Reviews",
+    "office-gear": "Home Office Gear Reviews",
 }
 DEFAULT_BOARD = "HandyTested — Product Reviews"
+SKIP_TAG_SLUGS = {"deal", "promo-email", "seasonal"}
 
 # ── Logging ───────────────────────────────────────────────────────────────
 def log(msg):
@@ -184,9 +190,10 @@ def buscar_imagem_post(media_id):
         return ""
 
 def buscar_posts_recentes(quantidade=3):
+    fetch_count = max(quantidade * 5, 12)
     req = urllib.request.Request(
-        f"{WP_URL}/wp-json/wp/v2/posts?per_page={quantidade}&status=publish"
-        f"&_fields=id,title,link,excerpt,categories,featured_media",
+        f"{WP_URL}/wp-json/wp/v2/posts?per_page={fetch_count}&status=publish"
+        f"&_fields=id,title,link,excerpt,categories,featured_media,tags",
         headers={"Authorization": AUTH_HEADER}
     )
     with urllib.request.urlopen(req, timeout=15) as r:
@@ -200,8 +207,21 @@ def buscar_posts_recentes(quantidade=3):
         cats = json.loads(r.read())
     cat_map = {c["id"]: c["slug"] for c in cats}
 
+    req3 = urllib.request.Request(
+        f"{WP_URL}/wp-json/wp/v2/tags?per_page=100&_fields=id,slug",
+        headers={"Authorization": AUTH_HEADER}
+    )
+    with urllib.request.urlopen(req3, timeout=15) as r:
+        tags = json.loads(r.read())
+    tag_map = {t["id"]: t["slug"] for t in tags}
+
     result = []
     for p in posts:
+        tag_slugs = {tag_map.get(tag_id, "") for tag_id in p.get("tags", [])}
+        unsafe_tags = tag_slugs & SKIP_TAG_SLUGS
+        if unsafe_tags:
+            log(f"  Pulando post sazonal/deal: {p['title']['rendered']} | tags: {sorted(unsafe_tags)}")
+            continue
         cat_ids = p.get("categories", [])
         cat_slug = cat_map.get(cat_ids[0], "electronics") if cat_ids else "electronics"
         image_url = buscar_imagem_post(p.get("featured_media", 0))
@@ -213,6 +233,8 @@ def buscar_posts_recentes(quantidade=3):
             "categoria": cat_slug,
             "image_url": image_url,
         })
+        if len(result) >= quantidade:
+            break
     return result
 
 # ── Geração de descrição ──────────────────────────────────────────────────

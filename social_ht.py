@@ -28,7 +28,13 @@ SUBREDDITS = {
     "electronics": ["BudgetAudiophile", "HeadphoneAdvice", "gadgets", "hometheater"],
     "tools":       ["Tools", "DIY", "HomeImprovement", "woodworking"],
     "diy":         ["DIY", "HomeImprovement", "malelivingspace", "mildlyinfuriating"],
+    "smart-home":  ["homeautomation", "smarthome", "gadgets"],
+    "kitchen":     ["Cooking", "BuyItForLife", "AskCulinary"],
+    "outdoor":     ["CampingGear", "lawncare", "gardening"],
+    "cleaning":    ["CleaningTips", "HomeImprovement"],
+    "office-gear": ["Workspaces", "OfficeChairs", "gadgets"],
 }
+SKIP_TAG_SLUGS = {"deal", "promo-email", "seasonal"}
 # Máximo de subreddits por artigo para evitar spam
 MAX_SUBS_PER_POST = 2
 
@@ -61,9 +67,10 @@ def claude(prompt, max_tokens=400):
 # ── WordPress ─────────────────────────────────────────────────────────────
 def buscar_posts_recentes(quantidade=3):
     """Busca posts publicados recentemente que ainda não foram compartilhados."""
+    fetch_count = max(quantidade * 5, 12)
     req = urllib.request.Request(
-        f"{WP_URL}/wp-json/wp/v2/posts?per_page={quantidade}&status=publish"
-        f"&_fields=id,title,link,excerpt,categories,date",
+        f"{WP_URL}/wp-json/wp/v2/posts?per_page={fetch_count}&status=publish"
+        f"&_fields=id,title,link,excerpt,categories,date,tags",
         headers={"Authorization": AUTH_HEADER}
     )
     with urllib.request.urlopen(req, timeout=15) as r:
@@ -78,8 +85,21 @@ def buscar_posts_recentes(quantidade=3):
         cats = json.loads(r.read())
     cat_map = {c["id"]: c["slug"] for c in cats}
 
+    req3 = urllib.request.Request(
+        f"{WP_URL}/wp-json/wp/v2/tags?per_page=100&_fields=id,slug",
+        headers={"Authorization": AUTH_HEADER}
+    )
+    with urllib.request.urlopen(req3, timeout=15) as r:
+        tags = json.loads(r.read())
+    tag_map = {t["id"]: t["slug"] for t in tags}
+
     result = []
     for p in posts:
+        tag_slugs = {tag_map.get(tag_id, "") for tag_id in p.get("tags", [])}
+        unsafe_tags = tag_slugs & SKIP_TAG_SLUGS
+        if unsafe_tags:
+            log(f"  Pulando post sazonal/deal: {p['title']['rendered']} | tags: {sorted(unsafe_tags)}")
+            continue
         cat_ids = p.get("categories", [])
         cat_slug = cat_map.get(cat_ids[0], "electronics") if cat_ids else "electronics"
         result.append({
@@ -89,6 +109,8 @@ def buscar_posts_recentes(quantidade=3):
             "excerpt":  re.sub(r"<[^>]+>", "", p.get("excerpt", {}).get("rendered", "")).strip(),
             "categoria": cat_slug,
         })
+        if len(result) >= quantidade:
+            break
     return result
 
 # ── Reddit OAuth ──────────────────────────────────────────────────────────

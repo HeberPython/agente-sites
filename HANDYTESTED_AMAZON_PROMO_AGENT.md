@@ -9,12 +9,13 @@ This agent turns Amazon Associates promo emails sent or forwarded to
 2. Extracts the campaign theme, product categories, buyer angle, and useful links.
 3. Converts the promotion into an English HandyTested buying guide/review article.
 4. Uses Amazon.com affiliate search links with tag `amazonrev089f-20`.
-5. Publishes to WordPress as `draft` by default.
-6. Detects whether the campaign is seasonal/time-sensitive and stores an
+5. Assigns the post to `Amazon Deals` plus the relevant buyer category.
+6. Publishes to WordPress as `draft` by default.
+7. Detects whether the campaign is seasonal/time-sensitive and stores an
    internal expiration marker in the post.
-7. Moves expired published promo posts back to `draft` automatically.
-8. Marks the email as seen only after processing.
-9. Sends a Telegram summary when it creates or expires posts.
+8. Moves expired published promo posts back to `draft` automatically.
+9. Marks the email as seen only after processing.
+10. Sends a Telegram summary when it creates or expires posts.
 
 ## Required GitHub Secrets
 
@@ -71,6 +72,8 @@ draft quality is consistently good.
   Amazon tooling.
 - Treat seasonal Amazon campaigns as editorial signals first. Prefer evergreen
   buyer-guidance titles instead of date-heavy promo titles.
+- Tag promo posts with `deal` and `promo-email`; add `seasonal` when the
+  campaign has a deadline. Pinterest ignores these tags.
 - Detect explicit campaign deadlines. If a campaign has an end date, the agent
   stores an internal expiration marker and can move the post back to draft after
   the promo ends.
