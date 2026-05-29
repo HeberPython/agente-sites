@@ -320,11 +320,11 @@ def render_compact_list(posts: list[dict[str, str]], empty_message: str) -> str:
         date = html.escape(post["date"])
         image = image_markup(post, 68)
         items.append(f"""
-<article style="display:grid;grid-template-columns:82px 1fr;gap:12px;border-bottom:1px solid #e6ebf3;padding:0 0 13px;margin:0 0 13px;">
-  <a href="{url}" style="display:block;text-decoration:none;">{image}</a>
-  <div>
-    <p style="font-size:11px;color:#68748a;margin:0 0 4px;">{date}</p>
-    <h3 style="font-size:14px;line-height:1.3;margin:0;color:#172033;"><a href="{url}" style="color:#172033;text-decoration:none;">{title}</a></h3>
+<article class="ht-compact-item">
+  <a class="ht-compact-thumb" href="{url}">{image}</a>
+  <div class="ht-compact-copy">
+    <p class="ht-compact-date">{date}</p>
+    <h3 class="ht-compact-title"><a href="{url}">{title}</a></h3>
   </div>
 </article>
 """.strip())
@@ -378,12 +378,57 @@ body.home #primary {
 .ht-portal .ht-lead-grid {
   align-items: start !important;
   display: grid !important;
-  gap: 28px !important;
-  grid-template-columns: minmax(0, 1.7fr) minmax(300px, .9fr) !important;
+  gap: 34px !important;
+  grid-template-columns: minmax(0, 1.55fr) minmax(380px, .95fr) !important;
 }
 .ht-portal .ht-side-rail {
   border-left: 4px solid #f2a733 !important;
-  padding-left: 18px !important;
+  padding-left: 22px !important;
+}
+.ht-portal .ht-compact-item {
+  border-bottom: 1px solid #e6ebf3 !important;
+  display: grid !important;
+  gap: 12px !important;
+  grid-template-columns: 92px minmax(0, 1fr) !important;
+  margin: 0 0 15px !important;
+  padding: 0 0 15px !important;
+}
+.ht-portal .ht-compact-item > p {
+  grid-column: 1 !important;
+  margin: 0 !important;
+}
+.ht-portal .ht-compact-thumb,
+.ht-portal .ht-compact-item > p > a:first-child {
+  display: block !important;
+  grid-column: 1 !important;
+  text-decoration: none !important;
+}
+.ht-portal .ht-compact-thumb img,
+.ht-portal .ht-compact-item > p > a:first-child img {
+  height: 72px !important;
+  object-fit: cover !important;
+  width: 92px !important;
+}
+.ht-portal .ht-compact-copy {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+}
+.ht-portal .ht-compact-date {
+  color: #68748a !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  margin: 0 0 5px !important;
+}
+.ht-portal .ht-compact-title {
+  color: #172033 !important;
+  font-size: 14px !important;
+  line-height: 1.28 !important;
+  margin: 0 !important;
+}
+.ht-portal .ht-compact-title a {
+  color: #172033 !important;
+  text-decoration: none !important;
 }
 .ht-portal .ht-full-bleed {
   margin-left: calc(50% - 50vw) !important;
