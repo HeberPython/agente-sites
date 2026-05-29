@@ -14,16 +14,20 @@ Required environment variable:
 from __future__ import annotations
 
 import base64
+import html
 import json
 import os
+import re
 import urllib.parse
 import urllib.request
+from datetime import datetime
 from typing import Any
 
 
 WP_URL = "https://handytested.com"
 WP_USER = "hebergravano@gmail.com"
 WP_PASS = os.environ["HT_WP_PASS"]
+MEDIA_CACHE: dict[int, str] = {}
 
 
 CATEGORIES = {
@@ -125,6 +129,7 @@ def ensure_page(
     menu_order: int = 0,
     seo_title: str = "",
     seo_description: str = "",
+    home_layout: bool = False,
 ) -> dict[str, Any]:
     existing = wp_get(f"/pages?slug={urllib.parse.quote(slug)}&status=publish,draft&_fields=id,slug")
     payload = {
@@ -135,7 +140,20 @@ def ensure_page(
         "comment_status": "closed",
         "menu_order": menu_order,
     }
+    if home_layout:
+        payload["featured_media"] = 0
+
     meta = {}
+    if home_layout:
+        meta.update({
+            "site-post-title": "disabled",
+            "ast-featured-img": "disabled",
+            "ast-banner-title-visibility": "disabled",
+            "ast-breadcrumbs-content": "disabled",
+            "site-sidebar-layout": "no-sidebar",
+            "ast-site-content-layout": "full-width-container",
+            "site-content-style": "unboxed",
+        })
     if seo_title:
         meta["rank_math_title"] = seo_title
     if seo_description:
@@ -150,20 +168,225 @@ def ensure_page(
     return page
 
 
-def latest_posts_block(category_ids: list[int], posts_to_show: int = 3) -> str:
-    attrs = {
-        "categories": [{"id": category_id} for category_id in category_ids],
-        "postsToShow": posts_to_show,
-        "displayPostDate": True,
-        "displayFeaturedImage": True,
-        "featuredImageSizeSlug": "medium",
-        "addLinkToFeaturedImage": True,
+def rendered_text(value: Any) -> str:
+    if isinstance(value, dict):
+        value = value.get("rendered", "")
+    text = re.sub(r"<[^>]+>", " ", str(value))
+    text = html.unescape(text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def trim_text(value: str, max_chars: int) -> str:
+    if len(value) <= max_chars:
+        return value
+    clipped = value[: max_chars - 1].rsplit(" ", 1)[0].strip()
+    return f"{clipped}..."
+
+
+def format_post_date(value: str) -> str:
+    if not value:
+        return ""
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return value[:10]
+    return parsed.strftime("%b %d, %Y")
+
+
+def media_url(media_id: int) -> str:
+    if not media_id:
+        return ""
+    if media_id in MEDIA_CACHE:
+        return MEDIA_CACHE[media_id]
+
+    try:
+        media = wp_get(f"/media/{media_id}?_fields=source_url,media_details")
+    except Exception:
+        MEDIA_CACHE[media_id] = ""
+        return ""
+
+    sizes = media.get("media_details", {}).get("sizes", {})
+    for size in ("medium_large", "large", "medium", "thumbnail"):
+        source = sizes.get(size, {}).get("source_url")
+        if source:
+            MEDIA_CACHE[media_id] = source
+            return source
+
+    source = media.get("source_url", "")
+    MEDIA_CACHE[media_id] = source
+    return source
+
+
+def fetch_posts(
+    category_ids: list[int],
+    per_page: int,
+    exclude_category_ids: list[int] | None = None,
+) -> list[dict[str, str]]:
+    params = {
+        "status": "publish",
+        "per_page": str(per_page),
+        "orderby": "date",
+        "order": "desc",
+        "_fields": "id,date,link,title,excerpt,featured_media,categories",
     }
-    return f"<!-- wp:latest-posts {json.dumps(attrs, separators=(',', ':'))} /-->"
+    if category_ids:
+        params["categories"] = ",".join(str(category_id) for category_id in category_ids)
+    if exclude_category_ids:
+        params["categories_exclude"] = ",".join(str(category_id) for category_id in exclude_category_ids)
+
+    raw_posts = wp_get(f"/posts?{urllib.parse.urlencode(params)}")
+    posts = []
+    for post in raw_posts:
+        title = rendered_text(post.get("title", ""))
+        if not title:
+            continue
+        posts.append({
+            "title": title,
+            "excerpt": trim_text(rendered_text(post.get("excerpt", "")), 132),
+            "url": str(post.get("link", "#")),
+            "date": format_post_date(str(post.get("date", ""))),
+            "image": media_url(int(post.get("featured_media") or 0)),
+        })
+    return posts
+
+
+def image_markup(post: dict[str, str], height: int) -> str:
+    title = html.escape(post["title"], quote=True)
+    image = post.get("image", "")
+    if image:
+        return (
+            f'<img src="{html.escape(image, quote=True)}" alt="{title}" '
+            f'style="width:100%;height:{height}px;object-fit:cover;display:block;background:#e9edf5;">'
+        )
+    return (
+        f'<div aria-hidden="true" style="height:{height}px;background:#edf1f7;'
+        'display:flex;align-items:center;justify-content:center;color:#516078;'
+        'font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">'
+        "HandyTested</div>"
+    )
+
+
+def render_feature(post: dict[str, str] | None) -> str:
+    if not post:
+        return empty_panel("New review guides are being prepared.")
+    title = html.escape(post["title"])
+    url = html.escape(post["url"], quote=True)
+    excerpt = html.escape(post["excerpt"])
+    date = html.escape(post["date"])
+    return f"""
+<article style="border-bottom:1px solid #dfe5ef;padding-bottom:18px;">
+  <a href="{url}" style="display:block;text-decoration:none;color:#172033;">{image_markup(post, 255)}</a>
+  <p style="font-size:12px;color:#68748a;margin:12px 0 6px;">{date}</p>
+  <h3 style="font-size:26px;line-height:1.18;margin:0 0 8px;color:#172033;"><a href="{url}" style="color:#172033;text-decoration:none;">{title}</a></h3>
+  <p style="font-size:15px;line-height:1.6;color:#4b5870;margin:0;">{excerpt}</p>
+</article>
+""".strip()
+
+
+def render_card_grid(posts: list[dict[str, str]], empty_message: str) -> str:
+    if not posts:
+        return empty_panel(empty_message)
+    cards = []
+    for post in posts:
+        title = html.escape(post["title"])
+        url = html.escape(post["url"], quote=True)
+        excerpt = html.escape(post["excerpt"])
+        date = html.escape(post["date"])
+        cards.append(f"""
+<article style="border:1px solid #dfe5ef;background:#fff;">
+  <a href="{url}" style="display:block;text-decoration:none;color:#172033;">{image_markup(post, 142)}</a>
+  <div style="padding:13px 14px 15px;">
+    <p style="font-size:11px;color:#68748a;margin:0 0 6px;">{date}</p>
+    <h3 style="font-size:17px;line-height:1.25;margin:0 0 7px;color:#172033;"><a href="{url}" style="color:#172033;text-decoration:none;">{title}</a></h3>
+    <p style="font-size:13px;line-height:1.5;color:#4b5870;margin:0;">{excerpt}</p>
+  </div>
+</article>
+""".strip())
+    return (
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));'
+        'gap:18px;">'
+        + "\n".join(cards)
+        + "</div>"
+    )
+
+
+def render_compact_list(posts: list[dict[str, str]], empty_message: str) -> str:
+    if not posts:
+        return empty_panel(empty_message)
+    items = []
+    for post in posts:
+        title = html.escape(post["title"])
+        url = html.escape(post["url"], quote=True)
+        date = html.escape(post["date"])
+        image = image_markup(post, 68)
+        items.append(f"""
+<article style="display:grid;grid-template-columns:82px 1fr;gap:12px;border-bottom:1px solid #e6ebf3;padding:0 0 13px;margin:0 0 13px;">
+  <a href="{url}" style="display:block;text-decoration:none;">{image}</a>
+  <div>
+    <p style="font-size:11px;color:#68748a;margin:0 0 4px;">{date}</p>
+    <h3 style="font-size:14px;line-height:1.3;margin:0;color:#172033;"><a href="{url}" style="color:#172033;text-decoration:none;">{title}</a></h3>
+  </div>
+</article>
+""".strip())
+    return "\n".join(items)
+
+
+def empty_panel(message: str) -> str:
+    return (
+        '<div style="border:1px solid #dfe5ef;background:#f7f9fc;padding:16px;'
+        'color:#526078;font-size:14px;line-height:1.55;">'
+        f"{html.escape(message)}</div>"
+    )
+
+
+def portal_css() -> str:
+    return """
+<style>
+body.home .entry-header,
+body.home .post-thumb-img-content {
+  display: none !important;
+}
+body.home .entry-content,
+body.home #primary {
+  margin-top: 0 !important;
+}
+.ht-portal a:hover {
+  text-decoration: underline !important;
+}
+@media (max-width: 640px) {
+  .ht-portal .ht-hero {
+    padding: 30px 18px !important;
+  }
+  .ht-portal .ht-hero h1 {
+    font-size: 31px !important;
+  }
+}
+</style>
+""".strip()
+
+
+def category_links() -> str:
+    categories = [
+        ("Electronics", "/category/electronics/"),
+        ("Tools", "/category/tools/"),
+        ("DIY & Home", "/category/diy/"),
+        ("Smart Home", "/category/smart-home/"),
+        ("Kitchen", "/category/kitchen/"),
+        ("Outdoor", "/category/outdoor/"),
+        ("Cleaning", "/category/cleaning/"),
+        ("Office Gear", "/category/office-gear/"),
+    ]
+    links = [
+        f'<a href="{href}" style="padding:13px 14px;border:1px solid #d8deeb;'
+        'font-weight:700;color:#172033;text-decoration:none;background:#fff;">'
+        f"{label}</a>"
+        for label, href in categories
+    ]
+    return "\n".join(links)
 
 
 def home_content(cat_ids: dict[str, int]) -> str:
-    latest = latest_posts_block([
+    evergreen_ids = [
         cat_ids["electronics"],
         cat_ids["tools"],
         cat_ids["diy"],
@@ -172,74 +395,69 @@ def home_content(cat_ids: dict[str, int]) -> str:
         cat_ids["outdoor"],
         cat_ids["cleaning"],
         cat_ids["office-gear"],
-    ], 6)
-    deals = latest_posts_block([cat_ids["amazon-deals"]], 4)
-    tools = latest_posts_block([cat_ids["tools"]], 3)
-    electronics = latest_posts_block([cat_ids["electronics"], cat_ids["smart-home"], cat_ids["office-gear"]], 3)
-    home = latest_posts_block([cat_ids["diy"], cat_ids["kitchen"], cat_ids["cleaning"], cat_ids["outdoor"]], 3)
+    ]
+    deal_id = cat_ids["amazon-deals"]
+    latest = fetch_posts(evergreen_ids, 7, [deal_id])
+    deals = fetch_posts([deal_id], 4)
+    tools = fetch_posts([cat_ids["tools"]], 3, [deal_id])
+    electronics = fetch_posts([cat_ids["electronics"], cat_ids["smart-home"], cat_ids["office-gear"]], 3, [deal_id])
+    home = fetch_posts([cat_ids["diy"], cat_ids["kitchen"], cat_ids["cleaning"], cat_ids["outdoor"]], 3, [deal_id])
 
     return f"""
-<div class="ht-portal" style="font-family:Inter,Arial,sans-serif;color:#172033;">
-  <section style="padding:42px 24px 34px;background:#07153f;color:#fff;border-radius:0;margin:-24px -24px 34px;">
-    <div style="max-width:1040px;margin:0 auto;">
-      <p style="letter-spacing:.08em;text-transform:uppercase;font-size:12px;margin:0 0 10px;color:#f4b24d;">Independent buying guidance</p>
-      <h1 style="font-size:42px;line-height:1.08;margin:0 0 14px;color:#fff;">Reviews before you buy tools, tech, and home gear.</h1>
-      <p style="max-width:720px;font-size:18px;line-height:1.55;margin:0 0 24px;color:#dce5ff;">HandyTested turns product research, owner feedback, specs, safety signals, and Amazon deal trends into practical recommendations for real buyers.</p>
-      <form role="search" method="get" action="/" style="display:flex;gap:10px;max-width:680px;flex-wrap:wrap;">
-        <input type="search" name="s" placeholder="What are you looking for today?" style="flex:1;min-width:240px;padding:14px 16px;border-radius:4px;border:0;font-size:15px;">
-        <button type="submit" style="background:#f4a62a;color:#07153f;border:0;border-radius:4px;padding:14px 26px;font-weight:700;">Search</button>
-      </form>
-    </div>
+{portal_css()}
+<div class="ht-portal" style="font-family:Arial,sans-serif;color:#172033;max-width:1120px;margin:0 auto;">
+  <section class="ht-hero" style="padding:42px 28px 36px;background:#07153f;color:#fff;margin:0 0 34px;">
+    <p style="letter-spacing:.08em;text-transform:uppercase;font-size:12px;margin:0 0 10px;color:#f2b34c;font-weight:700;">Independent buying guidance</p>
+    <h1 style="font-size:42px;line-height:1.08;margin:0 0 14px;color:#fff;">Reviews before you buy tools, tech, and home gear.</h1>
+    <p style="max-width:740px;font-size:18px;line-height:1.55;margin:0 0 24px;color:#dce5ff;">HandyTested turns product research, owner feedback, specs, safety signals, and Amazon deal trends into practical recommendations for real buyers.</p>
+    <form role="search" method="get" action="/" style="display:flex;gap:10px;max-width:690px;flex-wrap:wrap;">
+      <input type="search" name="s" placeholder="What are you looking for today?" style="flex:1;min-width:240px;padding:14px 16px;border:0;font-size:15px;">
+      <button type="submit" style="background:#f2a733;color:#07153f;border:0;padding:14px 26px;font-weight:700;">Search</button>
+    </form>
   </section>
 
-  <section style="max-width:1040px;margin:0 auto 36px;">
-    <div style="display:grid;grid-template-columns:2fr 1fr;gap:28px;">
+  <section style="margin:0 0 34px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px;align-items:start;">
       <div>
-        <h2 style="font-size:22px;margin:0 0 14px;">Latest Reviews</h2>
-        {latest}
+        <h2 style="font-size:22px;letter-spacing:.02em;margin:0 0 14px;color:#172033;">Latest Reviews</h2>
+        {render_feature(latest[0] if latest else None)}
+        <div style="margin-top:18px;">{render_card_grid(latest[1:4], "More review guides are coming next.")}</div>
       </div>
-      <aside style="border-left:4px solid #f4a62a;padding-left:18px;">
-        <h2 style="font-size:20px;margin:0 0 12px;">Top Amazon Deals</h2>
-        <p style="font-size:14px;line-height:1.6;color:#536078;">Time-sensitive deal posts are reviewed by the promo agent and automatically removed from public view after expiration.</p>
-        {deals}
-        <p><a href="/deals/" style="font-weight:700;">View all deal guidance</a></p>
+      <aside style="border-left:4px solid #f2a733;padding-left:18px;">
+        <h2 style="font-size:20px;margin:0 0 10px;color:#172033;">Top Amazon Deals</h2>
+        <p style="font-size:14px;line-height:1.6;color:#536078;margin:0 0 16px;">Time-sensitive deal posts are reviewed by the promo agent and removed from public view after the campaign expires.</p>
+        {render_compact_list(deals, "No active deal guides are live right now.")}
+        <p style="margin:8px 0 0;"><a href="/deals/" style="font-weight:700;color:#0a3a78;text-decoration:none;">View all deal guidance</a></p>
       </aside>
     </div>
   </section>
 
-  <section style="max-width:1040px;margin:0 auto 34px;padding:28px 0;border-top:1px solid #e1e5ee;border-bottom:1px solid #e1e5ee;">
-    <h2 style="font-size:22px;margin:0 0 16px;">Shop by Category</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;">
-      <a href="/category/electronics/" style="padding:14px;border:1px solid #d8deeb;border-radius:6px;font-weight:700;">Electronics</a>
-      <a href="/category/tools/" style="padding:14px;border:1px solid #d8deeb;border-radius:6px;font-weight:700;">Tools</a>
-      <a href="/category/diy/" style="padding:14px;border:1px solid #d8deeb;border-radius:6px;font-weight:700;">DIY & Home</a>
-      <a href="/category/smart-home/" style="padding:14px;border:1px solid #d8deeb;border-radius:6px;font-weight:700;">Smart Home</a>
-      <a href="/category/kitchen/" style="padding:14px;border:1px solid #d8deeb;border-radius:6px;font-weight:700;">Kitchen</a>
-      <a href="/category/outdoor/" style="padding:14px;border:1px solid #d8deeb;border-radius:6px;font-weight:700;">Outdoor</a>
-      <a href="/category/cleaning/" style="padding:14px;border:1px solid #d8deeb;border-radius:6px;font-weight:700;">Cleaning</a>
-      <a href="/category/office-gear/" style="padding:14px;border:1px solid #d8deeb;border-radius:6px;font-weight:700;">Office Gear</a>
+  <section style="margin:0 0 34px;padding:26px 0;border-top:1px solid #e1e5ee;border-bottom:1px solid #e1e5ee;">
+    <h2 style="font-size:22px;margin:0 0 16px;color:#172033;">Shop by Category</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;">
+      {category_links()}
     </div>
   </section>
 
-  <section style="max-width:1040px;margin:0 auto 38px;">
-    <h2 style="font-size:22px;margin:0 0 14px;">Tools & Workshop</h2>
-    {tools}
-    <h2 style="font-size:22px;margin:34px 0 14px;">Electronics & Smart Home</h2>
-    {electronics}
-    <h2 style="font-size:22px;margin:34px 0 14px;">Home, Kitchen & Outdoor</h2>
-    {home}
+  <section style="margin:0 0 38px;">
+    <h2 style="font-size:22px;margin:0 0 14px;color:#172033;">Tools & Workshop</h2>
+    {render_card_grid(tools, "Tool and workshop reviews are being prepared.")}
+    <h2 style="font-size:22px;margin:34px 0 14px;color:#172033;">Electronics & Smart Home</h2>
+    {render_card_grid(electronics, "Electronics and smart home guides are being prepared.")}
+    <h2 style="font-size:22px;margin:34px 0 14px;color:#172033;">Home, Kitchen & Outdoor</h2>
+    {render_card_grid(home, "Home, kitchen, and outdoor guides are being prepared.")}
   </section>
 
-  <section style="padding:48px 24px;background:#07153f;color:#fff;border-radius:0;margin:42px -24px -24px;">
+  <section style="padding:42px 28px;background:#07153f;color:#fff;margin:38px 0 0;">
     <div style="max-width:880px;margin:0 auto;text-align:center;">
       <h2 style="font-size:28px;color:#fff;margin:0 0 12px;">Why trust HandyTested?</h2>
-      <p style="font-size:16px;line-height:1.7;color:#dce5ff;max-width:720px;margin:0 auto 24px;">Our recommendations are built around practical buyer questions: what matters, what fails, who a product is best for, and when a cheaper option is enough.</p>
+      <p style="font-size:16px;line-height:1.7;color:#dce5ff;max-width:720px;margin:0 auto 24px;">Our recommendations are built around practical buyer questions: what matters, what fails, who a product is best for, and when a simpler option is enough.</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px;text-align:left;">
-        <div><h3 style="color:#f4b24d;margin:0 0 8px;">Clear criteria</h3><p style="color:#dce5ff;font-size:14px;line-height:1.6;">Specs, safety, warranty, owner feedback, and buyer fit.</p></div>
-        <div><h3 style="color:#f4b24d;margin:0 0 8px;">No copied promos</h3><p style="color:#dce5ff;font-size:14px;line-height:1.6;">Amazon campaigns become editorial guidance, not pasted ads.</p></div>
-        <div><h3 style="color:#f4b24d;margin:0 0 8px;">Stale deals expire</h3><p style="color:#dce5ff;font-size:14px;line-height:1.6;">Seasonal posts are removed when the promotion window closes.</p></div>
+        <div><h3 style="color:#f2b34c;margin:0 0 8px;font-size:17px;">Clear criteria</h3><p style="color:#dce5ff;font-size:14px;line-height:1.6;margin:0;">Specs, safety, warranty, owner feedback, and buyer fit.</p></div>
+        <div><h3 style="color:#f2b34c;margin:0 0 8px;font-size:17px;">No copied promos</h3><p style="color:#dce5ff;font-size:14px;line-height:1.6;margin:0;">Amazon campaigns become editorial guidance, not pasted ads.</p></div>
+        <div><h3 style="color:#f2b34c;margin:0 0 8px;font-size:17px;">Stale deals expire</h3><p style="color:#dce5ff;font-size:14px;line-height:1.6;margin:0;">Seasonal posts are removed when the promotion window closes.</p></div>
       </div>
-      <p style="margin:28px 0 0;"><a href="/how-we-review/" style="background:#f4a62a;color:#07153f;padding:12px 22px;border-radius:4px;font-weight:700;text-decoration:none;">How we review</a></p>
+      <p style="margin:28px 0 0;"><a href="/how-we-review/" style="background:#f2a733;color:#07153f;padding:12px 22px;font-weight:700;text-decoration:none;">How we review</a></p>
     </div>
   </section>
 </div>
@@ -247,18 +465,21 @@ def home_content(cat_ids: dict[str, int]) -> str:
 
 
 def deals_content(deals_category_id: int) -> str:
+    deals = fetch_posts([deals_category_id], 10)
     return f"""
-<h1>Amazon Deals Worth Checking</h1>
-<p><strong>Affiliate Disclosure:</strong> As an Amazon Associate, HandyTested earns from qualifying purchases.</p>
-<p>This page collects our deal-driven buying guides. We do not list fixed prices or copy Amazon promotional images. When a deal is tied to a seasonal campaign, our agent stores an expiration marker and removes the post from public view after the promotion ends.</p>
-<h2>Latest Deal Guides</h2>
-{latest_posts_block([deals_category_id], 10)}
-<h2>How to Use This Page</h2>
-<ul>
-  <li>Use deal guides as a shortlist, not as a final price guarantee.</li>
-  <li>Check the Amazon product page for current price, shipping, seller, and availability.</li>
-  <li>Prefer products with strong owner feedback, clear warranty terms, and easy returns.</li>
-</ul>
+<div style="max-width:1040px;margin:0 auto;font-family:Arial,sans-serif;color:#172033;">
+  <h1>Amazon Deals Worth Checking</h1>
+  <p><strong>Affiliate Disclosure:</strong> As an Amazon Associate, HandyTested earns from qualifying purchases.</p>
+  <p>This page collects our deal-driven buying guides. We do not list fixed prices or copy Amazon promotional images. When a deal is tied to a seasonal campaign, our agent stores an expiration marker and removes the post from public view after the promotion ends.</p>
+  <h2>Latest Deal Guides</h2>
+  {render_card_grid(deals, "No active deal guides are live right now.")}
+  <h2>How to Use This Page</h2>
+  <ul>
+    <li>Use deal guides as a shortlist, not as a final price guarantee.</li>
+    <li>Check the Amazon product page for current price, shipping, seller, and availability.</li>
+    <li>Prefer products with strong owner feedback, clear warranty terms, and easy returns.</li>
+  </ul>
+</div>
 """.strip()
 
 
@@ -341,6 +562,7 @@ def main() -> None:
         0,
         "HandyTested - Product Reviews, Buying Guides & Amazon Deals",
         "Practical product reviews, buying guides, and Amazon deal guidance for tools, electronics, smart home, DIY, kitchen, and everyday gear.",
+        home_layout=True,
     )
     ensure_page(
         "deals",

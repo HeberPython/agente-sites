@@ -15,6 +15,15 @@ Pages created or updated:
 - `/affiliate-disclosure/` - affiliate transparency
 - `/about/` - updated site positioning
 
+Home page guardrails:
+
+- disables Astra's page title, banner, breadcrumbs, sidebar, and featured image
+  on the front page
+- clears the old front-page featured image so legacy hero artwork cannot render
+  above the portal
+- renders review/deal sections with controlled HTML cards instead of the
+  WordPress latest-posts block, keeping thumbnails compact and predictable
+
 Categories:
 
 - `electronics`
