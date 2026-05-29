@@ -3,7 +3,7 @@ name: Agente de Conteúdo
 on:
   schedule:
     # Acorda diariamente às 09:00 horário de Brasília (12:00 UTC).
-    # O script publica apenas em dias alternados para controlar consumo.
+    # Publica diariamente, com limite de 1 artigo por site.
     - cron: "0 12 * * *"
   workflow_dispatch:  # Permite rodar manualmente pelo GitHub
 
@@ -36,6 +36,5 @@ jobs:
           ARTICLES_PER_SITE: "1"
           MAX_TOTAL_ARTICLES: "2"
           MAX_UNSPLASH_DOWNLOADS: "2"
-          PUBLICATION_INTERVAL_DAYS: "2"
-          PUBLICATION_START_DATE: "2026-05-29"
+          PUBLICATION_INTERVAL_DAYS: "1"
         run: python agente_sites.py
