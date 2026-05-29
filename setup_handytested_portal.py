@@ -353,12 +353,41 @@ body.home #primary {
 .ht-portal a:hover {
   text-decoration: underline !important;
 }
+.ht-portal .ht-category-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+.ht-portal .ht-category-card {
+  min-width: 0 !important;
+}
+.ht-portal .ht-category-card a {
+  align-items: center !important;
+  background: #fff !important;
+  border: 1px solid #d8deeb !important;
+  box-sizing: border-box !important;
+  color: #172033 !important;
+  display: flex !important;
+  font-weight: 700 !important;
+  min-height: 56px !important;
+  padding: 13px 14px !important;
+  text-decoration: none !important;
+  width: 100% !important;
+}
+@media (max-width: 820px) {
+  .ht-portal .ht-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
 @media (max-width: 640px) {
   .ht-portal .ht-hero {
     padding: 30px 18px !important;
   }
   .ht-portal .ht-hero h1 {
     font-size: 31px !important;
+  }
+  .ht-portal .ht-category-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 </style>
@@ -377,9 +406,7 @@ def category_links() -> str:
         ("Office Gear", "/category/office-gear/"),
     ]
     links = [
-        f'<a href="{href}" style="padding:13px 14px;border:1px solid #d8deeb;'
-        'font-weight:700;color:#172033;text-decoration:none;background:#fff;">'
-        f"{label}</a>"
+        f'<div class="ht-category-card"><a href="{href}">{label}</a></div>'
         for label, href in categories
     ]
     return "\n".join(links)
@@ -434,7 +461,7 @@ def home_content(cat_ids: dict[str, int]) -> str:
 
   <section style="margin:0 0 34px;padding:26px 0;border-top:1px solid #e1e5ee;border-bottom:1px solid #e1e5ee;">
     <h2 style="font-size:22px;margin:0 0 16px;color:#172033;">Shop by Category</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;">
+    <div class="ht-category-grid">
       {category_links()}
     </div>
   </section>
