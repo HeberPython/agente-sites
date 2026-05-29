@@ -331,6 +331,28 @@ def render_compact_list(posts: list[dict[str, str]], empty_message: str) -> str:
     return "\n".join(items)
 
 
+def render_deal_rail(deals: list[dict[str, str]], fallback_posts: list[dict[str, str]]) -> str:
+    fallback_title = "Recent Buying Guides" if not deals else "More Buying Guides"
+    return f"""
+<aside class="ht-side-rail">
+  <h2 style="font-size:20px;margin:0 0 10px;color:#172033;">Top Amazon Deals</h2>
+  <p style="font-size:14px;line-height:1.6;color:#536078;margin:0 0 16px;">Time-sensitive deal posts are reviewed by the promo agent and removed from public view after the campaign expires.</p>
+  {render_compact_list(deals, "No active deal guides are live right now.")}
+  <p style="margin:8px 0 18px;"><a href="/deals/" style="font-weight:700;color:#0a3a78;text-decoration:none;">View all deal guidance</a></p>
+
+  <div style="border-top:1px solid #e1e5ee;padding-top:18px;margin-top:18px;">
+    <h2 style="font-size:18px;margin:0 0 12px;color:#172033;">{fallback_title}</h2>
+    {render_compact_list(fallback_posts, "More buying guides are coming next.")}
+  </div>
+
+  <div style="background:#f7f9fc;border:1px solid #dfe5ef;padding:16px;margin-top:18px;">
+    <h3 style="font-size:16px;margin:0 0 8px;color:#172033;">Before You Buy</h3>
+    <p style="font-size:13px;line-height:1.6;color:#536078;margin:0;">We avoid fixed prices and stale discount claims. Always confirm current price, seller, shipping, and returns on Amazon before checkout.</p>
+  </div>
+</aside>
+""".strip()
+
+
 def empty_panel(message: str) -> str:
     return (
         '<div style="border:1px solid #dfe5ef;background:#f7f9fc;padding:16px;'
@@ -352,6 +374,28 @@ body.home #primary {
 }
 .ht-portal a:hover {
   text-decoration: underline !important;
+}
+.ht-portal .ht-lead-grid {
+  align-items: start !important;
+  display: grid !important;
+  gap: 28px !important;
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, .9fr) !important;
+}
+.ht-portal .ht-side-rail {
+  border-left: 4px solid #f2a733 !important;
+  padding-left: 18px !important;
+}
+.ht-portal .ht-full-bleed {
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+}
+.ht-portal .ht-full-bleed-inner {
+  box-sizing: border-box !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  max-width: 1200px !important;
+  padding-left: 28px !important;
+  padding-right: 28px !important;
 }
 .ht-portal .ht-category-grid {
   display: grid !important;
@@ -375,12 +419,21 @@ body.home #primary {
   width: 100% !important;
 }
 @media (max-width: 820px) {
+  .ht-portal .ht-lead-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .ht-portal .ht-side-rail {
+    border-left: 0 !important;
+    border-top: 4px solid #f2a733 !important;
+    padding-left: 0 !important;
+    padding-top: 18px !important;
+  }
   .ht-portal .ht-category-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
 @media (max-width: 640px) {
-  .ht-portal .ht-hero {
+  .ht-portal .ht-hero-inner {
     padding: 30px 18px !important;
   }
   .ht-portal .ht-hero h1 {
@@ -432,30 +485,27 @@ def home_content(cat_ids: dict[str, int]) -> str:
 
     return f"""
 {portal_css()}
-<div class="ht-portal" style="font-family:Arial,sans-serif;color:#172033;max-width:1120px;margin:0 auto;">
-  <section class="ht-hero" style="padding:42px 28px 36px;background:#07153f;color:#fff;margin:0 0 34px;">
-    <p style="letter-spacing:.08em;text-transform:uppercase;font-size:12px;margin:0 0 10px;color:#f2b34c;font-weight:700;">Independent buying guidance</p>
-    <h1 style="font-size:42px;line-height:1.08;margin:0 0 14px;color:#fff;">Reviews before you buy tools, tech, and home gear.</h1>
-    <p style="max-width:740px;font-size:18px;line-height:1.55;margin:0 0 24px;color:#dce5ff;">HandyTested turns product research, owner feedback, specs, safety signals, and Amazon deal trends into practical recommendations for real buyers.</p>
-    <form role="search" method="get" action="/" style="display:flex;gap:10px;max-width:690px;flex-wrap:wrap;">
-      <input type="search" name="s" placeholder="What are you looking for today?" style="flex:1;min-width:240px;padding:14px 16px;border:0;font-size:15px;">
-      <button type="submit" style="background:#f2a733;color:#07153f;border:0;padding:14px 26px;font-weight:700;">Search</button>
-    </form>
+<div class="ht-portal" style="font-family:Arial,sans-serif;color:#172033;max-width:1200px;margin:0 auto;">
+  <section class="ht-hero ht-full-bleed" style="background:#07153f;color:#fff;margin-top:0;margin-bottom:34px;">
+    <div class="ht-hero-inner ht-full-bleed-inner" style="padding-top:42px;padding-bottom:36px;">
+      <p style="letter-spacing:.08em;text-transform:uppercase;font-size:12px;margin:0 0 10px;color:#f2b34c;font-weight:700;">Independent buying guidance</p>
+      <h1 style="font-size:42px;line-height:1.08;margin:0 0 14px;color:#fff;">Reviews before you buy tools, tech, and home gear.</h1>
+      <p style="max-width:740px;font-size:18px;line-height:1.55;margin:0 0 24px;color:#dce5ff;">HandyTested turns product research, owner feedback, specs, safety signals, and Amazon deal trends into practical recommendations for real buyers.</p>
+      <form role="search" method="get" action="/" style="display:flex;gap:10px;max-width:690px;flex-wrap:wrap;">
+        <input type="search" name="s" placeholder="What are you looking for today?" style="flex:1;min-width:240px;padding:14px 16px;border:0;font-size:15px;">
+        <button type="submit" style="background:#f2a733;color:#07153f;border:0;padding:14px 26px;font-weight:700;">Search</button>
+      </form>
+    </div>
   </section>
 
   <section style="margin:0 0 34px;">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px;align-items:start;">
+    <div class="ht-lead-grid">
       <div>
         <h2 style="font-size:22px;letter-spacing:.02em;margin:0 0 14px;color:#172033;">Latest Reviews</h2>
         {render_feature(latest[0] if latest else None)}
         <div style="margin-top:18px;">{render_card_grid(latest[1:4], "More review guides are coming next.")}</div>
       </div>
-      <aside style="border-left:4px solid #f2a733;padding-left:18px;">
-        <h2 style="font-size:20px;margin:0 0 10px;color:#172033;">Top Amazon Deals</h2>
-        <p style="font-size:14px;line-height:1.6;color:#536078;margin:0 0 16px;">Time-sensitive deal posts are reviewed by the promo agent and removed from public view after the campaign expires.</p>
-        {render_compact_list(deals, "No active deal guides are live right now.")}
-        <p style="margin:8px 0 0;"><a href="/deals/" style="font-weight:700;color:#0a3a78;text-decoration:none;">View all deal guidance</a></p>
-      </aside>
+      {render_deal_rail(deals, latest[4:7])}
     </div>
   </section>
 
