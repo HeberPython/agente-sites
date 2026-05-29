@@ -20,6 +20,7 @@ Optional environment variables:
   PROMO_POST_STATUS          default: draft
   PROMO_MAX_EMAILS           default: 3
   PROMO_MARK_SEEN            default: 1
+  PROMO_DEFAULT_FEATURED_MEDIA optional WordPress media ID for promo posts
   TELEGRAM_TOKEN
   TELEGRAM_CHAT_ID
   PROMO_SAMPLE_EMAIL_FILE     parse a local .eml/.txt file instead of IMAP
@@ -66,6 +67,19 @@ PROMO_POST_STATUS = os.environ.get("PROMO_POST_STATUS", "draft")
 PROMO_SAMPLE_EMAIL_FILE = os.environ.get("PROMO_SAMPLE_EMAIL_FILE", "")
 PROMO_DEFAULT_EXPIRATION_DAYS = int(os.environ.get("PROMO_DEFAULT_EXPIRATION_DAYS", "21"))
 PROMO_EXPIRE_PUBLISHED_POSTS = os.environ.get("PROMO_EXPIRE_PUBLISHED_POSTS", "1") == "1"
+
+
+def parse_int_env(name: str, default: int = 0) -> int:
+    raw = os.environ.get(name, "").strip()
+    if not raw:
+        return default
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+PROMO_DEFAULT_FEATURED_MEDIA = parse_int_env("PROMO_DEFAULT_FEATURED_MEDIA")
 
 
 def load_local_tz() -> dt.tzinfo:
@@ -490,7 +504,7 @@ def expire_due_posts() -> list[dict[str, Any]]:
 
 
 def classify_campaign(promo: PromoEmail) -> dict[str, Any]:
-    allowed_categories = ", ".join(CATEGORIES.keys())
+    allowed_categories = ", ".join([*CATEGORIES.keys(), DEALS_CATEGORY["slug"]])
     prompt = f"""You are the editorial intake agent for HandyTested.com, an English-language Amazon affiliate review site for US buyers.
 
 Read this Amazon Associates promotional email. Do NOT copy promotional wording. Extract the useful editorial opportunity.
@@ -540,6 +554,8 @@ Rules:
 - Set is_time_sensitive true when the article would be misleading after a campaign/event ends.
 - Use ISO dates only when the date is explicit or can be safely inferred from the email date and campaign wording. If the end date is unclear but the promo is clearly temporary, set promotion_end_date null and explain in expiration_reason.
 - Avoid short-lived wording in article_title when possible. Prefer evergreen buyer-intent titles even when the post has an expiration date internally.
+- Use amazon-deals as primary_category when a campaign is broad, mixed, or outside HandyTested's core categories. Do not force baby, beauty, fashion, grocery, or other weak fits into tools, kitchen, outdoor, or cleaning.
+- Add secondary_categories only for categories that strongly and specifically fit the campaign.
 """
     return openai_json(prompt, max_tokens=1200)
 
@@ -569,6 +585,7 @@ Strict rules:
 - Do not use phrases like "today only", "this week", or "limited time" unless the campaign data has a clear end date.
 - Do not say we physically tested products unless the article says "we look for", "we check", or "our review criteria".
 - Add Amazon links using placeholders exactly like this: [AMAZON SEARCH: search query]
+- Keep Amazon placeholders as plain text only. Do not put placeholders inside href attributes or wrap them in <a> tags.
 - Make it 900-1300 words.
 - Include a practical buyer checklist, honest cautions, and a bottom-line recommendation.
 - The first paragraph must include the primary keyword: {campaign['buyer_intent_keyword']}.
@@ -586,7 +603,13 @@ Bottom line
     article = re.sub(r"^```[a-z]*\s*", "", article.strip(), flags=re.IGNORECASE)
     article = re.sub(r"\s*```$", "", article)
     article = replace_amazon_placeholders(article)
+    article = clean_malformed_amazon_links(article)
     return AFFILIATE_DISCLOSURE + "\n" + article
+
+
+def clean_malformed_amazon_links(article: str) -> str:
+    """Remove leftover closing-link text when a model wrapped a placeholder in <a>."""
+    return re.sub(r'(</a>)\s*["“”\']+>\s*[^<]{1,120}</a>', r"\1", article)
 
 
 def replace_amazon_placeholders(article: str) -> str:
@@ -646,6 +669,8 @@ def publish_campaign_post(campaign: dict[str, Any], article_html: str, promo: Pr
         "tags": tag_ids,
         "comment_status": "closed",
     }
+    if PROMO_DEFAULT_FEATURED_MEDIA > 0:
+        payload["featured_media"] = PROMO_DEFAULT_FEATURED_MEDIA
     try:
         post = wp_post("/posts", payload)
         try:

@@ -9,8 +9,10 @@ This agent turns Amazon Associates promo emails sent or forwarded to
 2. Extracts the campaign theme, product categories, buyer angle, and useful links.
 3. Converts the promotion into an English HandyTested buying guide/review article.
 4. Uses Amazon.com affiliate search links with tag `amazonrev089f-20`.
-5. Assigns the post to `Amazon Deals` plus the relevant buyer category.
-6. Publishes to WordPress as `draft` by default.
+5. Assigns the post to `Amazon Deals` plus a relevant buyer category only when
+   the fit is strong; broad or off-niche campaigns stay in `Amazon Deals` only.
+6. Publishes scheduled runs to WordPress automatically; manual workflow runs
+   can still be sent to `draft` for testing.
 7. Detects whether the campaign is seasonal/time-sensitive and stores an
    internal expiration marker in the post.
 8. Moves expired published promo posts back to `draft` automatically.
@@ -30,6 +32,7 @@ Optional:
 - `TELEGRAM_CHAT_ID`
 - `PROMO_DEFAULT_EXPIRATION_DAYS`
 - `PROMO_EXPIRE_PUBLISHED_POSTS`
+- `PROMO_DEFAULT_FEATURED_MEDIA`
 
 ## Workflow
 
@@ -47,6 +50,11 @@ better for seasonal campaigns than waiting almost a full day.
 It processes up to 5 unread promo emails per run and checks for expired
 promotional posts on every run, even when there are no new emails.
 
+Promo posts use WordPress media ID `129` as a safe default featured image unless
+a later workflow provides a campaign-specific featured image. This keeps deal
+cards from appearing image-less while still avoiding copyrighted Amazon email
+assets.
+
 ## Email Intake
 
 The current intake flow is manual forwarding:
@@ -63,9 +71,9 @@ sees the curated promotion emails that should become content.
 
 Manual run:
 
-Use GitHub Actions > HandyTested Amazon Promo Agent > Run workflow. Keep
-`post_status` as `draft` while calibrating. Change to `publish` only after the
-draft quality is consistently good.
+Use GitHub Actions > HandyTested Amazon Promo Agent > Run workflow. Manual runs
+default to `draft` so you can test safely; scheduled runs publish curated
+forwarded emails automatically.
 
 ## Editorial Rules
 
