@@ -39,10 +39,13 @@ Workflow file:
 
 Schedule:
 
-Daily at 10:30 America/Sao_Paulo. It only acts on unread promo emails, so daily
-runs are safer than waiting a full week and missing time-sensitive campaigns.
-It also checks for expired promotional posts on every run, even when there are
-no new emails.
+Every 2 hours from 08:00 to 20:00 America/Sao_Paulo. It only acts on unread
+promo emails, so frequent runs are safe: when the inbox is empty, the agent just
+checks expiration markers and exits without generating a new article. This is
+better for seasonal campaigns than waiting almost a full day.
+
+It processes up to 5 unread promo emails per run and checks for expired
+promotional posts on every run, even when there are no new emails.
 
 ## Email Intake
 

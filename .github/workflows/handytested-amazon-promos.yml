@@ -2,9 +2,9 @@ name: HandyTested Amazon Promo Agent
 
 on:
   schedule:
-    # Runs daily at 10:30 America/Sao_Paulo. The mailbox filter keeps it quiet
-    # when Amazon has not sent a new Associates campaign.
-    - cron: "30 13 * * *"
+    # Runs every 2 hours from 08:00 to 20:00 America/Sao_Paulo.
+    # The mailbox filter keeps it quiet when there are no unread promo emails.
+    - cron: "0 11,13,15,17,19,21,23 * * *"
   workflow_dispatch:
     inputs:
       post_status:
@@ -41,7 +41,7 @@ jobs:
           PROMO_EMAIL_IMAP_PORT: "993"
           PROMO_EMAIL_FOLDER:   INBOX
           PROMO_EMAIL_QUERY:    UNSEEN
-          PROMO_MAX_EMAILS:     "3"
+          PROMO_MAX_EMAILS:     "5"
           PROMO_MARK_SEEN:      "1"
           PROMO_POST_STATUS:    ${{ github.event.inputs.post_status || 'draft' }}
           PROMO_DEFAULT_EXPIRATION_DAYS: "21"
