@@ -2,9 +2,9 @@ name: Agente de Conteúdo
 
 on:
   schedule:
-    # Acorda diariamente às 09:00 horário de Brasília (12:00 UTC).
-    # Publica diariamente, com limite de 1 artigo por site.
-    - cron: "0 12 * * *"
+    # Toda segunda-feira as 09:00 no horario de Brasilia (12:00 UTC).
+    # Publica 1 artigo no Obra e Pratica e 1 artigo no Tem Razao.
+    - cron: "0 12 * * 1"
   workflow_dispatch:  # Permite rodar manualmente pelo GitHub
 
 jobs:
