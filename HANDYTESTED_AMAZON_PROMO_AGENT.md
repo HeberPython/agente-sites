@@ -33,6 +33,8 @@ Optional:
 - `PROMO_DEFAULT_EXPIRATION_DAYS`
 - `PROMO_EXPIRE_PUBLISHED_POSTS`
 - `PROMO_DEFAULT_FEATURED_MEDIA`
+- `PROMO_WP_RETRIES`
+- `PROMO_WP_RETRY_DELAY_SECONDS`
 
 ## Workflow
 
@@ -54,6 +56,10 @@ Promo posts use WordPress media ID `129` as a safe default featured image unless
 a later workflow provides a campaign-specific featured image. This keeps deal
 cards from appearing image-less while still avoiding copyrighted Amazon email
 assets.
+
+WordPress calls are retried before failing. The expiration check is best effort:
+if GitHub Actions temporarily cannot reach WordPress, the agent logs the network
+warning and continues instead of failing the whole run before checking the inbox.
 
 ## Email Intake
 

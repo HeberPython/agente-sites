@@ -38,6 +38,8 @@ import json
 import os
 import re
 import socket
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
@@ -67,6 +69,8 @@ PROMO_POST_STATUS = os.environ.get("PROMO_POST_STATUS", "draft")
 PROMO_SAMPLE_EMAIL_FILE = os.environ.get("PROMO_SAMPLE_EMAIL_FILE", "")
 PROMO_DEFAULT_EXPIRATION_DAYS = int(os.environ.get("PROMO_DEFAULT_EXPIRATION_DAYS", "21"))
 PROMO_EXPIRE_PUBLISHED_POSTS = os.environ.get("PROMO_EXPIRE_PUBLISHED_POSTS", "1") == "1"
+PROMO_WP_RETRIES = int(os.environ.get("PROMO_WP_RETRIES", "3"))
+PROMO_WP_RETRY_DELAY_SECONDS = float(os.environ.get("PROMO_WP_RETRY_DELAY_SECONDS", "6"))
 
 
 def parse_int_env(name: str, default: int = 0) -> int:
@@ -212,8 +216,7 @@ def wp_headers() -> dict[str, str]:
 
 def wp_get(endpoint: str) -> Any:
     req = urllib.request.Request(f"{WP_URL}/wp-json/wp/v2{endpoint}", headers=wp_headers())
-    with urllib.request.urlopen(req, timeout=30) as response:
-        return json.loads(response.read().decode("utf-8"))
+    return wp_urlopen_json(req, timeout=30)
 
 
 def wp_post(endpoint: str, payload: dict[str, Any]) -> Any:
@@ -223,8 +226,22 @@ def wp_post(endpoint: str, payload: dict[str, Any]) -> Any:
         method="POST",
         headers=wp_headers(),
     )
-    with urllib.request.urlopen(req, timeout=40) as response:
-        return json.loads(response.read().decode("utf-8"))
+    return wp_urlopen_json(req, timeout=40)
+
+
+def wp_urlopen_json(req: urllib.request.Request, timeout: int) -> Any:
+    for attempt in range(1, PROMO_WP_RETRIES + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError:
+            raise
+        except (urllib.error.URLError, TimeoutError, socket.timeout, OSError) as exc:
+            if attempt >= PROMO_WP_RETRIES:
+                raise
+            delay = PROMO_WP_RETRY_DELAY_SECONDS * attempt
+            log(f"WordPress network warning ({exc}); retrying in {delay:.0f}s ({attempt}/{PROMO_WP_RETRIES})")
+            time.sleep(delay)
 
 
 def rank_math_update(post_id: int, meta: dict[str, Any]) -> Any:
@@ -691,7 +708,11 @@ def publish_campaign_post(campaign: dict[str, Any], article_html: str, promo: Pr
 
 
 def run() -> None:
-    expired = expire_due_posts()
+    try:
+        expired = expire_due_posts()
+    except (urllib.error.URLError, TimeoutError, socket.timeout, OSError) as exc:
+        expired = []
+        log(f"Skipping expiration check after WordPress network error: {exc}")
     if expired:
         log(f"Expired {len(expired)} published promo post(s).")
         lines = ["<b>HandyTested Amazon Promo Agent</b>", f"Expired {len(expired)} promo post(s):"]
