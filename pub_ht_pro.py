@@ -8,7 +8,7 @@ HandyTested PRO — Agente dedicado de alta qualidade
 - Publica 1 artigo por run (3x/semana via GitHub Actions)
 """
 import urllib.request, urllib.error, urllib.parse
-import http.client, json, base64, os, time, datetime, re, random
+import http.client, json, base64, os, time, datetime, re, random, socket
 
 # ── Configuração ──────────────────────────────────────────────────────────
 OPENAI_API_KEY   = os.environ["OPENAI_API_KEY"]
@@ -37,6 +37,8 @@ TERM_CACHE = {"categories": {}, "tags": {}}
 AUTH_HEADER = "Basic " + base64.b64encode(f"{WP_USER}:{WP_PASS}".encode()).decode()
 
 MIN_WORDS = 1200
+WP_RETRIES = int(os.environ.get("HT_WP_RETRIES", "4"))
+WP_RETRY_DELAY_SECONDS = float(os.environ.get("HT_WP_RETRY_DELAY_SECONDS", "8"))
 
 REVIEW_STANDARDS = """
 QUALITY STANDARDS — match BestReviews, The Wirecutter, Tom's Guide, RTings.com:
@@ -95,8 +97,7 @@ def wp_post(endpoint, data):
         f"{WP_URL}/wp-json/wp/v2{endpoint}", data=body, method="POST",
         headers={"Authorization": AUTH_HEADER, "Content-Type": "application/json"}
     )
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read())
+    return wp_urlopen_json(req, timeout=30)
 
 def rank_math_update(post_id, meta):
     payload = {
@@ -109,16 +110,28 @@ def rank_math_update(post_id, meta):
         f"{WP_URL}/wp-json/rankmath/v1/updateMeta", data=body, method="POST",
         headers={"Authorization": AUTH_HEADER, "Content-Type": "application/json"}
     )
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read())
+    return wp_urlopen_json(req, timeout=30)
 
 def wp_get(endpoint):
     req = urllib.request.Request(
         f"{WP_URL}/wp-json/wp/v2{endpoint}",
         headers={"Authorization": AUTH_HEADER}
     )
-    with urllib.request.urlopen(req, timeout=15) as r:
-        return json.loads(r.read())
+    return wp_urlopen_json(req, timeout=15)
+
+def wp_urlopen_json(req, timeout):
+    for attempt in range(1, WP_RETRIES + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError:
+            raise
+        except (urllib.error.URLError, TimeoutError, socket.timeout, OSError) as exc:
+            if attempt >= WP_RETRIES:
+                raise
+            delay = WP_RETRY_DELAY_SECONDS * attempt
+            log(f"  Aviso de rede WordPress ({exc}); tentando de novo em {delay:.0f}s ({attempt}/{WP_RETRIES})")
+            time.sleep(delay)
 
 def ensure_term(taxonomy, slug, name, description=""):
     cached = TERM_CACHE.setdefault(taxonomy, {}).get(slug)
