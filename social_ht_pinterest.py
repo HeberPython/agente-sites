@@ -4,7 +4,7 @@ Cria pins automáticos para cada artigo publicado no handytested.com.
 Requer secret: PINTEREST_TOKEN (válido 30 dias, renovar em developers.pinterest.com)
 """
 import urllib.request, urllib.parse, urllib.error
-import http.client, json, base64, os, time, datetime, re
+import http.client, json, base64, os, time, datetime, re, socket
 
 OPENAI_API_KEY   = os.environ["OPENAI_API_KEY"]
 OPENAI_MODEL     = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
@@ -33,10 +33,38 @@ BOARD_NAMES = {
 }
 DEFAULT_BOARD = "HandyTested — Product Reviews"
 SKIP_TAG_SLUGS = {"deal", "promo-email", "seasonal"}
+WP_RETRIES = int(os.environ.get("HT_WP_RETRIES", "8"))
+WP_RETRY_DELAY_SECONDS = float(os.environ.get("HT_WP_RETRY_DELAY_SECONDS", "8"))
+
+
+class TransientWordPressNetworkError(SystemExit):
+    """WordPress was unreachable from the runner after retrying."""
+
+    def __init__(self, exc):
+        super().__init__(0)
+        self.exc = exc
 
 # ── Logging ───────────────────────────────────────────────────────────────
 def log(msg):
     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {msg}", flush=True)
+
+def wp_urlopen_json(req, timeout=15):
+    for attempt in range(1, WP_RETRIES + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError:
+            raise
+        except (urllib.error.URLError, TimeoutError, socket.timeout, OSError) as exc:
+            if attempt >= WP_RETRIES:
+                log("=" * 55)
+                log(f"WordPress indisponivel apos {WP_RETRIES} tentativas: {exc}")
+                log("Pins adiados para o proximo ciclo; encerrando sem marcar o workflow como falha.")
+                log("=" * 55)
+                raise TransientWordPressNetworkError(exc) from exc
+            delay = WP_RETRY_DELAY_SECONDS * attempt
+            log(f"  Aviso de rede WordPress ({exc}); tentando de novo em {delay:.0f}s ({attempt}/{WP_RETRIES})")
+            time.sleep(delay)
 
 def obter_access_token():
     """Gera access token novo via refresh token, com fallback para PINTEREST_TOKEN."""
@@ -179,8 +207,7 @@ def buscar_imagem_post(media_id):
             f"{WP_URL}/wp-json/wp/v2/media/{media_id}",
             headers={"Authorization": AUTH_HEADER}
         )
-        with urllib.request.urlopen(req, timeout=10) as r:
-            media = json.loads(r.read())
+        media = wp_urlopen_json(req, timeout=10)
         sizes = media.get("media_details", {}).get("sizes", {})
         for sz in ["large", "medium_large", "medium", "full"]:
             if sz in sizes:
@@ -196,23 +223,20 @@ def buscar_posts_recentes(quantidade=3):
         f"&_fields=id,title,link,excerpt,categories,featured_media,tags",
         headers={"Authorization": AUTH_HEADER}
     )
-    with urllib.request.urlopen(req, timeout=15) as r:
-        posts = json.loads(r.read())
+    posts = wp_urlopen_json(req, timeout=15)
 
     req2 = urllib.request.Request(
         f"{WP_URL}/wp-json/wp/v2/categories?per_page=20",
         headers={"Authorization": AUTH_HEADER}
     )
-    with urllib.request.urlopen(req2, timeout=15) as r:
-        cats = json.loads(r.read())
+    cats = wp_urlopen_json(req2, timeout=15)
     cat_map = {c["id"]: c["slug"] for c in cats}
 
     req3 = urllib.request.Request(
         f"{WP_URL}/wp-json/wp/v2/tags?per_page=100&_fields=id,slug",
         headers={"Authorization": AUTH_HEADER}
     )
-    with urllib.request.urlopen(req3, timeout=15) as r:
-        tags = json.loads(r.read())
+    tags = wp_urlopen_json(req3, timeout=15)
     tag_map = {t["id"]: t["slug"] for t in tags}
 
     result = []
