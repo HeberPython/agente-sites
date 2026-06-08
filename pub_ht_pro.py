@@ -48,6 +48,13 @@ class TransientWordPressNetworkError(SystemExit):
         super().__init__(0)
         self.exc = exc
 
+
+class DeferredPublication(SystemExit):
+    """The run should be skipped without publishing or failing the workflow."""
+
+    def __init__(self):
+        super().__init__(0)
+
 REVIEW_STANDARDS = """
 QUALITY STANDARDS — match BestReviews, The Wirecutter, Tom's Guide, RTings.com:
 1. SPECIFICITY: Name exact brand + model. Include real specs (voltage, dB, RPM, weight, battery life).
@@ -346,7 +353,7 @@ STRUCTURE:
 
     for tentativa in range(3):
         try:
-            html = claude(prompt, max_tokens=2800)
+            html = claude(prompt, max_tokens=4200)
             # Strip markdown fences if model wraps output
             html = re.sub(r"^```[a-z]*\s*", "", html.strip(), flags=re.IGNORECASE)
             html = re.sub(r"\s*```$", "", html)
@@ -357,7 +364,7 @@ STRUCTURE:
                 raise ValueError("HTML sem h2 — estrutura inválida")
             word_count = len(re.sub(r"<[^>]+>", "", html).split())
             log(f"  Palavras: {word_count} | Chars: {len(html)}")
-            if word_count < MIN_WORDS and tentativa < 2:
+            if word_count < MIN_WORDS:
                 raise ValueError(f"Curto demais: {word_count} palavras (mín {MIN_WORDS})")
             return html, word_count
         except (ValueError, Exception) as e:
@@ -365,7 +372,9 @@ STRUCTURE:
                 log(f"  HTML tentativa {tentativa+1}/3 falhou: {e}. Retry em 10s...")
                 time.sleep(10)
             else:
-                raise Exception(f"HTML falhou após 3 tentativas: {e}")
+                log(f"HTML falhou após 3 tentativas: {e}")
+                log("Publicação adiada para manter o padrão editorial; encerrando sem publicar.")
+                raise DeferredPublication()
 
 def gerar_meta(topico):
     """Chamada 2 de 2: gera meta_description + excerpt como JSON pequeno."""
