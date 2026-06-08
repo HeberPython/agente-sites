@@ -40,6 +40,14 @@ MIN_WORDS = 1200
 WP_RETRIES = int(os.environ.get("HT_WP_RETRIES", "4"))
 WP_RETRY_DELAY_SECONDS = float(os.environ.get("HT_WP_RETRY_DELAY_SECONDS", "8"))
 
+
+class TransientWordPressNetworkError(SystemExit):
+    """WordPress was unreachable from the runner after retrying."""
+
+    def __init__(self, exc):
+        super().__init__(0)
+        self.exc = exc
+
 REVIEW_STANDARDS = """
 QUALITY STANDARDS — match BestReviews, The Wirecutter, Tom's Guide, RTings.com:
 1. SPECIFICITY: Name exact brand + model. Include real specs (voltage, dB, RPM, weight, battery life).
@@ -128,7 +136,11 @@ def wp_urlopen_json(req, timeout):
             raise
         except (urllib.error.URLError, TimeoutError, socket.timeout, OSError) as exc:
             if attempt >= WP_RETRIES:
-                raise
+                log("=" * 55)
+                log(f"WordPress indisponível após {WP_RETRIES} tentativas: {exc}")
+                log("Publicação adiada para o próximo ciclo; encerrando sem marcar o workflow como falha.")
+                log("=" * 55)
+                raise TransientWordPressNetworkError(exc) from exc
             delay = WP_RETRY_DELAY_SECONDS * attempt
             log(f"  Aviso de rede WordPress ({exc}); tentando de novo em {delay:.0f}s ({attempt}/{WP_RETRIES})")
             time.sleep(delay)
