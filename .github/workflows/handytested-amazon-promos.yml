@@ -40,6 +40,7 @@ jobs:
           PROMO_EMAIL_IMAP_HOST: imap.hostinger.com
           PROMO_EMAIL_IMAP_PORT: "993"
           PROMO_EMAIL_FOLDER:   INBOX
+          PROMO_EMAIL_FOLDERS:  INBOX,INBOX.Junk
           PROMO_EMAIL_QUERY:    UNSEEN
           PROMO_MAX_EMAILS:     "5"
           PROMO_MARK_SEEN:      "1"

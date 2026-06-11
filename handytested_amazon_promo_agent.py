@@ -15,6 +15,7 @@ Optional environment variables:
   PROMO_EMAIL_IMAP_HOST      default: imap.hostinger.com
   PROMO_EMAIL_IMAP_PORT      default: 993
   PROMO_EMAIL_FOLDER         default: INBOX
+  PROMO_EMAIL_FOLDERS        optional comma-separated folders, e.g. INBOX,INBOX.Junk
   PROMO_EMAIL_QUERY          default: UNSEEN
   OPENAI_MODEL               default: gpt-4o-mini
   PROMO_POST_STATUS          default: draft
@@ -62,6 +63,11 @@ PROMO_EMAIL_PASS = os.environ["PROMO_EMAIL_PASS"]
 PROMO_EMAIL_IMAP_HOST = os.environ.get("PROMO_EMAIL_IMAP_HOST", "imap.hostinger.com")
 PROMO_EMAIL_IMAP_PORT = int(os.environ.get("PROMO_EMAIL_IMAP_PORT", "993"))
 PROMO_EMAIL_FOLDER = os.environ.get("PROMO_EMAIL_FOLDER", "INBOX")
+PROMO_EMAIL_FOLDERS = [
+    folder.strip()
+    for folder in os.environ.get("PROMO_EMAIL_FOLDERS", PROMO_EMAIL_FOLDER).split(",")
+    if folder.strip()
+]
 PROMO_EMAIL_QUERY = os.environ.get("PROMO_EMAIL_QUERY", "UNSEEN")
 PROMO_MAX_EMAILS = int(os.environ.get("PROMO_MAX_EMAILS", "3"))
 PROMO_MARK_SEEN = os.environ.get("PROMO_MARK_SEEN", "1") == "1"
@@ -136,6 +142,7 @@ AFFILIATE_DISCLOSURE = (
 @dataclass
 class PromoEmail:
     uid: bytes
+    folder: str
     subject: str
     sender: str
     date: str
@@ -341,11 +348,11 @@ def clean_tracking_link(link: str) -> str:
     return link
 
 
-def connect_mailbox() -> imaplib.IMAP4_SSL:
+def connect_mailbox(folder: str = PROMO_EMAIL_FOLDER) -> imaplib.IMAP4_SSL:
     socket.setdefaulttimeout(40)
     mailbox = imaplib.IMAP4_SSL(PROMO_EMAIL_IMAP_HOST, PROMO_EMAIL_IMAP_PORT)
     mailbox.login(PROMO_EMAIL_USER, PROMO_EMAIL_PASS)
-    mailbox.select(PROMO_EMAIL_FOLDER)
+    mailbox.select(folder)
     return mailbox
 
 
@@ -353,31 +360,34 @@ def fetch_promo_emails() -> list[PromoEmail]:
     if PROMO_SAMPLE_EMAIL_FILE:
         return [load_sample_email(PROMO_SAMPLE_EMAIL_FILE)]
 
-    mailbox = connect_mailbox()
-    try:
-        status, data = mailbox.uid("search", None, PROMO_EMAIL_QUERY)
-        if status != "OK":
-            raise RuntimeError(f"IMAP search failed: {status} {data}")
-        uids = data[0].split()[-PROMO_MAX_EMAILS:]
-        emails: list[PromoEmail] = []
-        for uid in uids:
-            status, raw_data = mailbox.uid("fetch", uid, "(RFC822)")
-            if status != "OK" or not raw_data or not raw_data[0]:
-                continue
-            msg = email.message_from_bytes(raw_data[0][1])
-            text, links = body_from_message(msg)
-            emails.append(PromoEmail(
-                uid=uid,
-                subject=decode_header_value(msg.get("Subject")),
-                sender=decode_header_value(msg.get("From")),
-                date=decode_header_value(msg.get("Date")),
-                message_id=decode_header_value(msg.get("Message-ID")),
-                text=text,
-                links=links,
-            ))
-        return emails
-    finally:
-        mailbox.logout()
+    emails: list[PromoEmail] = []
+    per_folder_limit = max(PROMO_MAX_EMAILS, 1)
+    for folder in PROMO_EMAIL_FOLDERS:
+        mailbox = connect_mailbox(folder)
+        try:
+            status, data = mailbox.uid("search", None, PROMO_EMAIL_QUERY)
+            if status != "OK":
+                raise RuntimeError(f"IMAP search failed in {folder}: {status} {data}")
+            uids = data[0].split()[-per_folder_limit:]
+            for uid in uids:
+                status, raw_data = mailbox.uid("fetch", uid, "(RFC822)")
+                if status != "OK" or not raw_data or not raw_data[0]:
+                    continue
+                msg = email.message_from_bytes(raw_data[0][1])
+                text, links = body_from_message(msg)
+                emails.append(PromoEmail(
+                    uid=uid,
+                    folder=folder,
+                    subject=decode_header_value(msg.get("Subject")),
+                    sender=decode_header_value(msg.get("From")),
+                    date=decode_header_value(msg.get("Date")),
+                    message_id=decode_header_value(msg.get("Message-ID")),
+                    text=text,
+                    links=links,
+                ))
+        finally:
+            mailbox.logout()
+    return emails[-PROMO_MAX_EMAILS:]
 
 
 def load_sample_email(path: str) -> PromoEmail:
@@ -391,6 +401,7 @@ def load_sample_email(path: str) -> PromoEmail:
         if text:
             return PromoEmail(
                 uid=b"sample",
+                folder="sample",
                 subject=subject,
                 sender=sender,
                 date=decode_header_value(msg.get("Date")),
@@ -405,6 +416,7 @@ def load_sample_email(path: str) -> PromoEmail:
     links = sorted({clean_tracking_link(link) for link in re.findall(r'https?://[^\s"<>]+', text)})
     return PromoEmail(
         uid=b"sample",
+        folder="sample",
         subject="Sample Amazon Associates promotion",
         sender="sample@amazon.com",
         date=dt.date.today().isoformat(),
@@ -414,10 +426,11 @@ def load_sample_email(path: str) -> PromoEmail:
     )
 
 
-def mark_seen(uid: bytes) -> None:
+def mark_seen(promo: PromoEmail) -> None:
+    uid = promo.uid
     if not PROMO_MARK_SEEN or uid == b"sample":
         return
-    mailbox = connect_mailbox()
+    mailbox = connect_mailbox(promo.folder)
     try:
         mailbox.uid("store", uid, "+FLAGS", "(\\Seen)")
     finally:
@@ -732,14 +745,14 @@ def run() -> None:
         campaign = classify_campaign(promo)
         if not campaign.get("is_relevant"):
             log("Email is not relevant. Marking as seen.")
-            mark_seen(promo.uid)
+            mark_seen(promo)
             continue
         article_html = generate_article(campaign)
         post = publish_campaign_post(campaign, article_html, promo)
         if not post.get("skipped"):
             created.append(post)
             log(f"Created {PROMO_POST_STATUS}: {post.get('link')}")
-        mark_seen(promo.uid)
+        mark_seen(promo)
 
     if created:
         lines = ["<b>HandyTested Amazon Promo Agent</b>", f"Created {len(created)} {PROMO_POST_STATUS} post(s):"]
