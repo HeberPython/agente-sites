@@ -79,6 +79,10 @@ PROMO_WP_RETRIES = int(os.environ.get("PROMO_WP_RETRIES", "3"))
 PROMO_WP_RETRY_DELAY_SECONDS = float(os.environ.get("PROMO_WP_RETRY_DELAY_SECONDS", "6"))
 
 
+class TransientWordPressNetworkError(RuntimeError):
+    """WordPress was unreachable from the runner after retrying."""
+
+
 def parse_int_env(name: str, default: int = 0) -> int:
     raw = os.environ.get(name, "").strip()
     if not raw:
@@ -245,7 +249,7 @@ def wp_urlopen_json(req: urllib.request.Request, timeout: int) -> Any:
             raise
         except (urllib.error.URLError, TimeoutError, socket.timeout, OSError) as exc:
             if attempt >= PROMO_WP_RETRIES:
-                raise
+                raise TransientWordPressNetworkError(str(exc)) from exc
             delay = PROMO_WP_RETRY_DELAY_SECONDS * attempt
             log(f"WordPress network warning ({exc}); retrying in {delay:.0f}s ({attempt}/{PROMO_WP_RETRIES})")
             time.sleep(delay)
@@ -716,6 +720,8 @@ def publish_campaign_post(campaign: dict[str, Any], article_html: str, promo: Pr
         except Exception as meta_exc:
             log(f"Rank Math meta warning for post {post.get('id')}: {meta_exc}")
         return post
+    except TransientWordPressNetworkError:
+        raise
     except Exception as exc:
         raise RuntimeError(f"WordPress publish failed for '{title}': {exc}") from exc
 
@@ -723,7 +729,7 @@ def publish_campaign_post(campaign: dict[str, Any], article_html: str, promo: Pr
 def run() -> None:
     try:
         expired = expire_due_posts()
-    except (urllib.error.URLError, TimeoutError, socket.timeout, OSError) as exc:
+    except (TransientWordPressNetworkError, urllib.error.URLError, TimeoutError, socket.timeout, OSError) as exc:
         expired = []
         log(f"Skipping expiration check after WordPress network error: {exc}")
     if expired:
@@ -762,4 +768,11 @@ def run() -> None:
 
 
 if __name__ == "__main__":
-    run()
+    try:
+        run()
+    except TransientWordPressNetworkError as exc:
+        log("=" * 55)
+        log(f"WordPress unavailable after {PROMO_WP_RETRIES} attempts: {exc}")
+        log("Promo publication deferred; keeping the email unread for the next scheduled run.")
+        log("=" * 55)
+        raise SystemExit(0)
