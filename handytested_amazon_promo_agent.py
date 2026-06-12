@@ -374,7 +374,7 @@ def fetch_promo_emails() -> list[PromoEmail]:
                 raise RuntimeError(f"IMAP search failed in {folder}: {status} {data}")
             uids = data[0].split()[-per_folder_limit:]
             for uid in uids:
-                status, raw_data = mailbox.uid("fetch", uid, "(RFC822)")
+                status, raw_data = mailbox.uid("fetch", uid, "(BODY.PEEK[])")
                 if status != "OK" or not raw_data or not raw_data[0]:
                     continue
                 msg = email.message_from_bytes(raw_data[0][1])
