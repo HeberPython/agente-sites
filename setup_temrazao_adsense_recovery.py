@@ -254,16 +254,7 @@ def install_technical_recovery_snippet() -> None:
     except Exception as exc:
         log(f"Rank Math permalink flush skipped: {exc}")
 
-    code = r'''
-add_action('wp_head', function () {
-    echo '<style id="tr-adsense-cleanup">.ast-header-button-1{display:none!important}</style>' . "\n";
-});
-'''
-    upsert_code_snippet(
-        "Tem Razao hide leftover template button",
-        code,
-        "Hides the leftover Astra template button that still says Contact Me in the header.",
-    )
+    log("Skipped Code Snippets header cleanup; sitemap recovery is handled by Rank Math.")
 
 
 def create_cornerstone_posts(categories: dict[str, int]) -> None:
