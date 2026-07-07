@@ -69,6 +69,10 @@ SITES = [
         "nicho": "curiosidades científicas, como as coisas funcionam, tecnologia do dia a dia, ciência explicada de forma simples",
         "tom": "curioso, acessível, levemente informal, explica conceitos complexos de forma simples",
         "publico": "brasileiros curiosos sobre ciência e tecnologia",
+        "diferencial_editorial": (
+            "explicar ciência e tecnologia com exemplos brasileiros, mecanismos passo a passo, "
+            "limites reais, perguntas frequentes e links internos para guias relacionados"
+        ),
         "categorias": {
             "tecnologia": 5,
             "ciencia": 6,
@@ -225,10 +229,12 @@ def claude(prompt, max_tokens=2800):
 
 def gerar_topico(site, titulos_existentes):
     existentes = "\n".join(f"- {t}" for t in titulos_existentes[:30]) or "Nenhum ainda"
+    diferencial = site.get("diferencial_editorial", "conteúdo original, útil e específico")
     prompt = f"""Você é um estrategista de SEO sênior especializado em conteúdo para o blog "{site['name']}".
 
 Nicho: {site['nicho']}
 Público: {site['publico']}
+Diferencial editorial obrigatório: {diferencial}
 
 Artigos já publicados (NÃO sugerir estes):
 {existentes}
@@ -238,6 +244,8 @@ Sugira UM tópico novo seguindo estes critérios:
 - Específico o suficiente para cobrir em profundidade (não genérico demais)
 - Com potencial real de busca no Google Brasil
 - Que resolva uma dúvida concreta ou problema prático do público
+- Que permita acrescentar explicação própria, exemplos concretos, limites da tecnologia e links internos
+- Evite títulos repetitivos demais começando sempre com "Como funciona a tecnologia de..."
 
 Responda APENAS com JSON válido:
 {{
@@ -416,20 +424,37 @@ STRUCTURE (900-1100 words):
 
 def gerar_artigo(site, topico):
     """Gera artigo PT-BR em 2 chamadas: HTML direto + meta separado."""
+    diferencial = site.get("diferencial_editorial", "conteúdo original, útil e específico")
     prompt_html = f"""Você é um especialista com mais de 10 anos de experiência em {site['nicho']}, escrevendo para "{site['name']}".
 
 ARTIGO: "{topico['titulo']}"
 PALAVRA-CHAVE: {topico['palavra_chave']}
 TOM: {site['tom']}
 PÚBLICO: {site['publico']}
+DIFERENCIAL EDITORIAL: {diferencial}
 
 SAÍDA: APENAS HTML válido — sem JSON, sem markdown, sem explicação.
-Comece imediatamente com <p>. Use: <p> <h2> <h3> <ul> <ol> <li> <blockquote> <strong>
+Comece imediatamente com <p>. Use: <p> <h2> <h3> <ul> <ol> <li> <blockquote> <strong> <a>
 
-ESTRUTURA (900-1100 palavras):
+REGRAS DE QUALIDADE PARA ADSENSE E GOOGLE:
+- Não escreva texto genérico que poderia servir para qualquer site.
+- Inclua pelo menos 2 exemplos práticos do Brasil ou do cotidiano.
+- Explique o mecanismo em etapas, com causa e efeito.
+- Inclua limitações, riscos, privacidade, segurança ou custos quando fizer sentido.
+- Acrescente 2 links internos naturais usando estas URLs quando relevantes:
+  https://temrazao.com.br/fontes-e-metodologia/
+  https://temrazao.com.br/category/como-funciona/
+  https://temrazao.com.br/category/tecnologia/
+  https://temrazao.com.br/category/ciencia/
+- Se citar uma fonte externa, use apenas nome da entidade e contexto; não invente URL.
+
+ESTRUTURA (1200-1600 palavras):
 <p>Introdução: 2 parágrafos — contexto real + o que o leitor vai aprender. Inclua a palavra-chave nas primeiras 60 palavras.</p>
-[4-5 seções H2 práticas — cada uma com 2-3 parágrafos densos com informações específicas, medidas, etapas]
-<strong>Atenção:</strong> [aviso importante relevante ao tema]
+[5-6 seções H2 práticas — cada uma com 2-3 parágrafos densos com informações específicas, exemplos, medidas ou etapas]
+<h2>Exemplo prático</h2>
+[um cenário cotidiano mostrando o conceito funcionando]
+<h2>Limites e cuidados</h2>
+[o que a tecnologia/conceito ainda não resolve bem, riscos e atenções]
 <h2>Erros Comuns</h2>
 [3 erros reais com solução objetiva]
 <h2>Perguntas Frequentes</h2>

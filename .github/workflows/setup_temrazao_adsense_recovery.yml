@@ -1,0 +1,27 @@
+name: Tem Razao AdSense Recovery
+
+on:
+  workflow_dispatch:
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Baixar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Aplicar recuperacao editorial e tecnica do Tem Razao
+        env:
+          TR_WP_PASS: ${{ secrets.TR_WP_PASS }}
+          TR_WP_USER: hebergravano@gmail.com
+          TR_WP_URL: https://temrazao.com.br
+        run: python setup_temrazao_adsense_recovery.py
