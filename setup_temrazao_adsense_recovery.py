@@ -214,6 +214,131 @@ def update_existing_posts(categories: dict[str, int]) -> None:
         log(f"Post improved: {title} ({post_word_count(post)} words)")
 
 
+def upsert_code_snippet(name: str, code: str, description: str) -> None:
+    snippets = request_json(
+        "GET",
+        f"/wp-json/code-snippets/v1/snippets?search={urllib.parse.quote(name)}&per_page=100",
+    )
+    payload = {
+        "name": name,
+        "desc": description,
+        "code": code,
+        "scope": "global",
+        "active": True,
+        "tags": ["temrazao", "adsense", "seo"],
+        "priority": 10,
+    }
+    if isinstance(snippets, list):
+        for snippet in snippets:
+            if snippet.get("name") == name:
+                request_json("POST", f"/wp-json/code-snippets/v1/snippets/{snippet['id']}", payload)
+                request_json("POST", f"/wp-json/code-snippets/v1/snippets/{snippet['id']}/activate")
+                log(f"Updated code snippet: {name}")
+                return
+    created = request_json("POST", "/wp-json/code-snippets/v1/snippets", payload)
+    snippet_id = created.get("id")
+    if snippet_id:
+        request_json("POST", f"/wp-json/code-snippets/v1/snippets/{snippet_id}/activate")
+    log(f"Created code snippet: {name}")
+
+
+def install_technical_recovery_snippet() -> None:
+    code = r'''
+function tr_adsense_xml_escape($value) {
+    return esc_xml($value);
+}
+
+function tr_adsense_sitemap_urlset($items) {
+    status_header(200);
+    nocache_headers();
+    header('Content-Type: application/xml; charset=UTF-8');
+    echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+    echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+    foreach ($items as $item) {
+        echo "  <url>\n";
+        echo '    <loc>' . tr_adsense_xml_escape($item['loc']) . "</loc>\n";
+        if (!empty($item['lastmod'])) {
+            echo '    <lastmod>' . tr_adsense_xml_escape($item['lastmod']) . "</lastmod>\n";
+        }
+        echo "  </url>\n";
+    }
+    echo "</urlset>\n";
+    exit;
+}
+
+function tr_adsense_sitemap_index() {
+    status_header(200);
+    nocache_headers();
+    header('Content-Type: application/xml; charset=UTF-8');
+    $today = gmdate('c');
+    $sitemaps = array(
+        home_url('/post-sitemap.xml'),
+        home_url('/page-sitemap.xml'),
+        home_url('/category-sitemap.xml'),
+    );
+    echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+    echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+    foreach ($sitemaps as $sitemap) {
+        echo "  <sitemap>\n";
+        echo '    <loc>' . tr_adsense_xml_escape($sitemap) . "</loc>\n";
+        echo '    <lastmod>' . tr_adsense_xml_escape($today) . "</lastmod>\n";
+        echo "  </sitemap>\n";
+    }
+    echo "</sitemapindex>\n";
+    exit;
+}
+
+add_action('template_redirect', function () {
+    $path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    if ($path === '/sitemap_index.xml') {
+        tr_adsense_sitemap_index();
+    }
+    if ($path === '/post-sitemap.xml') {
+        $posts = get_posts(array('post_type' => 'post', 'post_status' => 'publish', 'numberposts' => 500, 'orderby' => 'modified', 'order' => 'DESC'));
+        $items = array();
+        foreach ($posts as $post) {
+            $items[] = array('loc' => get_permalink($post), 'lastmod' => get_post_modified_time('c', true, $post));
+        }
+        tr_adsense_sitemap_urlset($items);
+    }
+    if ($path === '/page-sitemap.xml') {
+        $pages = get_posts(array('post_type' => 'page', 'post_status' => 'publish', 'numberposts' => 200, 'orderby' => 'modified', 'order' => 'DESC'));
+        $items = array();
+        foreach ($pages as $page) {
+            $items[] = array('loc' => get_permalink($page), 'lastmod' => get_post_modified_time('c', true, $page));
+        }
+        tr_adsense_sitemap_urlset($items);
+    }
+    if ($path === '/category-sitemap.xml') {
+        $terms = get_terms(array('taxonomy' => 'category', 'hide_empty' => true));
+        $items = array();
+        foreach ($terms as $term) {
+            $items[] = array('loc' => get_term_link($term), 'lastmod' => gmdate('c'));
+        }
+        tr_adsense_sitemap_urlset($items);
+    }
+});
+
+add_filter('robots_txt', function ($output, $public) {
+    $lines = array_filter(array_map('trim', explode("\n", (string) $output)), function ($line) {
+        return stripos($line, 'Sitemap:') !== 0;
+    });
+    $lines[] = '';
+    $lines[] = 'Sitemap: ' . home_url('/sitemap_index.xml');
+    return implode("\n", $lines) . "\n";
+}, 20, 2);
+
+add_action('wp_head', function () {
+    echo '<style id="tr-adsense-cleanup">.ast-header-button-1{display:none!important}</style>' . "\n";
+});
+'''
+    upsert_code_snippet(
+        "Tem Razao technical recovery for AdSense",
+        code,
+        "Provides XML sitemaps, normalizes robots.txt, and hides the leftover template header button.",
+    )
+
+
 def create_cornerstone_posts(categories: dict[str, int]) -> None:
     posts = {
         "como-o-tem-razao-explica-tecnologia-sem-complicar": {
@@ -290,6 +415,49 @@ def create_cornerstone_posts(categories: dict[str, int]) -> None:
 </ul>
 <h2>Como o leitor pode usar isso</h2>
 <p>Antes de confiar em uma explicação, pergunte: quem está dizendo, com base em quê, quando foi publicado e qual interesse pode existir por trás daquela afirmação? Essas quatro perguntas já filtram boa parte do conteúdo fraco.</p>
+""",
+        },
+        "por-que-algumas-tecnologias-prometem-mais-do-que-entregam": {
+            "title": "Por que algumas tecnologias prometem mais do que entregam?",
+            "category": categories["curiosidades"],
+            "excerpt": "Entenda por que certas tecnologias parecem revolucionárias no lançamento, mas demoram para fazer diferença real no cotidiano.",
+            "content": """
+<p>Algumas tecnologias chegam ao público com promessa de revolução. Meses depois, muita gente percebe que a mudança foi menor do que parecia. Isso não significa que a tecnologia seja inútil. Muitas vezes, significa que existe uma distância grande entre demonstração, produto real, custo e adoção em escala.</p>
+<h2>Protótipo não é rotina</h2>
+<p>Um protótipo pode funcionar muito bem em ambiente controlado. O desafio começa quando precisa operar com poeira, calor, internet instável, usuários diferentes, manutenção cara e integração com sistemas antigos.</p>
+<h2>O custo muda tudo</h2>
+<p>Uma tecnologia pode ser tecnicamente impressionante e economicamente inviável. Para chegar à casa das pessoas, precisa caber no orçamento, ter assistência, peças, garantia e vantagem clara sobre soluções simples.</p>
+<h2>O hábito do usuário pesa</h2>
+<p>Nem toda melhoria técnica muda comportamento. Às vezes, o método antigo é bom o suficiente. Um produto novo precisa ser não apenas melhor, mas fácil de entender e usar.</p>
+<h2>O ciclo de maturidade</h2>
+<p>Boas tecnologias costumam melhorar em ondas: primeiro chamam atenção, depois decepcionam expectativas exageradas e, por fim, encontram usos mais realistas. O valor aparece quando deixam de ser promessa e viram ferramenta confiável.</p>
+<h2>Como avaliar uma novidade</h2>
+<ul>
+<li>Qual problema concreto ela resolve?</li>
+<li>Quanto custa manter?</li>
+<li>Funciona fora da demonstração?</li>
+<li>Quem já usa com resultado real?</li>
+<li>Quais limitações o fabricante admite?</li>
+</ul>
+<p>Esse olhar ajuda a separar curiosidade legítima de propaganda. Tecnologia boa não precisa parecer mágica; precisa resolver algo de forma consistente.</p>
+""",
+        },
+        "por-que-a-mesma-tecnologia-pode-falhar-em-situacoes-diferentes": {
+            "title": "Por que a mesma tecnologia pode falhar em situações diferentes?",
+            "category": categories["curiosidades"],
+            "excerpt": "Veja por que sensores, aplicativos e sistemas inteligentes funcionam bem em alguns cenários e falham em outros.",
+            "content": """
+<p>Uma tecnologia pode funcionar perfeitamente em um teste e falhar em outro lugar. Isso acontece com reconhecimento facial, GPS, Wi-Fi, sensores, assistentes de voz e muitos sistemas inteligentes. O motivo quase sempre está no contexto.</p>
+<h2>Dados de entrada mudam</h2>
+<p>Todo sistema depende de dados. Uma câmera precisa de luz adequada. Um microfone sofre com ruído. Um GPS perde precisão entre prédios altos. Quando a entrada piora, a resposta também piora.</p>
+<h2>Ambiente interfere</h2>
+<p>Calor, umidade, obstáculos, interferência eletromagnética e conexão instável podem alterar o desempenho. É por isso que produtos usados em indústria, medicina ou transporte precisam de testes mais rigorosos.</p>
+<h2>Treinamento e configuração importam</h2>
+<p>Sistemas baseados em software dependem de configuração correta e, muitas vezes, de modelos treinados com dados representativos. Se o cenário real é diferente do cenário usado no desenvolvimento, a falha aparece.</p>
+<h2>Expectativa também conta</h2>
+<p>Às vezes a tecnologia não falha; ela apenas não faz o que o usuário imaginou. Um sensor pode indicar tendência, não diagnóstico. Um algoritmo pode sugerir, não garantir. Entender o limite evita frustração.</p>
+<h2>Conclusão</h2>
+<p>Quando uma tecnologia falha, a pergunta certa não é apenas “ela presta?”. A pergunta melhor é: em quais condições ela funciona bem, quais dados precisa receber e quais limites foram assumidos no projeto?</p>
 """,
         },
     }
@@ -464,6 +632,7 @@ def main() -> int:
 
     create_cornerstone_posts(categories)
     update_existing_posts(categories)
+    install_technical_recovery_snippet()
 
     log("Tem Razao AdSense recovery completed.")
     return 0
