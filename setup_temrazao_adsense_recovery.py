@@ -243,99 +243,26 @@ def upsert_code_snippet(name: str, code: str, description: str) -> None:
 
 
 def install_technical_recovery_snippet() -> None:
+    try:
+        request_json("POST", "/wp-json/rankmath/v1/saveModule", {"module": "sitemap", "state": "on"})
+        log("Rank Math sitemap module enabled.")
+    except Exception as exc:
+        log(f"Rank Math sitemap module enable failed: {exc}")
+    try:
+        request_json("POST", "/wp-json/rankmath/v1/toolsAction", {"action": "flushPermalinks"})
+        log("Rank Math permalink flush requested.")
+    except Exception as exc:
+        log(f"Rank Math permalink flush skipped: {exc}")
+
     code = r'''
-function tr_adsense_xml_escape($value) {
-    return esc_xml($value);
-}
-
-function tr_adsense_sitemap_urlset($items) {
-    status_header(200);
-    nocache_headers();
-    header('Content-Type: application/xml; charset=UTF-8');
-    echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-    echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
-    foreach ($items as $item) {
-        echo "  <url>\n";
-        echo '    <loc>' . tr_adsense_xml_escape($item['loc']) . "</loc>\n";
-        if (!empty($item['lastmod'])) {
-            echo '    <lastmod>' . tr_adsense_xml_escape($item['lastmod']) . "</lastmod>\n";
-        }
-        echo "  </url>\n";
-    }
-    echo "</urlset>\n";
-    exit;
-}
-
-function tr_adsense_sitemap_index() {
-    status_header(200);
-    nocache_headers();
-    header('Content-Type: application/xml; charset=UTF-8');
-    $today = gmdate('c');
-    $sitemaps = array(
-        home_url('/post-sitemap.xml'),
-        home_url('/page-sitemap.xml'),
-        home_url('/category-sitemap.xml'),
-    );
-    echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-    echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
-    foreach ($sitemaps as $sitemap) {
-        echo "  <sitemap>\n";
-        echo '    <loc>' . tr_adsense_xml_escape($sitemap) . "</loc>\n";
-        echo '    <lastmod>' . tr_adsense_xml_escape($today) . "</lastmod>\n";
-        echo "  </sitemap>\n";
-    }
-    echo "</sitemapindex>\n";
-    exit;
-}
-
-add_action('template_redirect', function () {
-    $path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
-    if ($path === '/sitemap_index.xml') {
-        tr_adsense_sitemap_index();
-    }
-    if ($path === '/post-sitemap.xml') {
-        $posts = get_posts(array('post_type' => 'post', 'post_status' => 'publish', 'numberposts' => 500, 'orderby' => 'modified', 'order' => 'DESC'));
-        $items = array();
-        foreach ($posts as $post) {
-            $items[] = array('loc' => get_permalink($post), 'lastmod' => get_post_modified_time('c', true, $post));
-        }
-        tr_adsense_sitemap_urlset($items);
-    }
-    if ($path === '/page-sitemap.xml') {
-        $pages = get_posts(array('post_type' => 'page', 'post_status' => 'publish', 'numberposts' => 200, 'orderby' => 'modified', 'order' => 'DESC'));
-        $items = array();
-        foreach ($pages as $page) {
-            $items[] = array('loc' => get_permalink($page), 'lastmod' => get_post_modified_time('c', true, $page));
-        }
-        tr_adsense_sitemap_urlset($items);
-    }
-    if ($path === '/category-sitemap.xml') {
-        $terms = get_terms(array('taxonomy' => 'category', 'hide_empty' => true));
-        $items = array();
-        foreach ($terms as $term) {
-            $items[] = array('loc' => get_term_link($term), 'lastmod' => gmdate('c'));
-        }
-        tr_adsense_sitemap_urlset($items);
-    }
-});
-
-add_filter('robots_txt', function ($output, $public) {
-    $lines = array_filter(array_map('trim', explode("\n", (string) $output)), function ($line) {
-        return stripos($line, 'Sitemap:') !== 0;
-    });
-    $lines[] = '';
-    $lines[] = 'Sitemap: ' . home_url('/sitemap_index.xml');
-    return implode("\n", $lines) . "\n";
-}, 20, 2);
-
 add_action('wp_head', function () {
     echo '<style id="tr-adsense-cleanup">.ast-header-button-1{display:none!important}</style>' . "\n";
 });
 '''
     upsert_code_snippet(
-        "Tem Razao technical recovery for AdSense",
+        "Tem Razao hide leftover template button",
         code,
-        "Provides XML sitemaps, normalizes robots.txt, and hides the leftover template header button.",
+        "Hides the leftover Astra template button that still says Contact Me in the header.",
     )
 
 
