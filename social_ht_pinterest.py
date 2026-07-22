@@ -44,6 +44,14 @@ class TransientWordPressNetworkError(SystemExit):
         super().__init__(0)
         self.exc = exc
 
+
+class PinterestAuthExpired(SystemExit):
+    """Pinterest credentials must be renewed before pins can be published."""
+
+    def __init__(self, message):
+        super().__init__(0)
+        self.message = message
+
 # ── Logging ───────────────────────────────────────────────────────────────
 def log(msg):
     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {msg}", flush=True)
@@ -157,7 +165,10 @@ def obter_ou_criar_board(nome):
             if board["name"] == nome:
                 return board["id"]
     elif status == 401:
-        raise Exception("PINTEREST_TOKEN inválido ou expirado. Renove em developers.pinterest.com → Generate token.")
+        raise PinterestAuthExpired(
+            "Pinterest credentials expired. Renew PINTEREST_REFRESH_TOKEN and "
+            "PINTEREST_TOKEN in GitHub Secrets."
+        )
 
     status, data = pinterest_api("POST", "/boards", {
         "name": nome,
@@ -342,6 +353,13 @@ try:
         log(f"  ✓ {nome}")
     boards["default"] = obter_ou_criar_board(DEFAULT_BOARD)
     log(f"  ✓ {DEFAULT_BOARD}")
+except PinterestAuthExpired as e:
+    log("=" * 55)
+    log(e.message)
+    log("Pins postponed; ending without marking the workflow as failed.")
+    log("=" * 55)
+    telegram(f"⚠️ <b>Pinterest</b>\n{e.message}")
+    raise
 except Exception as e:
     log(f"ERRO boards: {e}")
     telegram(f"⚠️ <b>Pinterest</b>\n{e}")
