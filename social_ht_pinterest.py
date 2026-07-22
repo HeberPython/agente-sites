@@ -87,6 +87,7 @@ def obter_access_token():
         data = urllib.parse.urlencode({
             "grant_type": "refresh_token",
             "refresh_token": PINTEREST_REFRESH,
+            "scope": "boards:read,boards:write,pins:read,pins:write,user_accounts:read",
         }).encode()
         req = urllib.request.Request(
             "https://api.pinterest.com/v5/oauth/token",
@@ -102,6 +103,8 @@ def obter_access_token():
             token = payload.get("access_token", "")
             if not token:
                 raise Exception(f"Pinterest nao retornou access_token: {payload}")
+            if payload.get("refresh_token"):
+                log("Pinterest returned a rotated refresh token; update PINTEREST_REFRESH_TOKEN in GitHub Secrets.")
             PINTEREST_ACCESS_TOKEN = token
             return token
         except urllib.error.HTTPError as e:
