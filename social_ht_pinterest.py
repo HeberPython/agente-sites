@@ -6,8 +6,10 @@ Requer secret: PINTEREST_TOKEN (válido 30 dias, renovar em developers.pinterest
 import urllib.request, urllib.parse, urllib.error
 import http.client, json, base64, os, time, datetime, re, socket
 
-OPENAI_API_KEY   = os.environ["OPENAI_API_KEY"]
-OPENAI_MODEL     = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_KEY", "")
+CLAUDE_MODEL      = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+OPENAI_API_KEY    = os.environ.get("OPENAI_API_KEY", "")
+OPENAI_MODEL      = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 TELEGRAM_TOKEN   = os.environ.get("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 PINTEREST_CLIENT_ID = os.environ.get("PINTEREST_CLIENT_ID", "1567646")
@@ -116,8 +118,34 @@ def obter_access_token():
         "PINTEREST_REFRESH_TOKEN nos GitHub Secrets."
     )
 
-# ── Claude SSE streaming ──────────────────────────────────────────────────
-def claude(prompt, max_tokens=150):
+def anthropic_text(prompt, max_tokens=150):
+    data = json.dumps({
+        "model": CLAUDE_MODEL,
+        "max_tokens": max_tokens,
+        "messages": [{"role": "user", "content": prompt}],
+    }).encode()
+    conn = http.client.HTTPSConnection("api.anthropic.com", timeout=60)
+    try:
+        conn.request("POST", "/v1/messages", body=data, headers={
+            "x-api-key": ANTHROPIC_API_KEY,
+            "anthropic-version": "2023-06-01",
+            "Content-Type": "application/json",
+        })
+        resp = conn.getresponse()
+        body = resp.read()
+        if resp.status != 200:
+            raise Exception(f"Anthropic {resp.status}: {body[:300]}")
+        payload = json.loads(body)
+        return "".join(
+            block.get("text", "")
+            for block in payload.get("content", [])
+            if block.get("type") == "text"
+        ).strip()
+    finally:
+        conn.close()
+
+
+def openai_text(prompt, max_tokens=150):
     data = json.dumps({
         "model": OPENAI_MODEL,
         "max_tokens": max_tokens,
@@ -137,6 +165,16 @@ def claude(prompt, max_tokens=150):
         return payload["choices"][0]["message"]["content"].strip()
     finally:
         conn.close()
+
+
+# ── AI text generation ────────────────────────────────────────────────────
+def claude(prompt, max_tokens=150):
+    if ANTHROPIC_API_KEY:
+        return anthropic_text(prompt, max_tokens=max_tokens)
+    if OPENAI_API_KEY:
+        log("ANTHROPIC_KEY not configured; using OPENAI_API_KEY fallback.")
+        return openai_text(prompt, max_tokens=max_tokens)
+    raise Exception("Configure ANTHROPIC_KEY or OPENAI_API_KEY in GitHub Secrets.")
 
 # ── Pinterest API ─────────────────────────────────────────────────────────
 def pinterest_api(method, path, data=None):
