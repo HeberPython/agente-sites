@@ -172,10 +172,18 @@ def openai_text(prompt, max_tokens=150):
 
 # ── AI text generation ────────────────────────────────────────────────────
 def claude(prompt, max_tokens=150):
+    anthropic_failed = False
     if ANTHROPIC_API_KEY:
-        return anthropic_text(prompt, max_tokens=max_tokens)
+        try:
+            return anthropic_text(prompt, max_tokens=max_tokens)
+        except Exception as exc:
+            if not OPENAI_API_KEY:
+                raise
+            log(f"Anthropic unavailable ({exc}); using OPENAI_API_KEY fallback.")
+            anthropic_failed = True
     if OPENAI_API_KEY:
-        log("ANTHROPIC_KEY not configured; using OPENAI_API_KEY fallback.")
+        if not anthropic_failed:
+            log("ANTHROPIC_KEY not configured; using OPENAI_API_KEY fallback.")
         return openai_text(prompt, max_tokens=max_tokens)
     raise Exception("Configure ANTHROPIC_KEY or OPENAI_API_KEY in GitHub Secrets.")
 
