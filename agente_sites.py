@@ -360,6 +360,8 @@ def _validar_html(html, min_palavras=600):
     if "<h2>" not in html:
         raise ValueError("HTML sem h2 — estrutura inválida")
     palavras = len(re.sub(r"<[^>]+>", "", html).split())
+    if palavras < min_palavras:
+        raise ValueError(f"HTML curto demais: {palavras} palavras (mínimo {min_palavras})")
     return html, palavras
 
 
@@ -465,13 +467,17 @@ ESTRUTURA (1200-1600 palavras):
     for tentativa in range(3):
         try:
             html_bruto = claude(prompt_html, max_tokens=2800)
-            html, palavras = _validar_html(html_bruto, min_palavras=600)
+            html, palavras = _validar_html(html_bruto, min_palavras=1100)
             log(f"  HTML artigo: {palavras} palavras | {len(html)} chars")
             meta = _gerar_meta(topico["titulo"], topico["palavra_chave"], idioma="pt")
+            if site.get("id") == "temrazao":
+                final_html = html
+            else:
+                final_html = html + DISCLOSURE_HTML
             return {
                 "meta_description": meta["meta_description"],
                 "excerpt":          meta["excerpt"],
-                "conteudo_html":    html + DISCLOSURE_HTML,
+                "conteudo_html":    final_html,
             }
         except Exception as e:
             if tentativa < 2:
