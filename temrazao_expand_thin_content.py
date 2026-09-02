@@ -30,7 +30,7 @@ OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 
 MIN_POST_WORDS = int(os.environ.get("TR_MIN_POST_WORDS", "900"))
-MIN_PAGE_WORDS = int(os.environ.get("TR_MIN_PAGE_WORDS", "650"))
+MIN_PAGE_WORDS = int(os.environ.get("TR_MIN_PAGE_WORDS", "450"))
 MAX_ITEMS = int(os.environ.get("TR_MAX_EXPAND_ITEMS", "35"))
 REWRITE_ATTEMPTS = int(os.environ.get("TR_REWRITE_ATTEMPTS", "1"))
 

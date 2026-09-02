@@ -26,7 +26,7 @@ jobs:
           TR_WP_PASS: ${{ secrets.TR_WP_PASS }}
           TR_WP_USER: hebergravano@gmail.com
           TR_WP_URL: https://temrazao.com.br
-          TR_MIN_PAGE_WORDS: "650"
+          TR_MIN_PAGE_WORDS: "450"
           TR_MIN_POST_WORDS: "900"
           TR_MAX_EXPAND_ITEMS: "12"
           TR_REWRITE_ATTEMPTS: "1"
