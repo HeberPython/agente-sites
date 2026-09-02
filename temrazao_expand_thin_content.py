@@ -271,13 +271,16 @@ def main() -> int:
         target = 350 if slug in {"contato", "blog"} else MIN_PAGE_WORDS
         if current_words >= target:
             continue
-        html = rewrite_page(page)
         title = strip_html(page.get("title", {}).get("rendered", ""))
-        desc = meta_description(title, html)
-        request_json("POST", f"/wp-json/wp/v2/pages/{page['id']}", {"content": html, "excerpt": desc})
-        rank_math_meta("post", int(page["id"]), title, desc, title.lower())
-        processed += 1
-        log(f"Expanded page: {title} ({current_words} -> {word_count(html)} words)")
+        try:
+            html = rewrite_page(page)
+            desc = meta_description(title, html)
+            request_json("POST", f"/wp-json/wp/v2/pages/{page['id']}", {"content": html, "excerpt": desc})
+            rank_math_meta("post", int(page["id"]), title, desc, title.lower())
+            processed += 1
+            log(f"Expanded page: {title} ({current_words} -> {word_count(html)} words)")
+        except Exception as exc:
+            log(f"Skipped page after generation/update error: {title}: {exc}")
 
     posts = get_all("/wp-json/wp/v2/posts?status=publish&context=edit&_fields=id,slug,title,content,excerpt,categories,link")
     thin_posts = [
@@ -290,13 +293,16 @@ def main() -> int:
         if processed >= MAX_ITEMS:
             break
         current_words = word_count(post.get("content", {}).get("rendered", ""))
-        html = rewrite_post(post)
         title = strip_html(post.get("title", {}).get("rendered", ""))
-        desc = meta_description(title, html)
-        request_json("POST", f"/wp-json/wp/v2/posts/{post['id']}", {"content": html, "excerpt": desc})
-        rank_math_meta("post", int(post["id"]), title, desc, title.lower())
-        processed += 1
-        log(f"Expanded post: {title} ({current_words} -> {word_count(html)} words)")
+        try:
+            html = rewrite_post(post)
+            desc = meta_description(title, html)
+            request_json("POST", f"/wp-json/wp/v2/posts/{post['id']}", {"content": html, "excerpt": desc})
+            rank_math_meta("post", int(post["id"]), title, desc, title.lower())
+            processed += 1
+            log(f"Expanded post: {title} ({current_words} -> {word_count(html)} words)")
+        except Exception as exc:
+            log(f"Skipped post after generation/update error: {title}: {exc}")
 
     remaining_pages = get_all("/wp-json/wp/v2/pages?status=publish&context=edit&_fields=id,slug,title,content")
     remaining_posts = get_all("/wp-json/wp/v2/posts?status=publish&context=edit&_fields=id,slug,title,content")
