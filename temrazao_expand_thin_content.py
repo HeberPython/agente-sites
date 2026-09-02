@@ -197,14 +197,22 @@ Regras obrigatórias:
 - Inclua FAQ com 4 perguntas reais.
 - Evite frases genéricas como "essa tecnologia está revolucionando o mundo" sem explicar como.
 """
+    best_html = ""
+    best_words = 0
     for attempt in range(3):
         html = clean_model_html(openai_generate(prompt))
         words = word_count(html)
+        if words > best_words:
+            best_html = html
+            best_words = words
         if words >= MIN_POST_WORDS:
             return html
         log(f"Post rewrite too short for '{title}': {words} words. Retrying...")
         time.sleep(5 * (attempt + 1))
-    raise RuntimeError(f"Could not rewrite post '{title}' above {MIN_POST_WORDS} words.")
+    if best_html:
+        log(f"Accepting best available rewrite for '{title}': {best_words} words.")
+        return best_html
+    raise RuntimeError(f"Could not rewrite post '{title}'.")
 
 
 def rewrite_page(page: dict) -> str:
@@ -231,14 +239,22 @@ Regras:
 - Se fizer sentido, linke internamente usando /sobre-o-tem-razao/, /fontes-e-metodologia/, /politica-editorial/, /contato/ e categorias.
 """
     target = 350 if slug in {"contato", "blog"} else MIN_PAGE_WORDS
+    best_html = ""
+    best_words = 0
     for attempt in range(3):
         html = clean_model_html(openai_generate(prompt, max_tokens=2600))
         words = word_count(html)
+        if words > best_words:
+            best_html = html
+            best_words = words
         if words >= target:
             return html
         log(f"Page rewrite too short for '{title}': {words} words. Retrying...")
         time.sleep(5 * (attempt + 1))
-    raise RuntimeError(f"Could not rewrite page '{title}' above {target} words.")
+    if best_html:
+        log(f"Accepting best available rewrite for '{title}': {best_words} words.")
+        return best_html
+    raise RuntimeError(f"Could not rewrite page '{title}'.")
 
 
 def main() -> int:
