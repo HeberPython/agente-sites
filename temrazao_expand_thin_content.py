@@ -173,8 +173,9 @@ def rank_math_meta(object_type: str, object_id: int, title: str, description: st
 
 def rewrite_post(post: dict) -> str:
     title = strip_html(post.get("title", {}).get("rendered", ""))
+    current_html = post.get("content", {}).get("rendered", "")
     current = strip_html(post.get("content", {}).get("rendered", ""))
-    prompt = f"""Reescreva o artigo abaixo para o site brasileiro "Tem Razão".
+    prompt = f"""Escreva um COMPLEMENTO editorial para o artigo abaixo do site brasileiro "Tem Razão".
 
 TÍTULO: {title}
 
@@ -185,23 +186,21 @@ Objetivo editorial: aprovar e sustentar qualidade para AdSense e Google Search.
 
 Regras obrigatórias:
 - Tema deve continuar sendo tecnologia, ciência ou curiosidade educativa. Não incluir conteúdo adulto.
-- Saída APENAS em HTML válido. Sem markdown, sem JSON e sem explicações fora do artigo.
-- Comece com <p>, não use <h1>.
+- Saída APENAS em HTML válido. Sem markdown, sem JSON e sem explicações fora do complemento.
+- Comece com <h2>, não use <h1>.
 - Use apenas <p>, <h2>, <h3>, <ul>, <ol>, <li>, <strong>, <blockquote>.
-- 950 a 1.250 palavras.
+- 350 a 550 palavras.
 - Nada de boilerplate repetido sobre "nota editorial" ou "transparência editorial".
-- Acrescente exemplos brasileiros/cotidianos específicos.
-- Explique mecanismo em etapas, com causa e efeito.
-- Inclua limites, riscos, privacidade, custo ou manutenção quando fizer sentido.
-- Inclua uma seção "Exemplo prático".
-- Inclua uma seção "Erros comuns".
-- Inclua FAQ com 4 perguntas reais.
+- Acrescente informação nova, sem repetir a introdução existente.
+- Inclua pelo menos duas destas seções: "Exemplo prático", "Limites e cuidados", "Erros comuns", "Perguntas frequentes".
+- Se usar FAQ, use no máximo 3 perguntas.
 - Evite frases genéricas como "essa tecnologia está revolucionando o mundo" sem explicar como.
 """
     best_html = ""
     best_words = 0
     for attempt in range(REWRITE_ATTEMPTS):
-        html = clean_model_html(openai_generate(prompt, max_tokens=2600))
+        addition = clean_model_html(openai_generate(prompt, max_tokens=1600))
+        html = f"{current_html}\n\n{addition}"
         words = word_count(html)
         if words > best_words:
             best_html = html
@@ -219,8 +218,9 @@ Regras obrigatórias:
 def rewrite_page(page: dict) -> str:
     title = strip_html(page.get("title", {}).get("rendered", ""))
     slug = page.get("slug", "")
+    current_html = page.get("content", {}).get("rendered", "")
     current = strip_html(page.get("content", {}).get("rendered", ""))
-    prompt = f"""Reescreva a página institucional abaixo para o site brasileiro "Tem Razão".
+    prompt = f"""Escreva um COMPLEMENTO para a página institucional abaixo do site brasileiro "Tem Razão".
 
 PÁGINA: {title}
 SLUG: {slug}
@@ -229,10 +229,9 @@ CONTEÚDO ATUAL:
 {current[:3500]}
 
 Regras:
-- Saída APENAS em HTML válido. Sem markdown, sem JSON e sem explicações fora da página.
-- Use <h1> no começo e depois <p>, <h2>, <ul>, <li>, <strong>, <a>.
-- 650 a 950 palavras para páginas institucionais.
-- Página Contato e página Artigos podem ter 350 a 600 palavras, desde que sejam úteis e claras.
+- Saída APENAS em HTML válido. Sem markdown, sem JSON e sem explicações fora do complemento.
+- Comece com <h2>. Use <p>, <h2>, <ul>, <li>, <strong>, <a>.
+- 180 a 320 palavras.
 - Fortaleça confiança, transparência, autoria editorial, método, utilidade para o leitor e clareza.
 - Não incluir conteúdo adulto.
 - Não inventar empresa, endereço físico, telefone, equipe ou certificados.
@@ -243,7 +242,8 @@ Regras:
     best_html = ""
     best_words = 0
     for attempt in range(REWRITE_ATTEMPTS):
-        html = clean_model_html(openai_generate(prompt, max_tokens=2200))
+        addition = clean_model_html(openai_generate(prompt, max_tokens=1100))
+        html = f"{current_html}\n\n{addition}"
         words = word_count(html)
         if words > best_words:
             best_html = html
@@ -274,6 +274,9 @@ def main() -> int:
         title = strip_html(page.get("title", {}).get("rendered", ""))
         try:
             html = rewrite_page(page)
+            if word_count(html) <= current_words:
+                log(f"Skipped page because generated content did not improve length: {title}")
+                continue
             desc = meta_description(title, html)
             request_json("POST", f"/wp-json/wp/v2/pages/{page['id']}", {"content": html, "excerpt": desc})
             rank_math_meta("post", int(page["id"]), title, desc, title.lower())
@@ -296,6 +299,9 @@ def main() -> int:
         title = strip_html(post.get("title", {}).get("rendered", ""))
         try:
             html = rewrite_post(post)
+            if word_count(html) <= current_words:
+                log(f"Skipped post because generated content did not improve length: {title}")
+                continue
             desc = meta_description(title, html)
             request_json("POST", f"/wp-json/wp/v2/posts/{post['id']}", {"content": html, "excerpt": desc})
             rank_math_meta("post", int(post["id"]), title, desc, title.lower())
