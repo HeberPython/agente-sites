@@ -19,6 +19,7 @@ import re
 import urllib.error
 import urllib.parse
 import urllib.request
+import time
 from html import unescape
 
 
@@ -43,14 +44,24 @@ def auth_headers() -> dict[str, str]:
 def request_json(method: str, path: str, payload: dict | None = None) -> dict | list:
     url = path if path.startswith("http") else f"{WP_URL}{path}"
     data = json.dumps(payload).encode("utf-8") if payload is not None else None
-    req = urllib.request.Request(url, data=data, method=method, headers=auth_headers())
-    try:
-        with urllib.request.urlopen(req, timeout=60) as response:
-            raw = response.read()
-            return json.loads(raw.decode("utf-8")) if raw else {}
-    except urllib.error.HTTPError as exc:
-        body = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"{method} {url} failed: HTTP {exc.code} {body[:500]}") from exc
+    last_error: Exception | None = None
+    for attempt in range(5):
+        req = urllib.request.Request(url, data=data, method=method, headers=auth_headers())
+        try:
+            with urllib.request.urlopen(req, timeout=60) as response:
+                raw = response.read()
+                return json.loads(raw.decode("utf-8")) if raw else {}
+        except urllib.error.HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")
+            if exc.code not in (429, 500, 502, 503, 504):
+                raise RuntimeError(f"{method} {url} failed: HTTP {exc.code} {body[:500]}") from exc
+            last_error = RuntimeError(f"{method} {url} failed: HTTP {exc.code} {body[:500]}")
+        except urllib.error.URLError as exc:
+            last_error = exc
+        wait = 10 * (attempt + 1)
+        log(f"Transient request error on {method} {url}: {last_error}. Retrying in {wait}s...")
+        time.sleep(wait)
+    raise RuntimeError(f"{method} {url} failed after retries: {last_error}")
 
 
 def get_all(path: str) -> list[dict]:
