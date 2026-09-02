@@ -222,14 +222,15 @@ CONTEÚDO ATUAL:
 Regras:
 - Saída APENAS em HTML válido. Sem markdown, sem JSON e sem explicações fora da página.
 - Use <h1> no começo e depois <p>, <h2>, <ul>, <li>, <strong>, <a>.
-- 650 a 950 palavras, exceto página Contato que pode ter 350 a 600 palavras.
+- 650 a 950 palavras para páginas institucionais.
+- Página Contato e página Artigos podem ter 350 a 600 palavras, desde que sejam úteis e claras.
 - Fortaleça confiança, transparência, autoria editorial, método, utilidade para o leitor e clareza.
 - Não incluir conteúdo adulto.
 - Não inventar empresa, endereço físico, telefone, equipe ou certificados.
 - Pode citar o e-mail hebergravano@gmail.com apenas na página Contato.
 - Se fizer sentido, linke internamente usando /sobre-o-tem-razao/, /fontes-e-metodologia/, /politica-editorial/, /contato/ e categorias.
 """
-    target = 350 if slug == "contato" else MIN_PAGE_WORDS
+    target = 350 if slug in {"contato", "blog"} else MIN_PAGE_WORDS
     for attempt in range(3):
         html = clean_model_html(openai_generate(prompt, max_tokens=2600))
         words = word_count(html)
@@ -250,7 +251,7 @@ def main() -> int:
             break
         slug = page.get("slug", "")
         current_words = word_count(page.get("content", {}).get("rendered", ""))
-        target = 350 if slug == "contato" else MIN_PAGE_WORDS
+        target = 350 if slug in {"contato", "blog"} else MIN_PAGE_WORDS
         if current_words >= target:
             continue
         html = rewrite_page(page)
@@ -285,7 +286,7 @@ def main() -> int:
     weak_pages = sum(
         1
         for page in remaining_pages
-        if word_count(page.get("content", {}).get("rendered", "")) < (350 if page.get("slug") == "contato" else MIN_PAGE_WORDS)
+        if word_count(page.get("content", {}).get("rendered", "")) < (350 if page.get("slug") in {"contato", "blog"} else MIN_PAGE_WORDS)
     )
     weak_posts = sum(1 for post in remaining_posts if word_count(post.get("content", {}).get("rendered", "")) < MIN_POST_WORDS)
     log(f"Processed items: {processed}")
