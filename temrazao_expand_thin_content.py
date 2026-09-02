@@ -29,9 +29,10 @@ WP_PASS = os.environ["TR_WP_PASS"]
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 
-MIN_POST_WORDS = int(os.environ.get("TR_MIN_POST_WORDS", "1100"))
+MIN_POST_WORDS = int(os.environ.get("TR_MIN_POST_WORDS", "900"))
 MIN_PAGE_WORDS = int(os.environ.get("TR_MIN_PAGE_WORDS", "650"))
 MAX_ITEMS = int(os.environ.get("TR_MAX_EXPAND_ITEMS", "35"))
+REWRITE_ATTEMPTS = int(os.environ.get("TR_REWRITE_ATTEMPTS", "1"))
 
 
 def log(message: str) -> None:
@@ -187,7 +188,7 @@ Regras obrigatórias:
 - Saída APENAS em HTML válido. Sem markdown, sem JSON e sem explicações fora do artigo.
 - Comece com <p>, não use <h1>.
 - Use apenas <p>, <h2>, <h3>, <ul>, <ol>, <li>, <strong>, <blockquote>.
-- 1.150 a 1.550 palavras.
+- 950 a 1.250 palavras.
 - Nada de boilerplate repetido sobre "nota editorial" ou "transparência editorial".
 - Acrescente exemplos brasileiros/cotidianos específicos.
 - Explique mecanismo em etapas, com causa e efeito.
@@ -199,8 +200,8 @@ Regras obrigatórias:
 """
     best_html = ""
     best_words = 0
-    for attempt in range(3):
-        html = clean_model_html(openai_generate(prompt))
+    for attempt in range(REWRITE_ATTEMPTS):
+        html = clean_model_html(openai_generate(prompt, max_tokens=2600))
         words = word_count(html)
         if words > best_words:
             best_html = html
@@ -241,8 +242,8 @@ Regras:
     target = 350 if slug in {"contato", "blog"} else MIN_PAGE_WORDS
     best_html = ""
     best_words = 0
-    for attempt in range(3):
-        html = clean_model_html(openai_generate(prompt, max_tokens=2600))
+    for attempt in range(REWRITE_ATTEMPTS):
+        html = clean_model_html(openai_generate(prompt, max_tokens=2200))
         words = word_count(html)
         if words > best_words:
             best_html = html
