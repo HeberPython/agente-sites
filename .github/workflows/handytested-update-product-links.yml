@@ -1,0 +1,32 @@
+name: HandyTested — Update Product Affiliate Links
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Use 1 to preview without updating WordPress, 0 to update"
+        required: false
+        default: "1"
+
+jobs:
+  update-product-links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Update HandyTested product affiliate links
+        env:
+          HT_WP_PASS:    ${{ secrets.HT_WP_PASS }}
+          HT_AMAZON_TAG: ${{ secrets.HT_AMAZON_TAG }}
+          DRY_RUN:       ${{ github.event.inputs.dry_run || '1' }}
+        run: python update_ht_product_links.py
