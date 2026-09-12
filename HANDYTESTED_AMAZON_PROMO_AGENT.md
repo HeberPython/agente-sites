@@ -8,7 +8,7 @@ This agent turns Amazon Associates promo emails sent or forwarded to
 1. Reads unread emails from `promoassociados@handytested.com` by IMAP.
 2. Extracts the campaign theme, product categories, buyer angle, and useful links.
 3. Converts the promotion into an English HandyTested buying guide/review article.
-4. Uses Amazon.com affiliate search links with tag `amazonrev089f-20`.
+4. Uses Amazon.com affiliate search links with the `HT_AMAZON_TAG` secret, currently `handytested0d-20`.
 5. Assigns the post to `Amazon Deals` plus a relevant buyer category only when
    the fit is strong; broad or off-niche campaigns stay in `Amazon Deals` only.
 6. Publishes scheduled runs to WordPress automatically; manual workflow runs

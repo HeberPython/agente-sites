@@ -20,7 +20,8 @@ UNSPLASH_KEY     = os.environ.get("UNSPLASH_KEY", "")
 WP_USER    = "hebergravano@gmail.com"
 WP_PASS    = os.environ["HT_WP_PASS"]
 WP_URL     = "https://handytested.com"
-AMAZON_TAG = "amazonrev089f-20"
+AMAZON_TAG = os.environ.get("HT_AMAZON_TAG", "handytested0d-20")
+AMAZON_DOMAIN = os.environ.get("HT_AMAZON_DOMAIN", "www.amazon.com")
 CATEGORIAS = {"electronics": 2, "tools": 3, "diy": 4}
 CATEGORY_DEFS = {
     "electronics": ("Electronics", "Reviews and comparisons of consumer electronics, gadgets, and tech accessories."),
@@ -206,7 +207,7 @@ def escolher_categoria(posts):
 # ── Geração de conteúdo ───────────────────────────────────────────────────
 def amazon_card(product, description="", price=""):
     q = urllib.parse.quote(product)
-    url = f"https://www.amazon.com/s?k={q}&tag={AMAZON_TAG}"
+    url = f"https://{AMAZON_DOMAIN}/s?k={q}&tag={AMAZON_TAG}"
     tier_html = (
         f'<span style="font-size:0.88em;font-weight:bold;color:#1a1f36;margin-right:14px;">Position: {price}</span>'
         if price and "$" not in price else ""

@@ -23,6 +23,8 @@ jobs:
         env:
           OPENAI_API_KEY:   ${{ secrets.OPENAI_API_KEY }}
           HT_WP_PASS:       ${{ secrets.HT_WP_PASS }}
+          HT_AMAZON_TAG:    ${{ secrets.HT_AMAZON_TAG }}
+          HT_AMAZON_DOMAIN: www.amazon.com
           TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           UNSPLASH_KEY:     ${{ secrets.UNSPLASH_KEY }}

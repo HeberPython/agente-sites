@@ -98,7 +98,8 @@ SITES = [
             "tools": 3,
             "diy": 4,
         },
-        "amazon_tag": "amazonrev089f-20",
+        "amazon_tag": os.environ.get("HT_AMAZON_TAG", "handytested0d-20"),
+        "amazon_domain": os.environ.get("HT_AMAZON_DOMAIN", "www.amazon.com"),
         "topicos_evitar": [],
     },
 ]
@@ -277,7 +278,8 @@ AFFILIATE_DISCLOSURE_EN = """<div style="background:#fff8e1;border-left:4px soli
 
 def amazon_card_html(product_name, tag, description="", price_range=""):
     query = urllib.parse.quote(product_name)
-    url = f"https://www.amazon.com/s?k={query}&tag={tag}"
+    domain = os.environ.get("HT_AMAZON_DOMAIN", "www.amazon.com")
+    url = f"https://{domain}/s?k={query}&tag={tag}"
     price_text = f"<span style='color:#b12704;font-weight:bold;'>{price_range}</span>" if price_range else ""
     return f"""<div style="border:1px solid #ddd;border-radius:8px;padding:16px 20px;margin:20px 0;background:#fafafa;">
 <strong style="font-size:1.1em;">🛒 {product_name}</strong><br>
@@ -367,7 +369,7 @@ def _validar_html(html, min_palavras=600):
 
 def gerar_artigo_review(site, topico):
     """Gera review em inglês em 2 chamadas: HTML direto + meta separado."""
-    tag = site.get("amazon_tag", "amazonrev089f-20")
+    tag = site.get("amazon_tag", "handytested0d-20")
     produtos = topico.get("produtos_sugeridos", [])
     produtos_str = "\n".join(f"- {p}" for p in produtos) if produtos else "- (pick 3-4 real Amazon products)"
 

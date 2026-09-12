@@ -32,6 +32,8 @@ jobs:
           OEP_WP_PASS:      ${{ secrets.OEP_WP_PASS }}
           TR_WP_PASS:       ${{ secrets.TR_WP_PASS }}
           HT_WP_PASS:       ${{ secrets.HT_WP_PASS }}
+          HT_AMAZON_TAG:    ${{ secrets.HT_AMAZON_TAG }}
+          HT_AMAZON_DOMAIN: www.amazon.com
           TARGET_SITES:     obraepratica,temrazao
           ARTICLES_PER_SITE: "1"
           MAX_TOTAL_ARTICLES: "2"

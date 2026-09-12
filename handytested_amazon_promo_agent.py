@@ -55,8 +55,8 @@ OPENAI_MODEL = os.environ.get("OPENAI_MODEL") or "gpt-4o-mini"
 WP_URL = "https://handytested.com"
 WP_USER = "hebergravano@gmail.com"
 WP_PASS = os.environ["HT_WP_PASS"]
-AMAZON_TAG = "amazonrev089f-20"
-AMAZON_DOMAIN = os.environ.get("AMAZON_DOMAIN", "www.amazon.com")
+AMAZON_TAG = os.environ.get("HT_AMAZON_TAG", "handytested0d-20")
+AMAZON_DOMAIN = os.environ.get("HT_AMAZON_DOMAIN") or os.environ.get("AMAZON_DOMAIN", "www.amazon.com")
 
 PROMO_EMAIL_USER = os.environ.get("PROMO_EMAIL_USER", "promoassociados@handytested.com")
 PROMO_EMAIL_PASS = os.environ["PROMO_EMAIL_PASS"]

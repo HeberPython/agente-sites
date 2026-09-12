@@ -14,7 +14,8 @@ UNSPLASH_KEY     = os.environ.get("UNSPLASH_KEY", "")
 WP_USER = "hebergravano@gmail.com"
 WP_PASS = os.environ["HT_WP_PASS"]
 WP_URL  = "https://handytested.com"
-AMAZON_TAG = "amazonrev089f-20"
+AMAZON_TAG = os.environ.get("HT_AMAZON_TAG", "handytested0d-20")
+AMAZON_DOMAIN = os.environ.get("HT_AMAZON_DOMAIN", "www.amazon.com")
 CATEGORIAS = {"electronics": 2, "tools": 3, "diy": 4}
 
 AUTH_HEADER = "Basic " + base64.b64encode(f"{WP_USER}:{WP_PASS}".encode()).decode()
@@ -75,7 +76,7 @@ AFFILIATE_DISCLOSURE = """<div style="background:#fff8e1;border-left:4px solid #
 
 def amazon_card(product, description=""):
     q = urllib.parse.quote(product)
-    url = f"https://www.amazon.com/s?k={q}&tag={AMAZON_TAG}"
+    url = f"https://{AMAZON_DOMAIN}/s?k={q}&tag={AMAZON_TAG}"
     return f"""<div style="border:1px solid #ddd;border-radius:8px;padding:16px 20px;margin:20px 0;background:#fafafa;">
 <strong style="font-size:1.05em;">🛒 {product}</strong>
 <p style="margin:8px 0;color:#555;">{description}</p>

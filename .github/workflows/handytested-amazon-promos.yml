@@ -33,6 +33,8 @@ jobs:
           OPENAI_API_KEY:       ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL:         ${{ secrets.OPENAI_MODEL }}
           HT_WP_PASS:           ${{ secrets.HT_WP_PASS }}
+          HT_AMAZON_TAG:        ${{ secrets.HT_AMAZON_TAG }}
+          HT_AMAZON_DOMAIN:     www.amazon.com
           TELEGRAM_TOKEN:       ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID:     ${{ secrets.TELEGRAM_CHAT_ID }}
           PROMO_EMAIL_USER:     promoassociados@handytested.com

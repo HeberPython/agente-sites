@@ -84,7 +84,7 @@ short-lived Amazon campaigns.
 ## API Impact
 
 - Amazon: no new PA API dependency. Links still use the affiliate tag
-  `amazonrev089f-20`. The scripts still avoid fixed prices and Amazon images.
+  `handytested0d-20` via `HT_AMAZON_TAG`. The scripts still avoid fixed prices and Amazon images.
 - Pinterest: safer because seasonal posts are excluded.
 - Google/Search/AdSense: stronger trust pages, clearer site architecture, and
   reduced stale-promo risk.
