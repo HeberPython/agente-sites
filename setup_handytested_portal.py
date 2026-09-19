@@ -590,8 +590,8 @@ def deals_content(deals_category_id: int) -> str:
     deals = fetch_posts([deals_category_id], 10)
     return f"""
 <div style="max-width:1040px;margin:0 auto;font-family:Arial,sans-serif;color:#172033;">
-  <h1>Amazon Deals Worth Checking</h1>
-  <p><strong>Affiliate Disclosure:</strong> As an Amazon Associate, HandyTested earns from qualifying purchases.</p>
+  <p>Current deal guides and buying advice. Confirm the latest price and availability on Amazon.</p>
+  <p><strong>Affiliate Disclosure:</strong> As an Amazon Associate I earn from qualifying purchases.</p>
   <p>This page collects our deal-driven buying guides. We do not list fixed prices or copy Amazon promotional images. When a deal is tied to a seasonal campaign, our agent stores an expiration marker and removes the post from public view after the promotion ends.</p>
   <h2>Latest Deal Guides</h2>
   {render_card_grid(deals, "No active deal guides are live right now.")}
@@ -606,7 +606,6 @@ def deals_content(deals_category_id: int) -> str:
 
 
 HOW_WE_REVIEW = """
-<h1>How We Review Products</h1>
 <p>HandyTested exists to help shoppers make faster, calmer buying decisions. Our reviews focus on practical fit: who a product is for, what tradeoffs matter, and when a cheaper or simpler option is enough.</p>
 <h2>Our Review Criteria</h2>
 <ul>
@@ -617,14 +616,13 @@ HOW_WE_REVIEW = """
   <li><strong>Value:</strong> We consider whether the product earns its place against cheaper and more expensive alternatives.</li>
 </ul>
 <h2>Testing and Research Notes</h2>
-<p>Some articles are based on direct hands-on evaluation. Others are research-led buying guides built from specifications, verified owner feedback, seller signals, and category expertise. We do not claim physical testing unless it actually happened.</p>
+<p>Our buying guides are based on research and comparison of available specifications, manufacturer information, and publicly available buyer feedback. We identify physical testing only when it is documented in the individual article.</p>
 <h2>Affiliate Independence</h2>
-<p>HandyTested may earn commissions from Amazon links, but products cannot pay for positive coverage. Affiliate earnings do not change the criteria we use to recommend or reject a product.</p>
+<p>HandyTested may earn commissions from Amazon links. Affiliate earnings do not change the criteria we use to recommend or reject a product.</p>
 """.strip()
 
 
 EDITORIAL_POLICY = """
-<h1>Editorial Policy</h1>
 <p>HandyTested publishes product reviews, comparisons, buying guides, and deal-driven shopping guidance for tools, electronics, DIY, home, and everyday gear.</p>
 <h2>What We Publish</h2>
 <ul>
@@ -644,11 +642,10 @@ EDITORIAL_POLICY = """
 
 
 AFFILIATE_DISCLOSURE_PAGE = """
-<h1>Affiliate Disclosure</h1>
-<p>HandyTested is reader-supported. As an Amazon Associate, we earn from qualifying purchases.</p>
+<p>HandyTested is reader-supported. As an Amazon Associate I earn from qualifying purchases.</p>
 <p>This means that when you click an Amazon link on HandyTested and make a purchase, we may receive a commission at no extra cost to you.</p>
 <h2>How This Affects Reviews</h2>
-<p>Affiliate relationships do not determine whether a product is recommended. Our content is built around buyer fit, useful specifications, owner feedback, safety signals, warranty support, and practical value.</p>
+<p>Affiliate relationships do not determine whether a product is recommended. Our content is built around buyer fit, available specifications, public buyer feedback, safety information, warranty support, and practical value.</p>
 <h2>Prices and Availability</h2>
 <p>Amazon prices and availability change frequently. HandyTested avoids publishing fixed prices unless they are supplied directly through approved Amazon tools. Always confirm final price, seller, shipping, and return terms on Amazon before buying.</p>
 """.strip()
@@ -656,7 +653,6 @@ AFFILIATE_DISCLOSURE_PAGE = """
 
 def about_content() -> str:
     return """
-<h1>About HandyTested</h1>
 <p>HandyTested helps shoppers choose tools, electronics, DIY gear, smart home products, kitchen tools, and everyday home equipment with less guesswork.</p>
 <p>We focus on practical recommendations: what is worth buying, who it is best for, what tradeoffs matter, and what to check before clicking purchase.</p>
 <h2>Our Promise</h2>

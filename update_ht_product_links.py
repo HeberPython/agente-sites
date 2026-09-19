@@ -1,5 +1,5 @@
 """
-Add product-specific Amazon affiliate links to existing HandyTested posts.
+Add tagged Amazon search links for discussed models to existing posts.
 
 The update is idempotent: each run replaces the managed block between markers
 instead of appending duplicates. Links use the current Amazon Associates tag.
@@ -294,9 +294,9 @@ def build_block(products: list[str]) -> str:
         '<div class="handytested-amazon-picks" '
         'style="border:1px solid #e6e8ef;border-left:4px solid #e8440a;'
         'border-radius:8px;padding:18px 20px;margin:28px 0;background:#fff;">'
-        '<h2 style="margin-top:0;">Recommended Amazon product links</h2>'
-        '<p>These product-specific links point to current Amazon.com options for the models discussed in this guide. '
-        'Availability and listings can change, so compare the exact model and seller before buying.</p>'
+        '<h2 style="margin-top:0;">Find these models on Amazon</h2>'
+        '<p>These links open Amazon.com search results, which may include similar models and sponsored listings. '
+        'Confirm the exact model, seller, price, and availability before buying.</p>'
         f'<ul>{"".join(items)}</ul>'
         "</div>\n"
         f"{END_MARKER}\n"

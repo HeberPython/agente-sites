@@ -91,7 +91,7 @@ SITES = [
         "tipo": "review",
         "idioma": "en",
         "nicho": "electronics reviews, power tools, hand tools, DIY projects, home improvement gadgets",
-        "tom": "honest, practical, hands-on expert — like a knowledgeable friend who has actually tested the products",
+        "tom": "honest, practical product researcher; never imply physical testing without documentation",
         "publico": "English-speaking consumers looking for trustworthy product reviews before buying on Amazon",
         "categorias": {
             "electronics": 2,
@@ -273,21 +273,19 @@ DISCLOSURE_HTML = """<div style="background:#f8f9fa;border-left:4px solid #6c757
 
 
 AFFILIATE_DISCLOSURE_EN = """<div style="background:#fff8e1;border-left:4px solid #ffc107;padding:14px 18px;margin:24px 0;font-size:0.88em;color:#555;">
-<strong>Affiliate Disclosure:</strong> HandyTested is reader-supported. When you buy through links on our site, we may earn an affiliate commission at no extra cost to you. Our reviews are always independent and based on real testing criteria.</div>"""
+<strong>Affiliate Disclosure:</strong> As an Amazon Associate I earn from qualifying purchases. HandyTested may receive a commission when you use an Amazon link. Recommendations are based on research unless an article documents physical testing.</div>"""
 
 
 def amazon_card_html(product_name, tag, description="", price_range=""):
     query = urllib.parse.quote(product_name)
     domain = os.environ.get("HT_AMAZON_DOMAIN", "www.amazon.com")
     url = f"https://{domain}/s?k={query}&tag={tag}"
-    price_text = f"<span style='color:#b12704;font-weight:bold;'>{price_range}</span>" if price_range else ""
     return f"""<div style="border:1px solid #ddd;border-radius:8px;padding:16px 20px;margin:20px 0;background:#fafafa;">
 <strong style="font-size:1.1em;">🛒 {product_name}</strong><br>
-{price_text}
 <p style="margin:8px 0;color:#555;">{description}</p>
 <a href="{url}" rel="sponsored nofollow noopener" target="_blank"
    style="display:inline-block;background:#ff9900;color:#000;padding:8px 18px;border-radius:4px;text-decoration:none;font-weight:bold;margin-top:6px;">
-   Check Price on Amazon →
+   See Current Amazon Options →
 </a>
 </div>"""
 
@@ -373,7 +371,7 @@ def gerar_artigo_review(site, topico):
     produtos = topico.get("produtos_sugeridos", [])
     produtos_str = "\n".join(f"- {p}" for p in produtos) if produtos else "- (pick 3-4 real Amazon products)"
 
-    prompt_html = f"""You are a hands-on product expert writing for "{site['name']}".
+    prompt_html = f"""You are a product researcher writing for "{site['name']}". Never claim physical testing or first-hand use without documented evidence. Do not invent measurements, prices, ratings or review counts.
 
 ARTICLE: "{topico['titulo']}"
 KEYWORD: {topico['palavra_chave']}
@@ -386,12 +384,12 @@ Where each product card goes write exactly: [PRODUCT CARD for: ProductName]
 STRUCTURE (900-1100 words):
 <p>Intro 80-100 words. Include keyword in first 60 words.</p>
 <h2>Quick Comparison</h2>
-[table: Product | Price | Best For | Rating ★]
+[table: Product | Key Feature | Best For | Tradeoff]
 <h2>Our Top Picks</h2>
 <ul><li><strong>Best Overall:</strong> name — reason</li>...</ul>
 [For each product:]
 <h2>[Product Name]</h2>
-<p>120 words: specs, performance, hands-on feel</p>
+<p>120 words: verifiable specs, expected use, buyer fit and limitations</p>
 <h3>What We Like</h3><ul>...</ul>
 <h3>What Could Be Better</h3><ul>...</ul>
 <p><strong>Best for:</strong> specific buyer</p>
@@ -407,6 +405,8 @@ STRUCTURE (900-1100 words):
         try:
             html_bruto = claude(prompt_html, max_tokens=2800)
             html, palavras = _validar_html(html_bruto, min_palavras=600)
+            if re.search(r"\b(?:we tested|we measured|we used|during our testing|our hands-on|after testing|how we tested)\b", html, re.IGNORECASE):
+                raise ValueError("Article claims physical testing; editorial review required")
             log(f"  HTML review: {palavras} palavras | {len(html)} chars")
             # Substituir placeholders
             for produto in produtos:
@@ -579,10 +579,11 @@ def listar_titulos_publicados(site):
     titulos = []
     try:
         headers = wp_auth(site)
+        status = "publish,draft" if site.get("id") == "handytested" else "publish"
         pagina = 1
         while True:
             req = urllib.request.Request(
-                f"{site['url']}/wp-json/wp/v2/posts?per_page=50&page={pagina}&status=publish&_fields=title",
+                f"{site['url']}/wp-json/wp/v2/posts?per_page=50&page={pagina}&status={status}&_fields=title",
                 headers=headers
             )
             with urllib.request.urlopen(req, timeout=15) as r:
@@ -607,7 +608,7 @@ def publicar_post(site, topico, artigo, media_id):
         "title": topico["titulo"],
         "content": artigo["conteudo_html"],
         "excerpt": artigo.get("excerpt", ""),
-        "status": "publish",
+        "status": os.environ.get("HT_POST_STATUS", "draft") if site.get("id") == "handytested" else "publish",
         "categories": [categoria_id],
         "meta": {},
     }

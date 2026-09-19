@@ -3,7 +3,7 @@ Publica UM artigo de review no handytested.com.
 Uso único via GitHub Actions — max_tokens conservador para evitar timeout.
 """
 import urllib.request, urllib.error, urllib.parse
-import http.client, json, base64, os, time, datetime
+import http.client, json, base64, os, time, datetime, re
 
 OPENAI_API_KEY   = os.environ["OPENAI_API_KEY"]
 OPENAI_MODEL     = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
@@ -66,13 +66,13 @@ def wp_get(endpoint):
 
 def listar_titulos():
     try:
-        posts = wp_get("/posts?per_page=50&status=publish&_fields=title")
+        posts = wp_get("/posts?per_page=100&status=publish,draft&_fields=title")
         return [p["title"]["rendered"] for p in posts]
     except:
         return []
 
 AFFILIATE_DISCLOSURE = """<div style="background:#fff8e1;border-left:4px solid #ffc107;padding:14px 18px;margin:24px 0;font-size:0.88em;color:#555;">
-<strong>Affiliate Disclosure:</strong> HandyTested is reader-supported. When you buy through links on our site, we may earn an affiliate commission at no extra cost to you. Our reviews are always independent and based on real testing criteria.</div>"""
+<strong>Affiliate Disclosure:</strong> As an Amazon Associate I earn from qualifying purchases. HandyTested may receive a commission when you use an Amazon link. Our recommendations are based on research unless an article documents physical testing.</div>"""
 
 def amazon_card(product, description=""):
     q = urllib.parse.quote(product)
@@ -82,7 +82,7 @@ def amazon_card(product, description=""):
 <p style="margin:8px 0;color:#555;">{description}</p>
 <a href="{url}" rel="sponsored nofollow noopener" target="_blank"
    style="display:inline-block;background:#ff9900;color:#000;padding:8px 18px;border-radius:4px;text-decoration:none;font-weight:bold;margin-top:6px;">
-Check Price on Amazon →</a></div>"""
+See Current Amazon Options →</a></div>"""
 
 def gerar_topico(titulos_existentes):
     existentes = "\n".join(f"- {t}" for t in titulos_existentes[:20]) or "None yet"
@@ -108,7 +108,7 @@ Return ONLY valid JSON:
 def gerar_artigo(topico):
     produtos = topico.get("produtos", [])
     produtos_str = "\n".join(f"- {p}" for p in produtos)
-    prompt = f"""You are a hands-on product expert writing for HandyTested.
+    prompt = f"""You are a product researcher writing for HandyTested.
 
 Write a review article: "{topico['titulo']}"
 Keyword: {topico['palavra_chave']}
@@ -118,12 +118,14 @@ Products to cover:
 
 REQUIREMENTS:
 - 700-900 words total (concise and authoritative)
+- Base recommendations on verifiable specifications and clearly attributed owner feedback.
+- Do not claim hands-on testing, invent measurements, prices, ratings or first-hand use.
 - Specific pros/cons for each product
 - Honest, practical tone — like advice from a knowledgeable friend
 
 STRUCTURE:
 1. Intro (1-2 paragraphs: the problem this solves)
-2. H2 "Quick Comparison" — short bullets with each product + star rating
+2. H2 "Quick Comparison" — short bullets with each product and buyer fit; no invented ratings
 3. For each product: H2 with name, then pros, cons, best for, then [PRODUCT CARD for: Name]
 4. H2 "Buying Guide" — 3 key criteria
 5. H2 "FAQ" — 3 Q&As
@@ -143,6 +145,8 @@ Return ONLY valid JSON:
             html = artigo["conteudo_html"]
             for p in produtos:
                 html = html.replace(f"[PRODUCT CARD for: {p}]", amazon_card(p, f"Top pick in our {topico['titulo']} review"))
+            if re.search(r"\b(?:we tested|we measured|we used|during our testing|our hands-on|after testing|how we tested)\b", html, re.IGNORECASE):
+                raise ValueError("Article claims physical testing; editorial review required")
             artigo["conteudo_html"] = AFFILIATE_DISCLOSURE + html
             return artigo
         except (json.JSONDecodeError, KeyError, ValueError) as e:
@@ -198,7 +202,7 @@ def publicar(topico, artigo, media_id):
         "title":          topico["titulo"],
         "content":        artigo["conteudo_html"],
         "excerpt":        artigo.get("excerpt", ""),
-        "status":         "publish",
+        "status":         os.environ.get("HT_POST_STATUS", "draft"),
         "categories":     [cat_id],
     }
     if media_id:
@@ -252,6 +256,6 @@ log(f"Imagem: {'media ID ' + str(media_id) if media_id else 'sem imagem'}")
 
 log("Publicando...")
 post_id, post_link = publicar(topico, artigo, media_id)
-log(f"Publicado! ID {post_id} | {post_link}")
+log(f"Artigo salvo no WordPress! ID {post_id} | {post_link}")
 
 telegram(f"✅ <b>HandyTested</b>\n<a href=\"{post_link}\">{topico['titulo']}</a>")

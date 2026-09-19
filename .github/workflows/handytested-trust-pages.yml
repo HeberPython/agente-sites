@@ -1,0 +1,32 @@
+name: HandyTested - Trust page corrections
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Use 1 to apply after reviewing the dry-run"
+        required: true
+        default: "0"
+
+jobs:
+  trust-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Review or apply narrow page updates
+        env:
+          HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
+          APPLY: ${{ github.event.inputs.apply }}
+          BACKUP_DIR: handytested-page-backup
+        run: python handytested_trust_page_patch.py
+      - name: Preserve original page content
+        if: ${{ always() && github.event.inputs.apply == '1' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: handytested-trust-pages-backup
+          path: handytested-page-backup/
+          retention-days: 30

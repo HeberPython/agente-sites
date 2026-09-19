@@ -58,8 +58,9 @@ class DeferredPublication(SystemExit):
 
 REVIEW_STANDARDS = """
 QUALITY STANDARDS — match BestReviews, The Wirecutter, Tom's Guide, RTings.com:
-1. SPECIFICITY: Name exact brand + model. Include real specs (voltage, dB, RPM, weight, battery life).
+1. SPECIFICITY: Name exact brand + model. Include specs only when supplied by a verifiable source; omit unknown figures.
 2. HONEST EVALUATION VOICE: Do not claim physical testing unless verified. Use "we evaluate", "we look for", and "our review criteria" when discussing methodology.
+   Do not invent measurements, ownership, first-hand impressions, review counts, ratings, or current prices.
 3. BUYER PERSONAS: Each product gets "Best for: [specific user]" — not "most users".
 4. HONEST NEGATIVES: Every product needs 2 real cons that actually affect purchase decisions.
 5. KEYWORD: Include the primary keyword naturally in the first 80 words.
@@ -72,9 +73,9 @@ QUALITY STANDARDS — match BestReviews, The Wirecutter, Tom's Guide, RTings.com
 AFFILIATE_DISCLOSURE = (
     '<div style="background:#fff8e1;border-left:4px solid #ffc107;padding:14px 18px;'
     'margin:24px 0 32px;font-size:0.88em;color:#555;border-radius:0 4px 4px 0;">'
-    "<strong>Affiliate Disclosure:</strong> HandyTested is reader-supported. When you buy "
-    "through links on our site, we may earn an affiliate commission at no extra cost to you. "
-    "Our testing process is always independent — brands cannot pay for positive coverage.</div>"
+    "<strong>Affiliate Disclosure:</strong> As an Amazon Associate I earn from qualifying purchases. "
+    "HandyTested may receive a commission when you use an Amazon link. "
+    "Our recommendations are based on research unless an article documents physical testing.</div>"
 )
 
 # ── Logging ───────────────────────────────────────────────────────────────
@@ -186,7 +187,7 @@ def preparar_taxonomia():
 
 def listar_posts():
     try:
-        return wp_get("/posts?per_page=50&status=publish&_fields=title,categories,date")
+        return wp_get("/posts?per_page=100&status=publish,draft&_fields=title,categories,date")
     except Exception as e:
         log(f"  Aviso: não foi possível listar posts ({e})")
         return []
@@ -288,7 +289,7 @@ PRODUCTS:
 
 TARGET: 1400-1700 words. American English. Expert, conversational tone.
 VALUE FOCUS: Prioritize products with clear use cases and meaningful affiliate purchase intent.
-PRODUCT QUALITY: Reference 4-star+ products with strong review counts.
+PRODUCT QUALITY: Describe buyer fit without assuming star ratings or review counts.
 
 OUTPUT RULES:
 - Output ONLY valid HTML — no JSON, no markdown, no explanation, no code fences
@@ -296,6 +297,7 @@ OUTPUT RULES:
 - Use only: <p> <h2> <h3> <ul> <li> <strong> <table> <thead> <tbody> <tr> <th> <td>
 - Do not include exact prices, live discounts, or "today's price".
 - Do not claim HandyTested physically tested the products. Use "How We Evaluate" and "review criteria".
+- Do not invent measurements, prices, ratings, source checks, or first-hand experience.
 - Where each Amazon product card goes, write exactly: [PRODUCT CARD: ProductName]
   (use the exact product name from the list above)
 
@@ -412,6 +414,9 @@ def gerar_artigo(topico):
         if placeholder in html:
             html = html.replace(placeholder, amazon_card(nome, f"Our pick for {melhor}", preco))
 
+    if re.search(r"\b(?:we tested|we measured|we used|during our testing|our hands-on|after testing|how we tested)\b", html, re.IGNORECASE):
+        raise ValueError("Article claims physical testing; editorial review required")
+
     return {
         "meta_description": meta.get("meta_description", topico["titulo"]),
         "excerpt":          meta.get("excerpt", ""),
@@ -516,7 +521,7 @@ def publicar(topico, artigo, media_id):
         "title":          topico["titulo"],
         "content":        artigo["conteudo_html"],
         "excerpt":        artigo.get("excerpt", ""),
-        "status":         "publish",
+        "status":         os.environ.get("HT_POST_STATUS", "draft"),
         "categories":     [cat_id],
         "tags":           tag_ids,
         "comment_status": "closed",
@@ -596,7 +601,7 @@ log(f"Imagem: {'ID ' + str(media_id) if media_id else 'não encontrada (publican
 
 log("Publicando no WordPress...")
 post_id, post_link = publicar(topico, artigo, media_id)
-log(f"Publicado com sucesso! ID={post_id}")
+log(f"Artigo salvo no WordPress! ID={post_id}")
 log(f"URL: {post_link}")
 log(f"Keyword: {topico['palavra_chave']} | Palavras: {word_count} | Categoria: {categoria}")
 

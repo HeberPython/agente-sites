@@ -46,7 +46,7 @@ jobs:
           PROMO_EMAIL_QUERY:    UNSEEN
           PROMO_MAX_EMAILS:     "5"
           PROMO_MARK_SEEN:      "1"
-          PROMO_POST_STATUS:    ${{ github.event_name == 'schedule' && 'publish' || github.event.inputs.post_status || 'draft' }}
+          PROMO_POST_STATUS:    ${{ github.event.inputs.post_status || 'draft' }}
           PROMO_DEFAULT_EXPIRATION_DAYS: "21"
           PROMO_EXPIRE_PUBLISHED_POSTS: "1"
           PROMO_DEFAULT_FEATURED_MEDIA: "129"
