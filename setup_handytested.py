@@ -97,7 +97,7 @@ about_content = """<h2>About HandyTested</h2>
 <p>HandyTested is an independent product review site dedicated to helping you make smarter buying decisions. We focus on electronics, tools, and DIY supplies — the stuff that actually matters when you're working with your hands or setting up your home.</p>
 
 <h2>Our Mission</h2>
-<p>We believe every buyer deserves honest, detailed, and practical information before spending their hard-earned money. Our team digs deep into product specs, reads hundreds of real user reviews, and applies our own hands-on expertise to give you reviews that go beyond the manufacturer's marketing copy.</p>
+<p>We believe every buyer deserves clear information before buying. We compare available specifications, manufacturer information, and public buyer feedback to explain which products fit different needs.</p>
 
 <h2>What We Cover</h2>
 <ul>
@@ -107,7 +107,7 @@ about_content = """<h2>About HandyTested</h2>
 </ul>
 
 <h2>How We Review</h2>
-<p>Our reviews are based on a combination of hands-on testing, technical specification analysis, and aggregated user feedback from verified buyers. We have no affiliation with any manufacturer and our editorial opinions are never influenced by business relationships.</p>
+<p>Our guides are based on product research and comparison. We describe physical testing only where an article documents it. Affiliate relationships do not determine our recommendations.</p>
 
 <h2>Affiliate Disclosure</h2>
 <p>HandyTested participates in the Amazon Associates program. When you click affiliate links on our site and make a purchase, we may earn a small commission — at no extra cost to you. This helps us keep the lights on and continue producing independent content. Our editorial recommendations are never influenced by affiliate relationships.</p>
@@ -187,7 +187,7 @@ try:
         uid = users[0]["id"]
         wp_post(f"/users/{uid}", {
             "name": "HandyTested Editorial Team",
-            "description": "The HandyTested team combines hands-on product testing with deep technical research to deliver reviews you can actually trust. Our editors have backgrounds in electronics engineering, woodworking, and home improvement.",
+            "description": "HandyTested compares product information and buyer needs to publish practical guides for tools, electronics, and home gear.",
         })
         print(f"  Autor atualizado: ID {uid}")
 except Exception as e:
