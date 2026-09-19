@@ -17,7 +17,7 @@ Baseline and evidence: [HANDYTESTED_AUDIT.md](HANDYTESTED_AUDIT.md). Preserve ex
 
 ## First implementation slice
 
-Completed in the repo: read-only public inventory; generator language and disclosure tightened; new HandyTested posts default to draft; scheduled promo posts default to draft; portal source avoids duplicate page H1s. A narrow workflow is available to preview and apply those trust-page corrections without rerunning portal setup. Existing 38 published articles remain unchanged until separately reviewed.
+Completed: read-only public inventory; generator language and disclosure tightened; new HandyTested posts default to draft; scheduled promo posts default to draft; portal source avoids duplicate page H1s. The narrow workflow was run, and the five existing trust pages now have one H1. Existing 38 published articles remain unchanged until separately reviewed.
 
 ## Editorial review sequence
 

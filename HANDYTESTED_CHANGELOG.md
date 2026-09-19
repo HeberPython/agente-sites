@@ -23,7 +23,7 @@
 
 ### Manual action required
 
-- Deploy reviewed code/workflow changes. Run the trust-page workflow in preview mode, inspect the page revision diff, then apply. The workflow saves original page content as a 30-day artifact. Changes above do not by themselves rewrite the live site.
+- The code/workflow and five trust-page corrections are deployed. Review backup artifacts before any further page rewrite; they are retained for 30 days.
 - Review unsupported claims and commercial figures in the 38 existing posts. Verify each Amazon product and exact SiteStripe/ASIN link before replacing search URLs.
 - Inspect Rank Math sitemap cache/indexability: public REST lists 38 published posts but post sitemap listed 35, omitting the latest post.
 - Check Pinterest OAuth callback usage before removing the demo page from navigation/sitemap or adding `noindex`.
@@ -31,8 +31,8 @@
 
 ### Open issues
 
-No mass edit of existing claims, prices, titles or links was performed. No homepage redesign or live WordPress change was made in this slice. These require editorial verification, browser QA and a controlled release. The full ordered work is in `HANDYTESTED_IMPROVEMENT_PLAN.md`.
+No mass edit of existing article claims, prices, titles or links was performed. No homepage redesign was made in this slice. These require editorial verification, browser QA and a controlled release. The full ordered work is in `HANDYTESTED_IMPROVEMENT_PLAN.md`.
 
 ### Live trust-page release
 
-The first release updated `about`, `deals`, `how-we-review`, `editorial-policy` and `affiliate-disclosure` using the narrow workflow. Original content is stored in workflow run `35473146922` as `handytested-trust-pages-backup`. Four pages had one H1 after release; `deals` still had a nested H1 and needs the follow-up regex correction. The methodology copy and exact Amazon Associate statement were verified on the public pages.
+The first release updated `about`, `deals`, `how-we-review`, `editorial-policy` and `affiliate-disclosure` using the narrow workflow. Original content is stored in workflow run `35473146922` as `handytested-trust-pages-backup`. A nested H1 in `deals` required a follow-up. Run `35473274600` failed before any write because the runner network was unreachable; run `35473361461` then corrected `deals` and saved its previous content as another backup artifact. All five pages were verified with one H1 in public HTML; the methodology copy and exact Amazon Associate statement were also verified.
