@@ -32,3 +32,7 @@
 ### Open issues
 
 No mass edit of existing claims, prices, titles or links was performed. No homepage redesign or live WordPress change was made in this slice. These require editorial verification, browser QA and a controlled release. The full ordered work is in `HANDYTESTED_IMPROVEMENT_PLAN.md`.
+
+### Live trust-page release
+
+The first release updated `about`, `deals`, `how-we-review`, `editorial-policy` and `affiliate-disclosure` using the narrow workflow. Original content is stored in workflow run `35473146922` as `handytested-trust-pages-backup`. Four pages had one H1 after release; `deals` still had a nested H1 and needs the follow-up regex correction. The methodology copy and exact Amazon Associate statement were verified on the public pages.

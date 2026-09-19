@@ -50,7 +50,7 @@ def replace_once(content: str, old: str, new: str, slug: str) -> str:
 
 
 def revise(slug: str, content: str) -> str:
-    content = re.sub(r"^\s*<h1(?:\s[^>]*)?>.*?</h1>\s*", "", content, count=1, flags=re.I | re.S)
+    content = re.sub(r"<h1(?:\s[^>]*)?>.*?</h1>\s*", "", content, count=1, flags=re.I | re.S)
     if slug == "how-we-review":
         content = replace_once(
             content,
