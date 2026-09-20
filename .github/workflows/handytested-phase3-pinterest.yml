@@ -1,0 +1,36 @@
+name: HandyTested - Pinterest Noindex
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Dry-run or apply only Rank Math noindex to OAuth callback"
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - apply
+
+jobs:
+  pinterest-noindex:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify callback and optionally noindex
+        env:
+          HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
+          MODE: ${{ github.event.inputs.mode }}
+          BACKUP_DIR: handytested-phase3-pinterest-backup
+        run: python handytested_phase3_pinterest.py
+      - name: Preserve callback-page metadata backup
+        if: ${{ always() && github.event.inputs.mode == 'apply' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: handytested-phase3-pinterest-backup
+          path: handytested-phase3-pinterest-backup/
+          retention-days: 30
