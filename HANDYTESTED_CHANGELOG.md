@@ -73,3 +73,6 @@ The first release updated `about`, `deals`, `how-we-review`, `editorial-policy` 
 # Phase 4 blender release (2026-09-20)
 
 Published the researched smoothie-blender rewrite for post 175 after focused tests, [dry-run 35538884487](https://github.com/HeberPython/agente-sites/actions/runs/35538884487), and [apply 35538909594](https://github.com/HeberPython/agente-sites/actions/runs/35538909594) with original-post backup. Public article and both related guides returned HTTP 200. The release retained Vitamix E310, Breville BBL620 and Ninja BN701 with manufacturer evidence; it did not invent hands-on performance, prices, ASINs or exact direct product links. Phase 4 stands at 13/37, with smart-home automation next.
+# Phase 4 smart-home automation release (2026-09-20)
+
+Published the smart-home automation rewrite for post 173 after manufacturer verification, local tests, [dry-run 35539248856](https://github.com/HeberPython/agente-sites/actions/runs/35539248856) and [apply 35539266719](https://github.com/HeberPython/agente-sites/actions/runs/35539266719) with original-post backup and live-public verification. Four products now have distinct use cases and installation/compatibility limits. Phase 4 stands at 14/37, with kitchen gadgets next.
