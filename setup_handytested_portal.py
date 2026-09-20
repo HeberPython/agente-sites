@@ -510,86 +510,12 @@ def category_links() -> str:
     return "\n".join(links)
 
 
-def home_content(cat_ids: dict[str, int]) -> str:
+def home_content() -> str:
     import handytested_phase2
 
     categories = handytested_phase2.request("/categories?per_page=100&_fields=id,slug,count")
     posts = [handytested_phase2.get_post(slug) for slug in handytested_phase2.TOP_SLUGS]
     return handytested_phase2.home_html(categories, posts)
-
-    evergreen_ids = [
-        cat_ids["electronics"],
-        cat_ids["tools"],
-        cat_ids["diy"],
-        cat_ids["smart-home"],
-        cat_ids["kitchen"],
-        cat_ids["outdoor"],
-        cat_ids["cleaning"],
-        cat_ids["office-gear"],
-    ]
-    deal_id = cat_ids["amazon-deals"]
-    latest = fetch_posts(evergreen_ids, 7, [deal_id])
-    deals = fetch_posts([deal_id], 4)
-    tools = fetch_posts([cat_ids["tools"]], 3, [deal_id])
-    electronics = fetch_posts([cat_ids["electronics"], cat_ids["smart-home"], cat_ids["office-gear"]], 3, [deal_id])
-    home = fetch_posts([cat_ids["diy"], cat_ids["kitchen"], cat_ids["cleaning"], cat_ids["outdoor"]], 3, [deal_id])
-
-    return f"""
-{portal_css()}
-<div class="ht-portal" style="font-family:Arial,sans-serif;color:#172033;max-width:1200px;margin:0 auto;">
-  <section class="ht-hero ht-full-bleed" style="background:#07153f;color:#fff;margin-top:0;margin-bottom:34px;">
-    <div class="ht-hero-inner ht-full-bleed-inner" style="padding-top:42px;padding-bottom:36px;">
-      <p style="letter-spacing:.08em;text-transform:uppercase;font-size:12px;margin:0 0 10px;color:#f2b34c;font-weight:700;">Independent buying guidance</p>
-      <h1 style="font-size:42px;line-height:1.08;margin:0 0 14px;color:#fff;">Reviews before you buy tools, tech, and home gear.</h1>
-      <p style="max-width:740px;font-size:18px;line-height:1.55;margin:0 0 24px;color:#dce5ff;">HandyTested turns product research, owner feedback, specs, safety signals, and Amazon deal trends into practical recommendations for real buyers.</p>
-      <form role="search" method="get" action="/" style="display:flex;gap:10px;max-width:690px;flex-wrap:wrap;">
-        <input type="search" name="s" placeholder="What are you looking for today?" style="flex:1;min-width:240px;padding:14px 16px;border:0;font-size:15px;">
-        <button type="submit" style="background:#f2a733;color:#07153f;border:0;padding:14px 26px;font-weight:700;">Search</button>
-      </form>
-    </div>
-  </section>
-
-  <section style="margin:0 0 34px;">
-    <div class="ht-lead-grid">
-      <div>
-        <h2 style="font-size:22px;letter-spacing:.02em;margin:0 0 14px;color:#172033;">Latest Reviews</h2>
-        {render_feature(latest[0] if latest else None)}
-        <div style="margin-top:18px;">{render_card_grid(latest[1:4], "More review guides are coming next.")}</div>
-      </div>
-      {render_deal_rail(deals, latest[4:7])}
-    </div>
-  </section>
-
-  <section style="margin:0 0 34px;padding:26px 0;border-top:1px solid #e1e5ee;border-bottom:1px solid #e1e5ee;">
-    <h2 style="font-size:22px;margin:0 0 16px;color:#172033;">Shop by Category</h2>
-    <div class="ht-category-grid">
-      {category_links()}
-    </div>
-  </section>
-
-  <section style="margin:0 0 38px;">
-    <h2 style="font-size:22px;margin:0 0 14px;color:#172033;">Tools & Workshop</h2>
-    {render_card_grid(tools, "Tool and workshop reviews are being prepared.")}
-    <h2 style="font-size:22px;margin:34px 0 14px;color:#172033;">Electronics & Smart Home</h2>
-    {render_card_grid(electronics, "Electronics and smart home guides are being prepared.")}
-    <h2 style="font-size:22px;margin:34px 0 14px;color:#172033;">Home, Kitchen & Outdoor</h2>
-    {render_card_grid(home, "Home, kitchen, and outdoor guides are being prepared.")}
-  </section>
-
-  <section style="padding:42px 28px;background:#07153f;color:#fff;margin:38px 0 0;">
-    <div style="max-width:880px;margin:0 auto;text-align:center;">
-      <h2 style="font-size:28px;color:#fff;margin:0 0 12px;">Why trust HandyTested?</h2>
-      <p style="font-size:16px;line-height:1.7;color:#dce5ff;max-width:720px;margin:0 auto 24px;">Our recommendations are built around practical buyer questions: what matters, what fails, who a product is best for, and when a simpler option is enough.</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px;text-align:left;">
-        <div><h3 style="color:#f2b34c;margin:0 0 8px;font-size:17px;">Clear criteria</h3><p style="color:#dce5ff;font-size:14px;line-height:1.6;margin:0;">Specs, safety, warranty, owner feedback, and buyer fit.</p></div>
-        <div><h3 style="color:#f2b34c;margin:0 0 8px;font-size:17px;">No copied promos</h3><p style="color:#dce5ff;font-size:14px;line-height:1.6;margin:0;">Amazon campaigns become editorial guidance, not pasted ads.</p></div>
-        <div><h3 style="color:#f2b34c;margin:0 0 8px;font-size:17px;">Stale deals expire</h3><p style="color:#dce5ff;font-size:14px;line-height:1.6;margin:0;">Seasonal posts are removed when the promotion window closes.</p></div>
-      </div>
-      <p style="margin:28px 0 0;"><a href="/how-we-review/" style="background:#f2a733;color:#07153f;padding:12px 22px;font-weight:700;text-decoration:none;">How we review</a></p>
-    </div>
-  </section>
-</div>
-""".strip()
 
 
 def deals_content(deals_category_id: int) -> str:
@@ -682,7 +608,7 @@ def main() -> None:
     home = ensure_page(
         "home-page",
         "Home",
-        home_content(category_ids),
+        home_content(),
         0,
         "HandyTested - Product Reviews, Buying Guides & Amazon Deals",
         "Practical product reviews, buying guides, and Amazon deal guidance for tools, electronics, smart home, DIY, kitchen, and everyday gear.",

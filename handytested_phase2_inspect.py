@@ -48,6 +48,8 @@ def main() -> None:
                 } for page in data]
             elif name == "settings" and isinstance(data, dict):
                 data = {key: data.get(key) for key in ("show_on_front", "page_on_front", "page_for_posts", "stylesheet", "template")}
+            elif name == "widgets" and isinstance(data, list):
+                data = [{"id": widget.get("id"), "sidebar": widget.get("sidebar"), "id_base": widget.get("id_base")} for widget in data]
             elif name == "astra" and isinstance(data, dict):
                 data = {"keys": list(data)[:60]}
             elif name == "block" and isinstance(data, dict):
@@ -62,7 +64,10 @@ def main() -> None:
             for menu in menus:
                 menu_id = menu["id"]
                 items = get(f"/wp/v2/menu-items?menus={menu_id}&per_page=100&context=edit")
-                print("menu_items", menu_id, json.dumps(items, ensure_ascii=False)[:12000])
+                print("menu_items", menu_id, json.dumps([
+                    {"id": item.get("id"), "title": item.get("title", {}).get("raw"), "url": item.get("url"), "order": item.get("menu_order")}
+                    for item in items
+                ], ensure_ascii=False))
     except urllib.error.HTTPError as exc:
         print("menu_items HTTP", exc.code, exc.read().decode()[:300])
 
