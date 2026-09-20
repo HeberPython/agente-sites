@@ -511,6 +511,12 @@ def category_links() -> str:
 
 
 def home_content(cat_ids: dict[str, int]) -> str:
+    import handytested_phase2
+
+    categories = handytested_phase2.request("/categories?per_page=100&_fields=id,slug,count")
+    posts = [handytested_phase2.get_post(slug) for slug in handytested_phase2.TOP_SLUGS]
+    return handytested_phase2.home_html(categories, posts)
+
     evergreen_ids = [
         cat_ids["electronics"],
         cat_ids["tools"],

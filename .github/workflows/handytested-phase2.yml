@@ -27,3 +27,17 @@ jobs:
         env:
           HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
         run: python handytested_phase2_inspect.py
+      - name: Review or apply redesign
+        if: ${{ github.event.inputs.mode != 'inspect' }}
+        env:
+          HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
+          MODE: ${{ github.event.inputs.mode }}
+          BACKUP_DIR: handytested-phase2-backup
+        run: python handytested_phase2.py
+      - name: Preserve original WordPress objects
+        if: ${{ always() && github.event.inputs.mode == 'apply' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: handytested-phase2-backup
+          path: handytested-phase2-backup/
+          retention-days: 30
