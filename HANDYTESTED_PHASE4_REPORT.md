@@ -7,14 +7,14 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 9 / 9 / 9 |
-| Pending, not genuinely blocked | 28 (21 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 10 / 10 / 10 |
+| Pending, not genuinely blocked | 27 (20 P1, 7 P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 26 |
+| Retained recommended products with primary-source records | 28 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in nine revised bodies | 26 |
-| Contextual internal links in nine revised bodies | 22 |
-| Featured-image rights/product-match reviews still open | 9 |
+| Tagged Amazon searches in ten revised bodies | 28 |
+| Contextual internal links in ten revised bodies | 24 |
+| Featured-image rights/product-match reviews still open | 10 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
 | Year titles updated | 6 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers) |
 
@@ -33,12 +33,13 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-voltage-testers-for-home-electrical-work-2025 | P0 | 3 verified | Complete | [Live](https://handytested.com/best-voltage-testers-for-home-electrical-work-2025/) |
 | best-robot-vacuums-for-pet-hair-under-300 | P1 | 2 verified | Complete | [Live](https://handytested.com/best-robot-vacuums-for-pet-hair-under-300/) |
 | best-indoor-hydroponic-gardening-systems-under-300 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-indoor-hydroponic-gardening-systems-under-300/) |
+| best-portable-outdoor-grills-under-300-for-2025 | P1 | 2 documented | Complete | [Live](https://handytested.com/best-portable-outdoor-grills-under-300-for-2025/) |
 
-The 28 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 27 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
-| best-portable-outdoor-grills-under-300-for-2025 | best-projectors-under-300-for-home-entertainment | best-cordless-ratchets-for-diy-mechanics-in-2025 |
+|  | best-projectors-under-300-for-home-entertainment | best-cordless-ratchets-for-diy-mechanics-in-2025 |
 | best-electric-lawn-mowers-under-300-for-2025 | top-5-ergonomic-office-chairs-under-300-for-comfort | best-electric-screwdrivers-for-diy-projects-in-2025 |
 | best-wireless-earbuds-under-300-for-2025 | best-carpet-cleaners-for-pet-owners-in-2025 | top-5-digital-torque-wrenches-under-100-for-accurate-torque |
 | best-high-performance-blenders-for-home-smoothies | best-cordless-nail-guns-under-300-for-diy-projects | best-cordless-circular-saws-under-150-for-diy-projects |
@@ -64,10 +65,11 @@ The 28 remaining articles retain their Phase 3 state **pending Phase 4 research*
 | Voltage testers | GT-16 minimum wrongly stated 50 V; false-positive and safety assurances | Correct | Manufacturer-listed 5 V AC minimum, with explicit de-energization limitation | [Greenlee](https://www.greenlee.com/ca/en/adjustable-voltage-detector-gt-16) |
 | Pet-hair robots | Old Roomba/Deebot/Neato/S4 lineup and durable $300 implication | Replace | Roborock Q7 M5 and Shark Navigator RV2120AE; budget removed from title | [Roborock](https://us.roborock.com/products/roborock-q7-m5) |
 | Hydroponic gardens | Click & Grow miscategorized as hydroponic; old AeroGarden stock unproven | Exclude/replace | LetPot LPH-SE, iDOO I-HGH01, LetPot LPH-Air; clarify Smart Soil difference | [Click & Grow](https://www.clickandgrow.com/products/the-smart-garden-9), [LetPot](https://letpot.com/products/letpot-senior-12-pod-hydroponic-growing-system-with-app-control) |
+| Portable grills | CGG-180T discontinued; RoadTrip 285 stock/budget uncertain; Blackstone griddle conflated | Exclude/replace | Coleman RoadTrip 225 Tabletop and Weber Go-Anywhere Charcoal; clarify fuels and safety | [Coleman](https://www.coleman.com/grills-stoves/grills/coleman-roadtrip-225-portable-tabletop-propane-grill/SP_271486.html), [Weber](https://www.weber.com/US/en/charcoal/portable-charcoal/go-anywhere-charcoal-grill/1500763.html) |
 
 ## Validation and open items
 
 - Each article passed focused local tests, GitHub Actions dry-run, apply and public release checks for H1, canonical, title, description, disclosure, tagged CTAs and related-link presence. Backup run links are in the checkpoint.
 - Browser QA at 320/375/1280 px was sampled across batches. Article tables were internally scrollable on mobile. AdSense iframes caused page-level overflow on sampled smart-hub, earbuds, voltage and robot pages; this is not fixed and should be handled separately without disabling ads blindly.
-- No Phase 4 article is recorded as genuinely blocked. The pending 28 must each receive fresh public research before a final state is assigned.
+- No Phase 4 article is recorded as genuinely blocked. The pending 27 must each receive fresh public research before a final state is assigned.
 - Search Console, Rank Math sitemap, global Astra styling/footer, Pinterest diagnostic admin, image rights and verified Amazon direct links remain outstanding but do not prevent careful text corrections.
