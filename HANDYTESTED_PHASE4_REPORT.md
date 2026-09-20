@@ -7,14 +7,14 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 11 / 11 / 11 |
-| Pending, not genuinely blocked | 26 (19 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 12 / 12 / 12 |
+| Pending, not genuinely blocked | 25 (18 P1, 7 P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 30 |
+| Retained recommended products with primary-source records | 33 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in eleven revised bodies | 30 |
-| Contextual internal links in eleven revised bodies | 26 |
-| Featured-image rights/product-match reviews still open | 11 |
+| Tagged Amazon searches in twelve revised bodies | 33 |
+| Contextual internal links in twelve revised bodies | 28 |
+| Featured-image rights/product-match reviews still open | 12 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
 | Year titles updated | 6 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers) |
 
@@ -35,14 +35,15 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-indoor-hydroponic-gardening-systems-under-300 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-indoor-hydroponic-gardening-systems-under-300/) |
 | best-portable-outdoor-grills-under-300-for-2025 | P1 | 2 documented | Complete | [Live](https://handytested.com/best-portable-outdoor-grills-under-300-for-2025/) |
 | best-electric-lawn-mowers-under-300-for-2025 | P1 | 2 documented | Complete | [Live](https://handytested.com/best-electric-lawn-mowers-under-300-for-2025/) |
+| best-wireless-earbuds-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-wireless-earbuds-under-300-for-2025/) |
 
-The 26 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 25 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
 |  | best-projectors-under-300-for-home-entertainment | best-cordless-ratchets-for-diy-mechanics-in-2025 |
 |  | top-5-ergonomic-office-chairs-under-300-for-comfort | best-electric-screwdrivers-for-diy-projects-in-2025 |
-| best-wireless-earbuds-under-300-for-2025 | best-carpet-cleaners-for-pet-owners-in-2025 | top-5-digital-torque-wrenches-under-100-for-accurate-torque |
+|  | best-carpet-cleaners-for-pet-owners-in-2025 | top-5-digital-torque-wrenches-under-100-for-accurate-torque |
 | best-high-performance-blenders-for-home-smoothies | best-cordless-nail-guns-under-300-for-diy-projects | best-cordless-circular-saws-under-150-for-diy-projects |
 | top-smart-home-automation-devices-under-300-for-2025 | best-camping-gear-under-300-for-outdoor-adventures | best-rotary-tools-under-50-for-diy-projects-2025 |
 | best-kitchen-gadgets-under-300-for-modern-chefs | best-kitchen-appliances-under-300-for-home-chefs | best-stud-finders-under-50-for-home-projects-2025 |
@@ -68,10 +69,11 @@ The 26 remaining articles retain their Phase 3 state **pending Phase 4 research*
 | Hydroponic gardens | Click & Grow miscategorized as hydroponic; old AeroGarden stock unproven | Exclude/replace | LetPot LPH-SE, iDOO I-HGH01, LetPot LPH-Air; clarify Smart Soil difference | [Click & Grow](https://www.clickandgrow.com/products/the-smart-garden-9), [LetPot](https://letpot.com/products/letpot-senior-12-pod-hydroponic-growing-system-with-app-control) |
 | Portable grills | CGG-180T discontinued; RoadTrip 285 stock/budget uncertain; Blackstone griddle conflated | Exclude/replace | Coleman RoadTrip 225 Tabletop and Weber Go-Anywhere Charcoal; clarify fuels and safety | [Coleman](https://www.coleman.com/grills-stoves/grills/coleman-roadtrip-225-portable-tabletop-propane-grill/SP_271486.html), [Weber](https://www.weber.com/US/en/charcoal/portable-charcoal/go-anywhere-charcoal-grill/1500763.html) |
 | Electric mowers | Old EGO/Snapper budget unsupported; Greenworks 25022 old deal; Sun Joe variants conflated | Replace/clarify | Greenworks 25322 kit and BLACK+DECKER BEMW472BH; cord and blade safety | [Greenworks](https://www.greenworkstools.com/collections/the-lawn-perfectionist/products/40v-cordless-lawn-mower-25322), [BLACK+DECKER](https://www.blackanddecker.com/products/bemw472bh) |
+| Premium earbuds | Old AirPods Pro 2/XM4/Buds2/Liberty 3 Pro lineup; future-generation confusion | Replace | AirPods Pro 3, Galaxy Buds4 Pro, Bose QC Ultra Earbuds 2nd Gen, with ecosystem and battery caveats | [Apple](https://www.apple.com/airpods-pro/specs/), [Samsung](https://www.samsung.com/us/audio-sound/galaxy-buds4-pro/), [Bose](https://www.bose.com/p/earbuds/bose-quietcomfort-ultra-earbuds-2nd-gen/QCUE2-HEADPHONEIN.html) |
 
 ## Validation and open items
 
 - Each article passed focused local tests, GitHub Actions dry-run, apply and public release checks for H1, canonical, title, description, disclosure, tagged CTAs and related-link presence. Backup run links are in the checkpoint.
 - Browser QA at 320/375/1280 px was sampled across batches. Article tables were internally scrollable on mobile. AdSense iframes caused page-level overflow on sampled smart-hub, earbuds, voltage and robot pages; this is not fixed and should be handled separately without disabling ads blindly.
-- No Phase 4 article is recorded as genuinely blocked. The pending 26 must each receive fresh public research before a final state is assigned.
+- No Phase 4 article is recorded as genuinely blocked. The pending 25 must each receive fresh public research before a final state is assigned.
 - Search Console, Rank Math sitemap, global Astra styling/footer, Pinterest diagnostic admin, image rights and verified Amazon direct links remain outstanding but do not prevent careful text corrections.
