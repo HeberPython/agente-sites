@@ -79,3 +79,6 @@ Published the smart-home automation rewrite for post 173 after manufacturer veri
 # Phase 4 kitchen gadgets release (2026-09-20)
 
 Published the kitchen-gadgets rewrite for post 171 after manufacturer and USDA research, local tests, [dry-run 35539514318](https://github.com/HeberPython/agente-sites/actions/runs/35539514318), and [apply 35539528239](https://github.com/HeberPython/agente-sites/actions/runs/35539528239) with original-post backup. Public article and related guides returned HTTP 200. The new article removes the discontinued TOA-60 and mistaken BN701 Smart Torque claim; it compares three precise products by job without invented testing or prices. Phase 4 stands at 15/37, smart-home devices next.
+# Phase 4 smart-home devices release (2026-09-20)
+
+Published post 168 after manufacturer research, local tests, repeat [dry-run 35539810069](https://github.com/HeberPython/agente-sites/actions/runs/35539810069) and [apply 35539826998](https://github.com/HeberPython/agente-sites/actions/runs/35539826998) with original-post backup and live verification. Initial dry-run 35539742700 failed on runner network before any write. The article now distinguishes Ring subscription, ecobee wiring and Kasa Matter feature limits; no invented price or ASIN. Phase 4 stands at 16/37, with outdoor furniture kits next.

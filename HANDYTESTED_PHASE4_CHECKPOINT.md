@@ -1,10 +1,10 @@
 # HandyTested Phase 4 checkpoint (2026-09-20)
 
-This is an execution checkpoint, not a final completion claim. Read the Phase 4 request and `HANDYTESTED_PHASE4_REPORT.md` before resuming. Do not redo the fifteen completed articles unless live QA reveals a regression.
+This is an execution checkpoint, not a final completion claim. Read the Phase 4 request and `HANDYTESTED_PHASE4_REPORT.md` before resuming. Do not redo the sixteen completed articles unless live QA reveals a regression.
 
 ## Completed and published
 
-All fifteen kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
+All sixteen kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
 
 | Article | Post ID | Apply run / backup artifact name |
 |---|---:|---|
@@ -23,16 +23,17 @@ All fifteen kept their original slug/self-canonical, gained a research-led Engli
 | Smoothie blenders | 175 | https://github.com/HeberPython/agente-sites/actions/runs/35538909594 / `handytested-phase4-blenders-backup` |
 | Smart-home automation | 173 | https://github.com/HeberPython/agente-sites/actions/runs/35539266719 / `handytested-phase4-automation-backup` |
 | Kitchen gadgets | 171 | https://github.com/HeberPython/agente-sites/actions/runs/35539528239 / `handytested-phase4-kitchen-gadgets-backup` |
+| Smart-home devices | 168 | https://github.com/HeberPython/agente-sites/actions/runs/35539826998 / `handytested-phase4-smart-devices-backup` |
 
 WordPress original-post backup artifacts are attached to those apply runs and retained for 30 days. Random orbital sanders had an initial failed apply (run `35534136103`) because an unrelated related-guide fetch timed out; its rollback restored the prior post, a second dry-run `35534259258` passed, and the successful apply is the one above.
 
 ## Next article and batch
 
-**NEXT ARTICLE:** `best-smart-home-devices-under-300-for-2025` (P1), then follow the exact P1 and P2 order in `HANDYTESTED_PHASE3_REPORT.md`. Seven P0 and eight P1 are complete; 15 P1 and 7 P2 remain. None of those 22 has been researched or published in Phase 4 yet. Do not mark them genuinely blocked merely because Phase 3 worksheets said "Screened; blocked".
+**NEXT ARTICLE:** `best-diy-outdoor-furniture-kits-under-300-for-2025` (P1), then follow the exact P1 and P2 order in `HANDYTESTED_PHASE3_REPORT.md`. Seven P0 and nine P1 are complete; 14 P1 and 7 P2 remain. None of those 21 has been researched or published in Phase 4 yet. Do not mark them genuinely blocked merely because Phase 3 worksheets said "Screened; blocked".
 
 ## Research already obtained for next work
 
-The kitchen gadget record documents Instant Pot Duo 6QT, TP19H and FoodSaver VS3130 with manufacturer/USDA evidence: `handytested_sources/best-kitchen-gadgets-under-300-for-modern-chefs.md`. Dry-run 35539514318 and apply 35539528239 passed; independent public HEAD returned HTTP 200. A first mower apply (35538345755) got HTTP 403 on the initial WordPress read, before backup/write. Dry-run 35538372442 and apply 35538395880 subsequently passed. Each completed article's source record names its primary manufacturer/manual evidence.
+The smart-devices record documents Ring Battery Doorbell Plus 2nd gen, ecobee Enhanced and Kasa KP125M: `handytested_sources/best-smart-home-devices-under-300-for-2025.md`. First dry-run 35539742700 hit temporary runner network-unreachable before any write; repeat dry-run 35539810069 and apply 35539826998 passed. Independent public HEAD returned HTTP 200. A first mower apply (35538345755) got HTTP 403 on the initial WordPress read, before backup/write. Dry-run 35538372442 and apply 35538395880 subsequently passed. Each completed article's source record names its primary manufacturer/manual evidence.
 
 ## Outstanding cross-cutting issues
 
@@ -45,4 +46,4 @@ The kitchen gadget record documents Instant Pot Duo 6QT, TP19H and FoodSaver VS3
 
 ## Resume instruction
 
-In `C:\Users\Heber\agente-sites` on `main`, read `git status --short` and this checkpoint; start public-source research for `best-smart-home-devices-under-300-for-2025`. For each article: read snapshot and source record, research current exact models, write original English copy plus source evidence, validate locally, stage only task files, commit/push, run its GitHub Actions dry-run, apply with backup, check live, update report/checkpoint, and immediately proceed to the next. Do not publish an article when its snapshot/revision guard fails; investigate that specific article and continue others. Do not return a plan in place of execution.
+In `C:\Users\Heber\agente-sites` on `main`, read `git status --short` and this checkpoint; start public-source research for `best-diy-outdoor-furniture-kits-under-300-for-2025`. For each article: read snapshot and source record, research current exact models, write original English copy plus source evidence, validate locally, stage only task files, commit/push, run its GitHub Actions dry-run, apply with backup, check live, update report/checkpoint, and immediately proceed to the next. Do not publish an article when its snapshot/revision guard fails; investigate that specific article and continue others. Do not return a plan in place of execution.

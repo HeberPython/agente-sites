@@ -7,14 +7,14 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 15 / 15 / 15 |
-| Pending, not genuinely blocked | 22 (15 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 16 / 16 / 16 |
+| Pending, not genuinely blocked | 21 (14 P1, 7 P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 43 |
+| Retained recommended products with primary-source records | 46 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in fifteen revised bodies | 43 |
-| Contextual internal links in fifteen revised bodies | 34 |
-| Featured-image rights/product-match reviews still open | 15 |
+| Tagged Amazon searches in sixteen revised bodies | 46 |
+| Contextual internal links in sixteen revised bodies | 36 |
+| Featured-image rights/product-match reviews still open | 16 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
 | Year titles updated | 6 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers) |
 
@@ -39,8 +39,9 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-high-performance-blenders-for-home-smoothies | P1 | 3 documented | Complete | [Live](https://handytested.com/best-high-performance-blenders-for-home-smoothies/) |
 | top-smart-home-automation-devices-under-300-for-2025 | P1 | 4 documented | Complete | [Live](https://handytested.com/top-smart-home-automation-devices-under-300-for-2025/) |
 | best-kitchen-gadgets-under-300-for-modern-chefs | P1 | 3 documented | Complete | [Live](https://handytested.com/best-kitchen-gadgets-under-300-for-modern-chefs/) |
+| best-smart-home-devices-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-smart-home-devices-under-300-for-2025/) |
 
-The 22 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 21 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
@@ -50,7 +51,7 @@ The 22 remaining articles retain their Phase 3 state **pending Phase 4 research*
 |  | best-cordless-nail-guns-under-300-for-diy-projects | best-cordless-circular-saws-under-150-for-diy-projects |
 |  | best-camping-gear-under-300-for-outdoor-adventures | best-rotary-tools-under-50-for-diy-projects-2025 |
 |  | best-kitchen-appliances-under-300-for-home-chefs | best-stud-finders-under-50-for-home-projects-2025 |
-| best-smart-home-devices-under-300-for-2025 | best-smart-home-security-cameras-under-300-for-2025 | best-cordless-drills-under-100 |
+|  | best-smart-home-security-cameras-under-300-for-2025 | best-cordless-drills-under-100 |
 | best-diy-outdoor-furniture-kits-under-300-for-2025 | best-home-diy-tool-sets-for-under-300-in-2025 |  |
 | best-cordless-impact-wrenches-under-300-for-2025 | best-smart-tvs-under-300-for-2025-viewing-experience |  |
 |  | best-noise-canceling-headphones-under-300-for-2025 |  |
@@ -76,10 +77,11 @@ The 22 remaining articles retain their Phase 3 state **pending Phase 4 research*
 | Smoothie blenders | Generic Hamilton Beach model, unsupported precise NutriBullet variant, implied hands-on ranking | Exclude/clarify | Vitamix E310, Breville BBL620 and Ninja BN701; distinguish total pitcher volume, optional accessory and manufacturer specs from measured performance | [Vitamix](https://www.vitamix.com/us/en_us/products/e310), [Breville](https://www.breville.com/en-us/product/bbl620), [Ninja](https://www.ninjakitchen.com/products/ninja-professional-plus-blender-with-auto-iq-zidBN701) |
 | Smart-home automation | Echo Show 8 2nd gen and Wyze Cam v3 mixed with hubs, vague Hue bundle | Exclude/clarify | Echo Hub, exact Hue four-bulb Bridge Pro kit, August Wi-Fi lock, Kasa HS220; distinguish protocols, deadbolt and neutral/single-pole wiring | [Amazon](https://www.aboutamazon.com/news/devices/amazon-echo-hub-best-features), [Hue](https://www.philips-hue.com/en-us/p/hue-white-and-color-ambiance-starter-kit-4-e26-color-capable-bulbs-bridge-pro/046677591908), [August](https://august.com/products/august-wifi-smart-lock), [TP-Link](https://www.tp-link.com/us/home-networking/smart-switch/hs220/v1/) |
 | Kitchen gadgets | TOA-60 discontinued; BN701/Smart Torque conflation; generic sous-vide and FoodSaver | Exclude/clarify | Instant Pot Duo 6QT, TempPro TP19H, FoodSaver VS3130 by task, with pressure, temperature and cold-storage caveats | [Instant Pot](https://instantpot.com/products/instant-pot-duo-6qt-multi-use-pressure-cooker), [TempPro](https://temppro.com/products/tp19h-instant-read-meat-thermometer), [FoodSaver](https://www.foodsaver.com/shop/food-vacuum-sealers/countertop-vacuum-sealers/foodsaver-vs3130-premier-multi-use-vacuum-sealing-food-preservation-system/SAP_2159402.html), [USDA](https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/safe-temperature-chart) |
+| Smart-home devices | Mixed older Echo/Ring generations, unspecified Hue bundle and HS103P4 | Replace/clarify | Ring Battery Doorbell Plus 2nd gen, ecobee Enhanced and Kasa KP125M; distinguish subscription, HVAC compatibility and Matter platform features | [Ring](https://ring.com/products/battery-doorbell-plus-2nd-gen), [ecobee](https://www.ecobee.com/en-us/smart-thermostats/smart-thermostat-enhanced/), [Kasa](https://www.tp-link.com/us/home-networking/smart-plug/kp125m/) |
 
 ## Validation and open items
 
 - Each article passed focused local tests, GitHub Actions dry-run, apply and public release checks for H1, canonical, title, description, disclosure, tagged CTAs and related-link presence. Backup run links are in the checkpoint.
 - Browser QA at 320/375/1280 px was sampled across batches. Article tables were internally scrollable on mobile. AdSense iframes caused page-level overflow on sampled smart-hub, earbuds, voltage and robot pages; this is not fixed and should be handled separately without disabling ads blindly.
-- No Phase 4 article is recorded as genuinely blocked. The pending 22 must each receive fresh public research before a final state is assigned.
+- No Phase 4 article is recorded as genuinely blocked. The pending 21 must each receive fresh public research before a final state is assigned.
 - Search Console, Rank Math sitemap, global Astra styling/footer, Pinterest diagnostic admin, image rights and verified Amazon direct links remain outstanding but do not prevent careful text corrections.
