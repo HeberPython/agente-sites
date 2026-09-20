@@ -82,3 +82,7 @@ Published the kitchen-gadgets rewrite for post 171 after manufacturer and USDA r
 # Phase 4 smart-home devices release (2026-09-20)
 
 Published post 168 after manufacturer research, local tests, repeat [dry-run 35539810069](https://github.com/HeberPython/agente-sites/actions/runs/35539810069) and [apply 35539826998](https://github.com/HeberPython/agente-sites/actions/runs/35539826998) with original-post backup and live verification. Initial dry-run 35539742700 failed on runner network before any write. The article now distinguishes Ring subscription, ecobee wiring and Kasa Matter feature limits; no invented price or ASIN. Phase 4 stands at 16/37, with outdoor furniture kits next.
+
+# Phase 4 outdoor-furniture release (2026-09-20)
+
+Published post 164 after exact-model manufacturer research, local tests, [dry-run 35541625044](https://github.com/HeberPython/agente-sites/actions/runs/35541625044), and [apply 35541640533](https://github.com/HeberPython/agente-sites/actions/runs/35541640533) with original-post backup artifact `handytested-phase4-outdoor-furniture-backup`. Public article returned HTTP 200 and the release verified metadata, disclosure and links. The revised guide distinguishes the 2x4 Basics chair/table bracket kits (lumber sold separately) from Keter's preformed Solana bench, without a fixed under-$300 promise or invented testing. Phase 4 stands at 17/37, with cordless impact wrenches next.
