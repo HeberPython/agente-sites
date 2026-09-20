@@ -7,14 +7,14 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 19 / 19 / 19 |
-| Pending, not genuinely blocked | 18 (11 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 20 / 20 / 20 |
+| Pending, not genuinely blocked | 17 (10 P1, 7 P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 55 |
+| Retained recommended products with primary-source records | 58 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in nineteen revised bodies | 55 |
-| Contextual internal links in nineteen revised bodies | 42 |
-| Featured-image rights/product-match reviews still open | 19 |
+| Tagged Amazon searches in twenty revised bodies | 58 |
+| Contextual internal links in twenty revised bodies | 44 |
+| Featured-image rights/product-match reviews still open | 20 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
 | Year titles updated | 7 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches) |
 
@@ -43,13 +43,14 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-diy-outdoor-furniture-kits-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-diy-outdoor-furniture-kits-under-300-for-2025/) |
 | best-cordless-impact-wrenches-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-cordless-impact-wrenches-under-300-for-2025/) |
 | best-projectors-under-300-for-home-entertainment | P1 | 3 documented | Complete | [Live](https://handytested.com/best-projectors-under-300-for-home-entertainment/) |
+| top-5-ergonomic-office-chairs-under-300-for-comfort | P1 | 3 documented | Complete | [Live](https://handytested.com/top-5-ergonomic-office-chairs-under-300-for-comfort/) |
 
-The 18 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 17 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
 |  |  | best-cordless-ratchets-for-diy-mechanics-in-2025 |
-|  | top-5-ergonomic-office-chairs-under-300-for-comfort | best-electric-screwdrivers-for-diy-projects-in-2025 |
+|  |  | best-electric-screwdrivers-for-diy-projects-in-2025 |
 |  | best-carpet-cleaners-for-pet-owners-in-2025 | top-5-digital-torque-wrenches-under-100-for-accurate-torque |
 |  | best-cordless-nail-guns-under-300-for-diy-projects | best-cordless-circular-saws-under-150-for-diy-projects |
 |  | best-camping-gear-under-300-for-outdoor-adventures | best-rotary-tools-under-50-for-diy-projects-2025 |
@@ -84,6 +85,7 @@ The 18 remaining articles retain their Phase 3 state **pending Phase 4 research*
 | Outdoor furniture kits | Adirondack label, lumber-inclusive price implication, generic assembly claims | Clarify | 2x4 Basics AnySize Chair and Picnic Table bracket kits need separately purchased lumber; Keter Solana is a preformed storage bench, not a lumber kit. Budget title removed | [2x4 Basics chair](https://2x4basics.com/outdoor-furniture/90134onlmi/), [picnic table](https://2x4basics.com/outdoor-furniture/90182onlmi/), [Keter](https://www.keter.com/en-us/outdoor-furniture/outdoor-benches/solana-70-gallon-outdoor-storage-bench-brown-250294.html) |
 | Impact wrenches | LGC120 falsely identified as impact wrench; conflated DCF899/P261/P262 and fabricated runtime/torque | Remove/replace | DCF921B, Milwaukee 2962-20 and RYOBI P262; clarify bare tools, fastening versus removal torque and final hand-torque verification | [DEWALT](https://www.dewalt.com/en-us/product/dcf921b/atomic-20v-max-12-cordless-impact-wrench-hog-ring-anvil-tool-only), [Milwaukee manual](https://documents.milwaukeetool.com/58-14-2960D1.pdf), [RYOBI](https://www.ryobitools.com/products/33287178230?objectID=51791464825195), [BLACK+DECKER](https://www.blackanddecker.com/products/lgc120) |
 | Projectors | VS250 as current, HT2050A under budget, unspecified Capsule generation and unsupported battery/bright-room claims | Replace/clarify | Yaber Pro V9, Epson CO-W01 and ViewSonic PA503S; explain native pixels, ANSI/ISO output, streaming and varying prices | [Yaber](https://www.yaber.com/collections/home-cinema/products/v9-home-cinema), [Epson](https://epson.com/For-Home/Projectors/Streaming-Entertainment/EpiqVision%C2%AE-Flex-CO-W01-Portable-Projector/p/V11HA86020), [ViewSonic](https://www.viewsonic.com/us/pa503s-4000-lumens-svga-home-with-hdmi-and-vertical-keystone.html) |
+| Office chairs | Sayl under $300, unspecified Furmax/AmazonBasics models, generic Ignition options and back-pain/productivity assurances | Remove/clarify | SIHOO M18, FlexiSpot OC3B and exact HON Ignition 2.0 configuration; compare seat and workstation fit without budget or treatment guarantee | [SIHOO](https://www.sihoo.com/products/m18-ergonomic-chair), [FlexiSpot](https://www.flexispot.com/office-chairs/ergonomic-office-chair-oc3b), [HON](https://www.hon.com/chairs/ignition/hitlmy1ahimcu10alsbt), [OSHA](https://www.osha.gov/etools/computer-workstations/components/chairs) |
 
 ## Validation and open items
 
