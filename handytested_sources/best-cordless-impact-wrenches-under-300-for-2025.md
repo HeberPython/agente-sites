@@ -1,4 +1,17 @@
-# Best Cordless Impact Wrenches Under $300 for 2025
+# Cordless impact wrenches: Phase 4 source record
+
+Researched 2026-09-20. Proposed title: Cordless Impact Wrenches: Compact and Mid-Torque Options. Original slug and canonical retained. Three exact models, no hands-on test, measured runtime, fixed price, rating or verified direct Amazon ASIN. The historical screening section below is superseded by this research; its `BLOCKED` label describes Phase 3 screening only, not a current public-research blocker.
+
+| Decision | Exact model / primary evidence | Supported facts |
+|---|---|---|
+| Retain | [DEWALT DCF921B](https://www.dewalt.com/en-us/product/dcf921b/atomic-20v-max-12-cordless-impact-wrench-hog-ring-anvil-tool-only) | 1/2-inch hog ring, up to 300 ft-lb fastening and 450 ft-lb breakaway, four settings; bare tool without battery/charger. |
+| Retain | [Milwaukee 2962-20](https://www.milwaukeetool.com/Products/Power-Tools/Specialty-Tools/Hoists/2962-20), [manual](https://documents.milwaukeetool.com/58-14-2960D1.pdf) | 1/2-inch friction ring, up to 550 ft-lb fastening and 650 ft-lb nut-busting; bare tool. Actual torque varies by joint, battery and duration; manual requires torque-wrench confirmation. |
+| Retain | [RYOBI P262](https://www.ryobitools.com/products/33287178230?objectID=51791464825195) | 1/2-inch friction ring, up to 450 ft-lb fastening and 600 ft-lb breakaway, three speeds plus auto; distinguish tool-only and kit selection. |
+| Remove | [BLACK+DECKER LGC120](https://www.blackanddecker.com/products/lgc120) | Garden cultivator, not an impact wrench. |
+
+[Tire Rack wheel-fastener guidance](https://www.tirerack.com/upgrade-garage/how-do-i-properly-torque-my-wheel-lug-nuts-or-bolts) supports hand-starting threads and final tightening to vehicle specification with a hand torque wrench. The old DCF899P1 paragraph invented a 72-hour runtime and exaggerated torque; the 2767-20 runtime and weight were not tied to a specified battery, and P261/P262 were conflated. Remove these and the broad under-$300/year claim. Amazon links below are tagged search destinations, not verified product pages. Existing featured-image rights and product match remain unverified. Related URLs: `/top-5-digital-torque-wrenches-under-100-for-accurate-torque/` and `/best-cordless-ratchets-for-diy-mechanics-in-2025/`. Editorial decision: research-led rewrite and publication after revision-guarded dry-run and backup.
+
+## Historical Phase 3 screening (superseded)
 
 Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verification.**
 
@@ -20,7 +33,7 @@ Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verifi
 - Exact Amazon disclosure in post body: False
 - JSON-LD present: True (semantics unverified)
 - Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+- Historical screening decision: superseded by the researched Phase 4 decision above.
 
 ## Product Candidates (Unverified)
 - DeWalt DCF899P1 20V MAX XR Brushless Impact Wrench
@@ -66,5 +79,5 @@ Detected rating markers: none
 |---|---|---|---|---|---|
 | PENDING | PENDING | PENDING | PENDING | PENDING | No recommendation approved yet |
 
-## Editorial Decision
-BLOCKED - REQUIRES MANUAL VERIFICATION. Screened fields above must be reviewed in context before a publish decision. Do not infer truth from a regex match or Amazon search result.
+## Historical editorial note
+The old screening fields were not verification. The Phase 4 primary-source review and publish decision are recorded at the top of this document.
