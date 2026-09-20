@@ -12,6 +12,9 @@ import json
 import os
 from pathlib import Path
 import re
+import socket
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -60,8 +63,20 @@ def request(path: str, payload: dict | None = None) -> object:
             "User-Agent": "HandyTested phase 2 release",
         },
     )
-    with urllib.request.urlopen(req, timeout=45) as response:
-        return json.load(response)
+    for attempt in range(3 if payload is None else 1):
+        try:
+            with urllib.request.urlopen(req, timeout=25) as response:
+                return json.load(response)
+        except urllib.error.HTTPError as exc:
+            if payload is not None or exc.code not in {403, 429, 500, 502, 503, 504} or attempt == 2:
+                raise
+            print(f"Read {path} returned HTTP {exc.code}; retry {attempt + 1}/2", flush=True)
+        except (TimeoutError, socket.timeout, urllib.error.URLError) as exc:
+            if payload is not None or attempt == 2:
+                raise
+            print(f"Read {path} failed ({type(exc).__name__}); retry {attempt + 1}/2", flush=True)
+        time.sleep(1 + attempt * 2)
+    raise RuntimeError("Read retries exhausted")
 
 
 def backup(name: str, value: object) -> None:
