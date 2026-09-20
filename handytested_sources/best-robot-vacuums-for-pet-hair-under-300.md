@@ -1,71 +1,33 @@
-# Best Robot Vacuums for Pet Hair Under $300
+# Robot Vacuums for Pet Hair: Two Documented Choices
 
-Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verification.**
-
-- URL: https://handytested.com/best-robot-vacuums-for-pet-hair-under-300/
 - WordPress ID: 187
 - Slug: best-robot-vacuums-for-pet-hair-under-300
-- Priority: P1
-- Category: cleaning
-- Published / modified: 2026-09-09T12:57:12 / 2026-09-12T13:18:05
-- Search intent: COMMERCIAL INVESTIGATION
-- Primary topic / likely keyword: Best Robot Vacuums for Pet Hair Under $300
-- Proposed title: PENDING EDITORIAL REVIEW
-- Secondary topics: PENDING EDITORIAL REVIEW
-- Current SEO title: Best Robot Vacuums for Pet Hair Under $300
-- Current meta description: Discover the best robot vacuum for pet hair under $300 to keep your home spotless. Perfect for pet owners looking for effective cleaning solutions.
 - Canonical: https://handytested.com/best-robot-vacuums-for-pet-hair-under-300/
-- H1: Best Robot Vacuums for Pet Hair Under $300
-- Title includes year: False
-- Exact Amazon disclosure in post body: False
-- JSON-LD present: True (semantics unverified)
-- Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+- Priority: P1
+- Research checked: 2026-09-20
+- Decision: replace dated lineup, remove budget from title because Shark relies on temporary sale; publish after revision-guarded dry-run
+- Copy: `handytested_phase4_robot_vacuums.html`
 
-## Product Candidates (Unverified)
-- iRobot Roomba 694
-- Ecovacs Deebot N79S
-- Neato D4
-- Roborock S4
-- iRobot Roomba 694 robot vacuum
-- Eufy RoboVac 11S Max robot vacuum
-- Shark ION Robot AV753 vacuum
+## Verified choices
 
-## Test/Experience Claims To Verify
-- None detected by screening.
+| Product | Primary source | Verified details | Status and decision |
+|---|---|---|---|
+| Roborock Q7 M5 | https://us.roborock.com/products/roborock-q7-m5 | Dual anti-tangle brushes, LiDAR, three water-flow levels, charging dock/mop in box; manufacturer lists $299.99 regular and $149.99 sale at check | Current US store, selected; no claim of measured pet-hair pickup or self-emptying |
+| Shark Navigator RV2120AE | https://www.sharkninja.com/shark-navigator-robot-vacuum-self-empty-base/RV2120AE.html and https://www.sharkninja.com/vacuums-air-care/vacuum-cleaners/robot-vacuums | Self-cleaning brushroll, LiDAR row cleaning, object avoidance, self-empty base; regular listing $449.99 and category sale $299.99 at check | Current US model, selected; no durable under-$300 promise |
 
-## Price Passages To Verify
-- If you’re a pet owner, you know that keeping your home clean can be a challenge due to pet hair. Finding the best robot vacuum for pet hair under $300 can make this task much easier. These affordable devices are specifically designed to tackle stubborn pet hair while fitting within a budget. In this guide, we’ll help you choose the ideal robot vacuum that best fits your lifestyle and needs, saving you time and effort in keeping your home tidy.
-- When searching for the best robot vacuum for pet hair under $300, consider these key factors:
+## Considered but not retained
 
-Detected dollar values (including CTAs): $300, $300,
+- Old Roomba 694, Deebot N79S, Neato D4 and Roborock S4: prior lineup not established as current. Removed rather than extrapolating from old Amazon search results.
+- Eufy G20 https://www.eufy.com/products/t2257111 : maker lists $229.99 and model details, but product page said "Notify Me" on 2026-09-20, so not a main pick.
+- Eufy 11S Max https://www.eufy.com/products/t2126113 : maker lists $279.99 and supports model, but page said "Notify Me". Not selected.
+- Shark RV2110 prior link currently redirects to robot-vacuum category. RV2120AE is not represented as the same product.
 
-## Rating Passages To Verify
-- None detected by screening.
+## Commercial and media notes
 
-Detected rating markers: none
+- No fixed article price or unverified Amazon availability. Two exact-model tagged Amazon searches remain temporary; direct product URLs need verified listing/SiteStripe evidence.
+- Existing featured image alt/license and product match are unverified. No exact model depiction claimed.
+- Related internal links should be checked live; another pending guide is linked for context but not endorsed as updated.
 
-## Amazon Links
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=iRobot%20Roomba%20694&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Ecovacs%20Deebot%20N79S&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Neato%20D4&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Roborock%20S4&tag=handytested0d-20
-- iRobot Roomba 694 robot vacuum | SEARCH | tag OK | https://www.amazon.com/s?k=iRobot+Roomba+694+robot+vacuum&tag=handytested0d-20
-- Eufy RoboVac 11S Max robot vacuum | SEARCH | tag OK | https://www.amazon.com/s?k=Eufy+RoboVac+11S+Max+robot+vacuum&tag=handytested0d-20
-- Shark ION Robot AV753 vacuum | SEARCH | tag OK | https://www.amazon.com/s?k=Shark+ION+Robot+AV753+vacuum&tag=handytested0d-20
+## Release checks
 
-## Images
-- Featured media: {"url": "https://handytested.com/wp-content/uploads/2026/09/best-robot-vacuums-for-pet-hair-under-300.jpg", "alt": "", "width": 1080, "height": 608}
-- Body image elements: []
-- Licensing and product match: UNVERIFIED
-
-## Internal Links
-- None detected by screening.
-
-## Source Evidence
-| Product | Manufacturer / primary source | Source type | Checked | Supported claim | Status / notes |
-|---|---|---|---|---|---|
-| PENDING | PENDING | PENDING | PENDING | PENDING | No recommendation approved yet |
-
-## Editorial Decision
-BLOCKED - REQUIRES MANUAL VERIFICATION. Screened fields above must be reviewed in context before a publish decision. Do not infer truth from a regex match or Amazon search result.
+- Preserve slug/canonical; one H1, exact disclosure, two tagged searches, two related links, title/meta, responsive table, backup and rollback.
