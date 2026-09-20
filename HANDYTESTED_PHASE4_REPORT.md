@@ -7,14 +7,14 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 18 / 18 / 18 |
-| Pending, not genuinely blocked | 19 (12 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 19 / 19 / 19 |
+| Pending, not genuinely blocked | 18 (11 P1, 7 P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 52 |
+| Retained recommended products with primary-source records | 55 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in eighteen revised bodies | 52 |
-| Contextual internal links in eighteen revised bodies | 40 |
-| Featured-image rights/product-match reviews still open | 18 |
+| Tagged Amazon searches in nineteen revised bodies | 55 |
+| Contextual internal links in nineteen revised bodies | 42 |
+| Featured-image rights/product-match reviews still open | 19 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
 | Year titles updated | 7 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches) |
 
@@ -42,12 +42,13 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-smart-home-devices-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-smart-home-devices-under-300-for-2025/) |
 | best-diy-outdoor-furniture-kits-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-diy-outdoor-furniture-kits-under-300-for-2025/) |
 | best-cordless-impact-wrenches-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-cordless-impact-wrenches-under-300-for-2025/) |
+| best-projectors-under-300-for-home-entertainment | P1 | 3 documented | Complete | [Live](https://handytested.com/best-projectors-under-300-for-home-entertainment/) |
 
-The 19 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 18 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
-|  | best-projectors-under-300-for-home-entertainment | best-cordless-ratchets-for-diy-mechanics-in-2025 |
+|  |  | best-cordless-ratchets-for-diy-mechanics-in-2025 |
 |  | top-5-ergonomic-office-chairs-under-300-for-comfort | best-electric-screwdrivers-for-diy-projects-in-2025 |
 |  | best-carpet-cleaners-for-pet-owners-in-2025 | top-5-digital-torque-wrenches-under-100-for-accurate-torque |
 |  | best-cordless-nail-guns-under-300-for-diy-projects | best-cordless-circular-saws-under-150-for-diy-projects |
@@ -82,10 +83,11 @@ The 19 remaining articles retain their Phase 3 state **pending Phase 4 research*
 | Smart-home devices | Mixed older Echo/Ring generations, unspecified Hue bundle and HS103P4 | Replace/clarify | Ring Battery Doorbell Plus 2nd gen, ecobee Enhanced and Kasa KP125M; distinguish subscription, HVAC compatibility and Matter platform features | [Ring](https://ring.com/products/battery-doorbell-plus-2nd-gen), [ecobee](https://www.ecobee.com/en-us/smart-thermostats/smart-thermostat-enhanced/), [Kasa](https://www.tp-link.com/us/home-networking/smart-plug/kp125m/) |
 | Outdoor furniture kits | Adirondack label, lumber-inclusive price implication, generic assembly claims | Clarify | 2x4 Basics AnySize Chair and Picnic Table bracket kits need separately purchased lumber; Keter Solana is a preformed storage bench, not a lumber kit. Budget title removed | [2x4 Basics chair](https://2x4basics.com/outdoor-furniture/90134onlmi/), [picnic table](https://2x4basics.com/outdoor-furniture/90182onlmi/), [Keter](https://www.keter.com/en-us/outdoor-furniture/outdoor-benches/solana-70-gallon-outdoor-storage-bench-brown-250294.html) |
 | Impact wrenches | LGC120 falsely identified as impact wrench; conflated DCF899/P261/P262 and fabricated runtime/torque | Remove/replace | DCF921B, Milwaukee 2962-20 and RYOBI P262; clarify bare tools, fastening versus removal torque and final hand-torque verification | [DEWALT](https://www.dewalt.com/en-us/product/dcf921b/atomic-20v-max-12-cordless-impact-wrench-hog-ring-anvil-tool-only), [Milwaukee manual](https://documents.milwaukeetool.com/58-14-2960D1.pdf), [RYOBI](https://www.ryobitools.com/products/33287178230?objectID=51791464825195), [BLACK+DECKER](https://www.blackanddecker.com/products/lgc120) |
+| Projectors | VS250 as current, HT2050A under budget, unspecified Capsule generation and unsupported battery/bright-room claims | Replace/clarify | Yaber Pro V9, Epson CO-W01 and ViewSonic PA503S; explain native pixels, ANSI/ISO output, streaming and varying prices | [Yaber](https://www.yaber.com/collections/home-cinema/products/v9-home-cinema), [Epson](https://epson.com/For-Home/Projectors/Streaming-Entertainment/EpiqVision%C2%AE-Flex-CO-W01-Portable-Projector/p/V11HA86020), [ViewSonic](https://www.viewsonic.com/us/pa503s-4000-lumens-svga-home-with-hdmi-and-vertical-keystone.html) |
 
 ## Validation and open items
 
 - Each article passed focused local tests, GitHub Actions dry-run, apply and public release checks for H1, canonical, title, description, disclosure, tagged CTAs and related-link presence. Backup run links are in the checkpoint.
 - Browser QA at 320/375/1280 px was sampled across batches. Article tables were internally scrollable on mobile. AdSense iframes caused page-level overflow on sampled smart-hub, earbuds, voltage and robot pages; this is not fixed and should be handled separately without disabling ads blindly.
-- No Phase 4 article is recorded as genuinely blocked. The pending 19 must each receive fresh public research before a final state is assigned.
+- No Phase 4 article is recorded as genuinely blocked. The pending 18 must each receive fresh public research before a final state is assigned.
 - Search Console, Rank Math sitemap, global Astra styling/footer, Pinterest diagnostic admin, image rights and verified Amazon direct links remain outstanding but do not prevent careful text corrections.
