@@ -1,0 +1,24 @@
+name: HandyTested - Rank Math sitemap refresh
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Use 1 to clear Rank Math transients after reviewing the dry-run"
+        required: true
+        default: "0"
+
+jobs:
+  sitemap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compare sitemap and optionally clear Rank Math transients
+        env:
+          HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
+          APPLY: ${{ github.event.inputs.apply }}
+        run: python handytested_sitemap_refresh.py
