@@ -1,0 +1,38 @@
+name: HandyTested - Phase 4 Premium Earbuds
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Dry-run before release"
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - apply
+
+jobs:
+  premium-earbuds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate tests
+        run: python -m unittest test_handytested_phase4_premium_earbuds_release.py test_handytested_release_gate.py test_handytested_editorial_validator.py test_handytested_phase2.py
+      - name: Check baseline and optionally publish
+        env:
+          HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
+          MODE: ${{ github.event.inputs.mode }}
+          BACKUP_DIR: handytested-phase4-premium-earbuds-backup
+        run: python handytested_phase4_premium_earbuds_release.py
+      - name: Preserve article backup
+        if: ${{ always() && github.event.inputs.mode == 'apply' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: handytested-phase4-premium-earbuds-backup
+          path: handytested-phase4-premium-earbuds-backup/
+          retention-days: 30
