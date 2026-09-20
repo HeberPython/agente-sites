@@ -1,70 +1,13 @@
-# Best Portable Outdoor Grills Under $300 for 2025
+# Portable outdoor grills editorial evidence
 
-Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verification.**
+Checked 2026-09-20. WordPress ID 183, priority P1. Preserve slug and self-canonical `https://handytested.com/best-portable-outdoor-grills-under-300-for-2025/`. No first-hand grill testing. US-market comparison; no permanent price ceiling despite historic slug.
 
-- URL: https://handytested.com/best-portable-outdoor-grills-under-300-for-2025/
-- WordPress ID: 183
-- Slug: best-portable-outdoor-grills-under-300-for-2025
-- Priority: P1
-- Category: outdoor
-- Published / modified: 2026-09-04T12:44:34 / 2026-09-12T13:18:08
-- Search intent: COMMERCIAL INVESTIGATION
-- Primary topic / likely keyword: Best Portable Outdoor Grills Under $300 for 2025
-- Proposed title: PENDING EDITORIAL REVIEW
-- Secondary topics: PENDING EDITORIAL REVIEW
-- Current SEO title: Best Portable Outdoor Grills Under $300 for 2025
-- Current meta description: Discover the best portable outdoor grills for camping under $300. Cook delicious meals anywhere with our top picks for 2025!
-- Canonical: https://handytested.com/best-portable-outdoor-grills-under-300-for-2025/
-- H1: Best Portable Outdoor Grills Under $300 for 2025
-- Title includes year: True
-- Exact Amazon disclosure in post body: False
-- JSON-LD present: True (semantics unverified)
-- Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+| Model | Primary source | Evidence and decision |
+|---|---|---|
+| Coleman RoadTrip 225 Tabletop, SKU 2000033046 | https://www.coleman.com/grills-stoves/grills/coleman-roadtrip-225-portable-tabletop-propane-grill/SP_271486.html | Two adjustable burners, 225 sq. in., up to 11,000 BTU, 27.6 lb, one-pound/16.4-ounce propane cylinder sold separately. Retain exact tabletop version. |
+| Weber Go-Anywhere Charcoal, part 1500763 | https://www.weber.com/US/en/charcoal/portable-charcoal/go-anywhere-charcoal-grill/1500763.html | 160 sq. in., 11.5 lb, two-piece grate, adjustable vents and charcoal. Retain; not gas Go-Anywhere. |
+| Cuisinart CGG-180T | https://www.cuisinart.com/discontinued-petite-gourmet-portable-tabletop-gas-grill/CGG-180T.html | Manufacturer labels discontinued. Remove. |
+| Coleman RoadTrip 285 | https://www.coleman.com/grills-stoves/grills/roadtrip-285-portable-stand-up-propane-grill/SAP_2000033052.html | Distinct 285-sq.-in. stand-up model, 47.8 lb; manufacturer page showed unavailable and sale-dependent budget. Remove from durable recommendation. |
+| Blackstone 22-inch tabletop | https://blackstoneproducts.com/collections/17-22-griddles | Flat-top griddle, not grate grill; exclude from this comparison. |
 
-## Product Candidates (Unverified)
-- Weber Q2200 Liquid Propane Grill
-- Cuisinart CGG-180T Petit Gourmet Portable Tabletop Grill
-- Blackstone 22 inch Tabletop Griddle
-- Coleman RoadTrip 285 Portable Stand-Up Propane Grill
-- Weber Q1200 portable gas grill
-- Coleman RoadTrip 285 portable stand-up propane grill
-- Cuisinart CGG-180T Petit Gourmet portable gas grill
-
-## Test/Experience Claims To Verify
-- None detected by screening.
-
-## Price Passages To Verify
-- As outdoor adventures beckon, having the best portable outdoor grills for camping can transform your meals from basic to delightful. Lightweight and adaptable, these grills are perfect for tailgating, picnics, and camping trips. With a budget under $300, you’ll find various options catering to different needs, from family-sized grills to compact models. In this article, we’ll explore the top picks for 2025, ensuring you can choose the ideal grill for your outdoor culinary experiences.
-
-Detected dollar values (including CTAs): $300,
-
-## Rating Passages To Verify
-- None detected by screening.
-
-Detected rating markers: none
-
-## Amazon Links
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Weber%20Q2200%20Liquid%20Propane%20Grill&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Cuisinart%20CGG-180T%20Petit%20Gourmet%20Portable%20Tabletop%20Grill&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Blackstone%2022%20inch%20Tabletop%20Griddle&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Coleman%20RoadTrip%20285%20Portable%20Stand-Up%20Propane%20Grill&tag=handytested0d-20
-- Weber Q1200 portable gas grill | SEARCH | tag OK | https://www.amazon.com/s?k=Weber+Q1200+portable+gas+grill&tag=handytested0d-20
-- Coleman RoadTrip 285 portable stand-up propane grill | SEARCH | tag OK | https://www.amazon.com/s?k=Coleman+RoadTrip+285+portable+stand-up+propane+grill&tag=handytested0d-20
-- Cuisinart CGG-180T Petit Gourmet portable gas grill | SEARCH | tag OK | https://www.amazon.com/s?k=Cuisinart+CGG-180T+Petit+Gourmet+portable+gas+grill&tag=handytested0d-20
-
-## Images
-- Featured media: {"url": "https://handytested.com/wp-content/uploads/2026/09/best-portable-outdoor-grills-under-300-for-2025.jpg", "alt": "", "width": 1080, "height": 720}
-- Body image elements: []
-- Licensing and product match: UNVERIFIED
-
-## Internal Links
-- None detected by screening.
-
-## Source Evidence
-| Product | Manufacturer / primary source | Source type | Checked | Supported claim | Status / notes |
-|---|---|---|---|---|---|
-| PENDING | PENDING | PENDING | PENDING | PENDING | No recommendation approved yet |
-
-## Editorial Decision
-BLOCKED - REQUIRES MANUAL VERIFICATION. Screened fields above must be reviewed in context before a publish decision. Do not infer truth from a regex match or Amazon search result.
+Safety: https://www.cpsc.gov/Safety-Education/Safety-Education-Centers/Carbon-Monoxide-Information-Center/Charcoal and https://www.cpsc.gov/safety-education/safety-guides/carbon-monoxide/carbon-monoxide-fact-sheet. Local fire restrictions can change; example https://www.nps.gov/mora/learn/news/mount-rainier-national-park-parkwide-fire-ban-goes-into-effect-june-26-2026.htm is contextual, not a universal rule. Two tagged Amazon model searches, not verified direct listings; no ASIN inferred. Two contextual internal links. Featured-image rights and product match remain unverified. Exact affiliate disclosure in body. No fixed prices, ratings or invented cooking results.
