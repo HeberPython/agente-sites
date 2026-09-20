@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Validate tests
-        run: python -m unittest test_handytested_release_gate.py test_handytested_editorial_validator.py test_handytested_phase2.py
+        run: python -m unittest test_handytested_phase4_multimeter_release.py test_handytested_release_gate.py test_handytested_editorial_validator.py test_handytested_phase2.py
       - name: Check baseline and optionally publish
         env:
           HT_WP_PASS: ${{ secrets.HT_WP_PASS }}

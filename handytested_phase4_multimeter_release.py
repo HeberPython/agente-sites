@@ -38,7 +38,7 @@ def check_public(url: str) -> dict[str, str]:
     for marker in ("Klein Tools MM325", "Klein Tools MM420", "Fluke 110"):
         if marker not in text:
             raise RuntimeError(f"Missing product: {marker}")
-    if "weeks hands-on testing" in text or "Fluke 101" in text and "CAT II" in text:
+    if "weeks hands-on testing" in text or re.search(r"Fluke 101.{0,80}CAT II(?!I)\b", text, re.I):
         raise RuntimeError("Old test or CAT claim remains")
     if source.count(TAG) < 3:
         raise RuntimeError("Missing tagged Amazon searches")
@@ -58,11 +58,16 @@ def main() -> None:
     current = api(f"/wp/v2/posts/{POST_ID}?context=edit")
     if current["id"] != POST_ID or current["slug"] != SLUG or current["status"] != "publish":
         raise RuntimeError("Post identity/status changed")
-    if current["modified"] != baseline["modified"] or current["content"]["rendered"] != baseline["content"]["rendered"]:
-        raise RuntimeError("Post changed since snapshot; re-review before editing")
+    if current["content"]["rendered"] != baseline["content"]["rendered"] or current["title"]["raw"] != plain(baseline["title"]["rendered"]):
+        raise RuntimeError("Post body/title changed since snapshot; re-review before editing")
     old_meta = public_meta(fetch_html(current["link"]))
     if old_meta["canonical"] != current["link"]:
         raise RuntimeError("Baseline canonical changed")
+    if current["modified"] != baseline["modified"]:
+        # Run 35532529781 restored the original body/title/meta but changed the revision timestamp.
+        if old_meta["title"] != "Best Multimeters Under $50 for Home Electricians 2025 - HandyTested" or old_meta["description"] != "Find the best multimeter under $50 for beginners with our 2025 picks. Safe, reliable tools perfect for every home electrician.":
+            raise RuntimeError("Post metadata differs from the known rollback state")
+        print("Known rollback revision matched original body, title and public metadata")
     print(json.dumps({"mode": MODE, "post": SLUG, "old_title": plain(current["title"]["rendered"]), "new_title": TITLE, "old_meta": old_meta, "validator": findings}, ensure_ascii=False))
     if MODE == "dry-run":
         return
