@@ -65,7 +65,11 @@ def main() -> None:
         raise RuntimeError("Baseline canonical changed")
     if current["modified"] != baseline["modified"]:
         # Run 35532529781 restored the original body/title/meta but changed the revision timestamp.
-        if old_meta["title"] != "Best Multimeters Under $50 for Home Electricians 2025 - HandyTested" or old_meta["description"] != "Find the best multimeter under $50 for beginners with our 2025 picks. Safe, reliable tools perfect for every home electrician.":
+        allowed_old_titles = {
+            "Best Multimeters Under $50 for Home Electricians 2025 - HandyTested",
+            "Best Multimeters Under $50 for Home Electricians 2025",
+        }
+        if old_meta["title"] not in allowed_old_titles or old_meta["description"] != "Find the best multimeter under $50 for beginners with our 2025 picks. Safe, reliable tools perfect for every home electrician.":
             raise RuntimeError("Post metadata differs from the known rollback state")
         print("Known rollback revision matched original body, title and public metadata")
     print(json.dumps({"mode": MODE, "post": SLUG, "old_title": plain(current["title"]["rendered"]), "new_title": TITLE, "old_meta": old_meta, "validator": findings}, ensure_ascii=False))
@@ -92,7 +96,7 @@ def main() -> None:
                 time.sleep(3)
     except Exception:
         print("Release failed; attempting rollback of multimeter article", flush=True)
-        api("/rankmath/v1/updateMeta", {"objectType": "post", "objectID": POST_ID, "meta": {"rank_math_title": old_meta["title"].removesuffix(" - HandyTested"), "rank_math_description": old_meta["description"]}})
+        api("/rankmath/v1/updateMeta", {"objectType": "post", "objectID": POST_ID, "meta": {"rank_math_title": old_meta["title"], "rank_math_description": old_meta["description"]}})
         api(f"/wp/v2/posts/{POST_ID}", {"title": current["title"]["raw"], "content": current["content"]["raw"]})
         raise
 
