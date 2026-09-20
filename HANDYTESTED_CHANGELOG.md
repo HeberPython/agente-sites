@@ -86,3 +86,7 @@ Published post 168 after manufacturer research, local tests, repeat [dry-run 355
 # Phase 4 outdoor-furniture release (2026-09-20)
 
 Published post 164 after exact-model manufacturer research, local tests, [dry-run 35541625044](https://github.com/HeberPython/agente-sites/actions/runs/35541625044), and [apply 35541640533](https://github.com/HeberPython/agente-sites/actions/runs/35541640533) with original-post backup artifact `handytested-phase4-outdoor-furniture-backup`. Public article returned HTTP 200 and the release verified metadata, disclosure and links. The revised guide distinguishes the 2x4 Basics chair/table bracket kits (lumber sold separately) from Keter's preformed Solana bench, without a fixed under-$300 promise or invented testing. Phase 4 stands at 17/37, with cordless impact wrenches next.
+
+# Phase 4 impact-wrench release (2026-09-20)
+
+Published post 159 after manufacturer/manual research, 12 local tests, [dry-run 35543522171](https://github.com/HeberPython/agente-sites/actions/runs/35543522171), and [apply 35543543637](https://github.com/HeberPython/agente-sites/actions/runs/35543543637) with original-post backup artifact ID `10615269178`. Public metadata/content checks and independent HTTP 200 passed. Corrected the LGC120 garden-cultivator misidentification, removed invented runtime/torque and compared DCF921B, 2962-20 and P262 with final-torque safety guidance. Phase 4 stands at 18/37; projectors are next.

@@ -7,16 +7,16 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 17 / 17 / 17 |
-| Pending, not genuinely blocked | 20 (13 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 18 / 18 / 18 |
+| Pending, not genuinely blocked | 19 (12 P1, 7 P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 49 |
+| Retained recommended products with primary-source records | 52 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in seventeen revised bodies | 49 |
-| Contextual internal links in seventeen revised bodies | 38 |
-| Featured-image rights/product-match reviews still open | 17 |
+| Tagged Amazon searches in eighteen revised bodies | 52 |
+| Contextual internal links in eighteen revised bodies | 40 |
+| Featured-image rights/product-match reviews still open | 18 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
-| Year titles updated | 6 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers) |
+| Year titles updated | 7 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches) |
 
 No published article asserts first-hand testing by HandyTested. Manufacturer specifications are attributed, promotional or outdated prices are not used as fixed article prices, and no Amazon ASIN was guessed. Source mix so far: manufacturer product pages for every retained recommendation, relevant official manuals/support pages for tool/electrical safety, official sellers for some availability/budget checks, and EPA/Fluke safety guidance. Precise source-type totals remain to be reconciled for the final report.
 
@@ -41,8 +41,9 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-kitchen-gadgets-under-300-for-modern-chefs | P1 | 3 documented | Complete | [Live](https://handytested.com/best-kitchen-gadgets-under-300-for-modern-chefs/) |
 | best-smart-home-devices-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-smart-home-devices-under-300-for-2025/) |
 | best-diy-outdoor-furniture-kits-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-diy-outdoor-furniture-kits-under-300-for-2025/) |
+| best-cordless-impact-wrenches-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-cordless-impact-wrenches-under-300-for-2025/) |
 
-The 20 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 19 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
@@ -54,7 +55,7 @@ The 20 remaining articles retain their Phase 3 state **pending Phase 4 research*
 |  | best-kitchen-appliances-under-300-for-home-chefs | best-stud-finders-under-50-for-home-projects-2025 |
 |  | best-smart-home-security-cameras-under-300-for-2025 | best-cordless-drills-under-100 |
 |  | best-home-diy-tool-sets-for-under-300-in-2025 |  |
-| best-cordless-impact-wrenches-under-300-for-2025 | best-smart-tvs-under-300-for-2025-viewing-experience |  |
+|  | best-smart-tvs-under-300-for-2025-viewing-experience |  |
 |  | best-noise-canceling-headphones-under-300-for-2025 |  |
 |  | best-laser-levels-for-diy-home-projects-under-60 |  |
 |  | best-oscillating-multi-tools-under-75-for-2025 |  |
@@ -80,10 +81,11 @@ The 20 remaining articles retain their Phase 3 state **pending Phase 4 research*
 | Kitchen gadgets | TOA-60 discontinued; BN701/Smart Torque conflation; generic sous-vide and FoodSaver | Exclude/clarify | Instant Pot Duo 6QT, TempPro TP19H, FoodSaver VS3130 by task, with pressure, temperature and cold-storage caveats | [Instant Pot](https://instantpot.com/products/instant-pot-duo-6qt-multi-use-pressure-cooker), [TempPro](https://temppro.com/products/tp19h-instant-read-meat-thermometer), [FoodSaver](https://www.foodsaver.com/shop/food-vacuum-sealers/countertop-vacuum-sealers/foodsaver-vs3130-premier-multi-use-vacuum-sealing-food-preservation-system/SAP_2159402.html), [USDA](https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/safe-temperature-chart) |
 | Smart-home devices | Mixed older Echo/Ring generations, unspecified Hue bundle and HS103P4 | Replace/clarify | Ring Battery Doorbell Plus 2nd gen, ecobee Enhanced and Kasa KP125M; distinguish subscription, HVAC compatibility and Matter platform features | [Ring](https://ring.com/products/battery-doorbell-plus-2nd-gen), [ecobee](https://www.ecobee.com/en-us/smart-thermostats/smart-thermostat-enhanced/), [Kasa](https://www.tp-link.com/us/home-networking/smart-plug/kp125m/) |
 | Outdoor furniture kits | Adirondack label, lumber-inclusive price implication, generic assembly claims | Clarify | 2x4 Basics AnySize Chair and Picnic Table bracket kits need separately purchased lumber; Keter Solana is a preformed storage bench, not a lumber kit. Budget title removed | [2x4 Basics chair](https://2x4basics.com/outdoor-furniture/90134onlmi/), [picnic table](https://2x4basics.com/outdoor-furniture/90182onlmi/), [Keter](https://www.keter.com/en-us/outdoor-furniture/outdoor-benches/solana-70-gallon-outdoor-storage-bench-brown-250294.html) |
+| Impact wrenches | LGC120 falsely identified as impact wrench; conflated DCF899/P261/P262 and fabricated runtime/torque | Remove/replace | DCF921B, Milwaukee 2962-20 and RYOBI P262; clarify bare tools, fastening versus removal torque and final hand-torque verification | [DEWALT](https://www.dewalt.com/en-us/product/dcf921b/atomic-20v-max-12-cordless-impact-wrench-hog-ring-anvil-tool-only), [Milwaukee manual](https://documents.milwaukeetool.com/58-14-2960D1.pdf), [RYOBI](https://www.ryobitools.com/products/33287178230?objectID=51791464825195), [BLACK+DECKER](https://www.blackanddecker.com/products/lgc120) |
 
 ## Validation and open items
 
 - Each article passed focused local tests, GitHub Actions dry-run, apply and public release checks for H1, canonical, title, description, disclosure, tagged CTAs and related-link presence. Backup run links are in the checkpoint.
 - Browser QA at 320/375/1280 px was sampled across batches. Article tables were internally scrollable on mobile. AdSense iframes caused page-level overflow on sampled smart-hub, earbuds, voltage and robot pages; this is not fixed and should be handled separately without disabling ads blindly.
-- No Phase 4 article is recorded as genuinely blocked. The pending 20 must each receive fresh public research before a final state is assigned.
+- No Phase 4 article is recorded as genuinely blocked. The pending 19 must each receive fresh public research before a final state is assigned.
 - Search Console, Rank Math sitemap, global Astra styling/footer, Pinterest diagnostic admin, image rights and verified Amazon direct links remain outstanding but do not prevent careful text corrections.
