@@ -612,6 +612,9 @@ def publicar_post(site, topico, artigo, media_id):
         "categories": [categoria_id],
         "meta": {},
     }
+    if site.get("id") == "handytested" and payload["status"] == "publish":
+        from handytested_release_gate import require_publish_approval
+        require_publish_approval(payload["status"], payload["title"], payload["content"])
     if media_id:
         payload["featured_media"] = media_id
 

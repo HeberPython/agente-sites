@@ -703,6 +703,9 @@ def publish_campaign_post(campaign: dict[str, Any], article_html: str, promo: Pr
         "tags": tag_ids,
         "comment_status": "closed",
     }
+    if payload["status"] == "publish":
+        from handytested_release_gate import require_publish_approval
+        require_publish_approval(payload["status"], payload["title"], payload["content"])
     if PROMO_DEFAULT_FEATURED_MEDIA > 0:
         payload["featured_media"] = PROMO_DEFAULT_FEATURED_MEDIA
     try:

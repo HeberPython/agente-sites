@@ -1,5 +1,7 @@
 # Top 5 Home DIY Paint Sprayers Under $300 in 2025
 
+**Historical baseline worksheet only.** The live article was substantially corrected on 2026-09-20. See [manufacturer evidence](verified-paint-sprayers.md), [Phase 3 report](../HANDYTESTED_PHASE3_REPORT.md), and [release/backup run](https://github.com/HeberPython/agente-sites/actions/runs/35529668323). The data below documents the pre-release content and must not be read as the current public article.
+
 Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verification.**
 
 - URL: https://handytested.com/top-5-home-diy-paint-sprayers-under-300-in-2025/

@@ -205,6 +205,9 @@ def publicar(topico, artigo, media_id):
         "status":         os.environ.get("HT_POST_STATUS", "draft"),
         "categories":     [cat_id],
     }
+    if payload["status"] == "publish":
+        from handytested_release_gate import require_publish_approval
+        require_publish_approval(payload["status"], payload["title"], payload["content"])
     if media_id:
         payload["featured_media"] = media_id
     post = wp_post("/posts", payload)
