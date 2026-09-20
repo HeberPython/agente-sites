@@ -33,6 +33,8 @@ class Phase2Tests(unittest.TestCase):
         self.assertNotIn('handytested0d-20', result)
         self.assertIn('width="768" height="432"', result)
         self.assertIn('A &amp; B guide', result)
+        self.assertIn('<footer class="ht-home-footer">', result)
+        self.assertIn('As an Amazon Associate I earn from qualifying purchases.', result)
 
     def test_footer_has_exact_disclosure(self) -> None:
         result = phase2.footer_html()

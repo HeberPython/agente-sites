@@ -151,12 +151,12 @@ def home_html(categories: list[dict], posts: list[dict]) -> str:
 <section class="ht-section ht-latest" id="latest-guides"><div class="ht-wrap"><div class="ht-section-head"><div><p class="ht-eyebrow">FRESH RESEARCH</p><h2>Latest Guides</h2><p>Recently published buying guides, updated automatically by WordPress.</p></div></div>{latest_block}</div></section>
 <section class="ht-section ht-section-alt" id="deals"><div class="ht-wrap ht-split"><div><p class="ht-eyebrow">SHOP SMARTER</p><h2>Deals &amp; Value Picks</h2><p class="ht-section-intro">Good products are better when the price makes sense. Explore our latest value-focused picks and deal guides.</p><a class="ht-button ht-button-outline" href="/deals/">Explore Deals &amp; Offers</a></div><div><p class="ht-eyebrow">BEFORE CHECKOUT</p><p class="ht-section-intro">Prices and availability change. Confirm the exact model, seller, shipping and current price on Amazon before you buy.</p></div></div></section>
 <section class="ht-section ht-method" id="how-we-choose"><div class="ht-wrap ht-split"><div><p class="ht-eyebrow">OUR APPROACH</p><h2>How We Choose</h2><p class="ht-section-intro">We compare specifications, features, buyer feedback, brand reputation and overall value to help narrow down the options worth considering.</p><a class="ht-button ht-button-light" href="/how-we-review/">See Our Methodology</a></div><div id="site-search"><p class="ht-eyebrow">LOOKING FOR SOMETHING?</p><h2>Search the guides</h2><form class="ht-search" role="search" action="/" method="get"><label class="screen-reader-text" for="ht-search-input">Search HandyTested</label><input id="ht-search-input" type="search" name="s" placeholder="Tool, project or product" required><button class="ht-button ht-button-primary" type="submit">Search</button></form></div></div></section>
-</main>'''
+</main><footer class="ht-home-footer">{footer_html()}</footer>'''
 
 
 def main() -> None:
-    if MODE not in {"dry-run", "apply"}:
-        raise ValueError("MODE must be dry-run or apply")
+    if MODE not in {"dry-run", "apply", "refresh-home"}:
+        raise ValueError("MODE must be dry-run, apply, or refresh-home")
     pages = request("/pages?slug=home-page&context=edit&_fields=id,slug,content,status,meta")
     if not isinstance(pages, list) or len(pages) != 1 or pages[0]["status"] != "publish":
         raise RuntimeError("Expected one published home-page")
@@ -166,6 +166,13 @@ def main() -> None:
     content = home_html(categories, posts)
     if "<!-- wp:latest-posts " not in content or "handytested0d-20" in content:
         raise RuntimeError("Unexpected home content")
+    if MODE == "refresh-home":
+        backup("home", home)
+        updated = request(f"/pages/{home['id']}", {"content": content})
+        if updated.get("id") != home["id"]:
+            raise RuntimeError("Homepage refresh not acknowledged")
+        print("Refreshed homepage with editorial footer")
+        return
     menus = request("/menus?context=edit")
     primary = next((m for m in menus if "primary" in m.get("locations", [])), None)
     if not primary:

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "inspect, dry-run, or apply"
+        description: "inspect, dry-run, apply, or refresh-home"
         required: true
         default: inspect
         type: choice
@@ -12,6 +12,7 @@ on:
           - inspect
           - dry-run
           - apply
+          - refresh-home
 
 jobs:
   phase2:
@@ -35,7 +36,7 @@ jobs:
           BACKUP_DIR: handytested-phase2-backup
         run: python handytested_phase2.py
       - name: Preserve original WordPress objects
-        if: ${{ always() && github.event.inputs.mode == 'apply' }}
+        if: ${{ always() && (github.event.inputs.mode == 'apply' || github.event.inputs.mode == 'refresh-home') }}
         uses: actions/upload-artifact@v4
         with:
           name: handytested-phase2-backup
