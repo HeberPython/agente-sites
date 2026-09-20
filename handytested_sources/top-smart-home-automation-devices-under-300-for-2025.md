@@ -1,70 +1,14 @@
-# Top Smart Home Automation Devices Under $300 for 2025
+# Smart home automation devices: editorial evidence
 
-Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verification.**
+Checked 2026-09-20. P1, WordPress ID 173, canonical https://handytested.com/top-smart-home-automation-devices-under-300-for-2025/. Manufacturer-document comparison, not hands-on testing. No fixed Amazon price, star rating, ASIN or measured security/performance claim. Four tagged Amazon.com searches are not direct product listings. Featured-image licensing/product match remains unverified.
 
-- URL: https://handytested.com/top-smart-home-automation-devices-under-300-for-2025/
-- WordPress ID: 173
-- Slug: top-smart-home-automation-devices-under-300-for-2025
-- Priority: P1
-- Category: smart-home
-- Published / modified: 2026-08-17T09:44:20 / 2026-09-12T13:18:14
-- Search intent: COMMERCIAL INVESTIGATION
-- Primary topic / likely keyword: Top Smart Home Automation Devices Under $300 for 2025
-- Proposed title: PENDING EDITORIAL REVIEW
-- Secondary topics: PENDING EDITORIAL REVIEW
-- Current SEO title: Top Smart Home Automation Devices Under $300 for 2025
-- Current meta description: Discover the best smart home automation devices 2025 under $300, perfect for enhancing your home&#039;s efficiency and convenience.
-- Canonical: https://handytested.com/top-smart-home-automation-devices-under-300-for-2025/
-- H1: Top Smart Home Automation Devices Under $300 for 2025
-- Title includes year: True
-- Exact Amazon disclosure in post body: False
-- JSON-LD present: True (semantics unverified)
-- Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+| Product | Primary evidence | Supported facts and limits |
+| --- | --- | --- |
+| Amazon Echo Hub | https://www.aboutamazon.com/news/devices/amazon-echo-hub-best-features | Wall/counter control panel, built-in Zigbee, Sidewalk, Thread, Bluetooth and Matter support; stand/PoE adapter separately sold; check specific device compatibility. |
+| Philips Hue White and Color Ambiance starter kit, 4 E26 color bulbs + Bridge Pro, UPC 046677591908 | https://www.philips-hue.com/en-us/p/hue-white-and-color-ambiance-starter-kit-4-e26-color-capable-bulbs-bridge-pro/046677591908 | Four E26 bulbs and Bridge Pro in this exact kit, Hue app and supported voice integrations; 110-130 V bulbs. Manufacturer page displayed under $300 when checked but retailer prices vary. Do not conflate standard Bridge, bulb-only or 3-bulb bundles. |
+| August Wi-Fi Smart Lock | https://august.com/products/august-wifi-smart-lock | Retrofit compatible single-cylinder deadbolt, original key remains, built-in Wi-Fi, DoorSense and two CR123 batteries; verify physical clearance and door compatibility. No guaranteed security claim. |
+| Kasa Smart Wi-Fi Dimmer HS220 (US v1) | https://www.tp-link.com/us/home-networking/smart-switch/hs220/v1/ ; https://www.tp-link.com/us/support/download/hs220/v1/ | Single-pole circuit only, neutral required, secured 2.4 GHz Wi-Fi, 100-120 V 60 Hz. Verify bulb/load and wiring; qualified electrician if uncertain. Not a universal 3-way or Matter switch. |
 
-## Product Candidates (Unverified)
-- Philips Hue White and Color Ambiance Starter Kit
-- Amazon Echo Show 8 (2nd Gen)
-- August Wi-Fi Smart Lock
-- Wyze Cam v3 with Color Night Vision
-- Amazon Echo Hub smart home control panel
-- Philips Hue Bridge smart lighting hub
-- Kasa Smart Dimmer Switch HS220
+Original Echo Show 8 2nd gen and Wyze Cam v3 are older/generation-specific and not needed for four core automation roles. Generic Hue kit/Bridge pair conflated bundles; replaced with uniquely identified current kit. Echo Hub also appears in dedicated hubs article. This is a use-case comparison, not performance ranking.
 
-## Test/Experience Claims To Verify
-- None detected by screening.
-
-## Price Passages To Verify
-- None detected by screening.
-
-Detected dollar values (including CTAs): none
-
-## Rating Passages To Verify
-- None detected by screening.
-
-Detected rating markers: none
-
-## Amazon Links
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Philips%20Hue%20White%20and%20Color%20Ambiance%20Starter%20Kit&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Amazon%20Echo%20Show%208%20%282nd%20Gen%29&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=August%20Wi-Fi%20Smart%20Lock&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Wyze%20Cam%20v3%20with%20Color%20Night%20Vision&tag=handytested0d-20
-- Amazon Echo Hub smart home control panel | SEARCH | tag OK | https://www.amazon.com/s?k=Amazon+Echo+Hub+smart+home+control+panel&tag=handytested0d-20
-- Philips Hue Bridge smart lighting hub | SEARCH | tag OK | https://www.amazon.com/s?k=Philips+Hue+Bridge+smart+lighting+hub&tag=handytested0d-20
-- Kasa Smart Dimmer Switch HS220 | SEARCH | tag OK | https://www.amazon.com/s?k=Kasa+Smart+Dimmer+Switch+HS220&tag=handytested0d-20
-
-## Images
-- Featured media: {"url": "https://handytested.com/wp-content/uploads/2026/08/top-smart-home-automation-devices-under-300-for-20.jpg", "alt": "", "width": 1080, "height": 720}
-- Body image elements: []
-- Licensing and product match: UNVERIFIED
-
-## Internal Links
-- None detected by screening.
-
-## Source Evidence
-| Product | Manufacturer / primary source | Source type | Checked | Supported claim | Status / notes |
-|---|---|---|---|---|---|
-| PENDING | PENDING | PENDING | PENDING | PENDING | No recommendation approved yet |
-
-## Editorial Decision
-BLOCKED - REQUIRES MANUAL VERIFICATION. Screened fields above must be reviewed in context before a publish decision. Do not infer truth from a regex match or Amazon search result.
+Internal links: `/best-smart-home-hubs-under-150-for-2025/`, `/best-smart-home-devices-under-300-for-2025/`. Verify routes. Release checks: one H1, exact disclosure, four tagged model searches, canonical/SEO metadata, mobile table containment and live body. Preserve image-rights caveat.
