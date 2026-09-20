@@ -1,70 +1,13 @@
-# Best Indoor Hydroponic Gardening Systems Under $300
+# Indoor hydroponic systems editorial evidence
 
-Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verification.**
+Checked 2026-09-20. WordPress ID 185; P1. Slug and canonical remain `best-indoor-hydroponic-gardening-systems-under-300` / `https://handytested.com/best-indoor-hydroponic-gardening-systems-under-300/`. US audience; no first-hand test.
 
-- URL: https://handytested.com/best-indoor-hydroponic-gardening-systems-under-300/
-- WordPress ID: 185
-- Slug: best-indoor-hydroponic-gardening-systems-under-300
-- Priority: P1
-- Category: diy
-- Published / modified: 2026-09-07T14:11:51 / 2026-09-12T13:18:06
-- Search intent: COMMERCIAL INVESTIGATION
-- Primary topic / likely keyword: Best Indoor Hydroponic Gardening Systems Under $300
-- Proposed title: PENDING EDITORIAL REVIEW
-- Secondary topics: PENDING EDITORIAL REVIEW
-- Current SEO title: Best Indoor Hydroponic Gardening Systems Under $300
-- Current meta description: Discover the best indoor hydroponic systems for home under $300, perfect for growing fresh herbs and vegetables year-round effortlessly.
-- Canonical: https://handytested.com/best-indoor-hydroponic-gardening-systems-under-300/
-- H1: Best Indoor Hydroponic Gardening Systems Under $300
-- Title includes year: False
-- Exact Amazon disclosure in post body: False
-- JSON-LD present: True (semantics unverified)
-- Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+| Model | Primary evidence | Supported facts | Decision |
+|---|---|---|---|
+| LetPot LPH-SE | https://letpot.com/products/letpot-senior-12-pod-hydroponic-growing-system-with-app-control | 12 pods, 5.5 L, 24 W LED, app/touch, adjustable height; US adapter variant | Retain exact variant; do not repeat untested speed/noise claims |
+| iDOO Translucent Garden I-HGH01 | https://www.idooworld.com/en-au/products/translucent-garden and https://www.idooworld.com/en-ca/pages/idoo-product-manuals | 12 pods, 5 L, pump, no app/low-water alert in maker comparison | Retain exact model; region page is specifications, not US stock proof |
+| LetPot LPH-Air | https://letpot.com/products/lph-air-indoor-hydroponic-gardening-system | 10 pods, 4 L, app/touch; US adapter variant | Retain |
+| Click & Grow Smart Garden 9 | https://www.clickandgrow.com/products/the-smart-garden-9 | Smart Soil and passive watering, not conventional solution hydroponics | Exclude from hydroponic picks |
+| AeroGarden Harvest Elite | https://aerogarden.com/gardens/harvest-family/harvest-elite.html | Historical six-pod description; current US stock not established | Remove recommendation |
 
-## Product Candidates (Unverified)
-- AeroGarden Harvest Elite
-- iDOO Hydroponics Growing System
-- VIVOSUN Hydroponics Growing Kit
-- Click and Grow Smart Garden
-- AeroGarden Harvest Elite indoor garden
-- LetPot LPH-SE hydroponics growing system
-- iDOO 12 pods hydroponics growing system
-
-## Test/Experience Claims To Verify
-- None detected by screening.
-
-## Price Passages To Verify
-- Indoor gardening has grown in popularity, especially among urban dwellers with limited outdoor space. The best indoor hydroponic systems for home gardening offer an easy and efficient way to grow fresh produce right in your kitchen or living room. Whether you’re a novice gardener or a busy professional, hydroponics simplifies the process, making it accessible and rewarding. This article will help you find the top-rated models under $300 that best suit your needs, focusing on ease of use, performance, and design.
-
-Detected dollar values (including CTAs): $300
-
-## Rating Passages To Verify
-- Indoor gardening has grown in popularity, especially among urban dwellers with limited outdoor space. The best indoor hydroponic systems for home gardening offer an easy and efficient way to grow fresh produce right in your kitchen or living room. Whether you’re a novice gardener or a busy professional, hydroponics simplifies the process, making it accessible and rewarding. This article will help you find the top-rated models under $300 that best suit your needs, focusing on ease of use, performance, and design.
-
-Detected rating markers: rated
-
-## Amazon Links
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=AeroGarden%20Harvest%20Elite&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=iDOO%20Hydroponics%20Growing%20System&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=VIVOSUN%20Hydroponics%20Growing%20Kit&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Click%20and%20Grow%20Smart%20Garden&tag=handytested0d-20
-- AeroGarden Harvest Elite indoor garden | SEARCH | tag OK | https://www.amazon.com/s?k=AeroGarden+Harvest+Elite+indoor+garden&tag=handytested0d-20
-- LetPot LPH-SE hydroponics growing system | SEARCH | tag OK | https://www.amazon.com/s?k=LetPot+LPH-SE+hydroponics+growing+system&tag=handytested0d-20
-- iDOO 12 pods hydroponics growing system | SEARCH | tag OK | https://www.amazon.com/s?k=iDOO+12+pods+hydroponics+growing+system&tag=handytested0d-20
-
-## Images
-- Featured media: {"url": "https://handytested.com/wp-content/uploads/2026/09/best-indoor-hydroponic-gardening-systems-under-300.jpg", "alt": "", "width": 1080, "height": 759}
-- Body image elements: []
-- Licensing and product match: UNVERIFIED
-
-## Internal Links
-- None detected by screening.
-
-## Source Evidence
-| Product | Manufacturer / primary source | Source type | Checked | Supported claim | Status / notes |
-|---|---|---|---|---|---|
-| PENDING | PENDING | PENDING | PENDING | PENDING | No recommendation approved yet |
-
-## Editorial Decision
-BLOCKED - REQUIRES MANUAL VERIFICATION. Screened fields above must be reviewed in context before a publish decision. Do not infer truth from a regex match or Amazon search result.
+Growing guidance: https://extension.psu.edu/hydroponics-systems-and-principles-of-plant-nutrition-essential-nutrients-function-deficiency-and-excess (nutrients in solution). Published body cites manufacturer sources. No exact price or rating claims; under-$300 historic slug does not guarantee present offers. Three tagged Amazon search links, **not verified direct product links**; no ASIN assumed. Two relevant internal links. Featured image alt/license and model match remain unverified; no image claims in body. Old worksheet's generic "top-rated" language removed. Exact Amazon disclosure included. Release requires revision guard, backup, and public verification.
