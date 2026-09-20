@@ -1,0 +1,29 @@
+name: HandyTested - Phase 2
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "inspect, dry-run, or apply"
+        required: true
+        default: inspect
+        type: choice
+        options:
+          - inspect
+          - dry-run
+          - apply
+
+jobs:
+  phase2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Inspect WordPress design surfaces
+        if: ${{ github.event.inputs.mode == 'inspect' }}
+        env:
+          HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
+        run: python handytested_phase2_inspect.py
