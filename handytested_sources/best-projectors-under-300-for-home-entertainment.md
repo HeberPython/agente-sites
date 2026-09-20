@@ -1,4 +1,17 @@
-# Best Projectors Under $300 for Home Entertainment
+# Home projectors: Phase 4 source record
+
+Researched 2026-09-20. Proposed title: Home Projectors: Native Resolution, Brightness and Setup. Original slug/canonical retained. No hands-on test, measured brightness, fixed price, rating or verified direct Amazon ASIN. The historical screening fields below are superseded, not a current research block.
+
+| Decision | Exact product / primary source | Supported facts and caveat |
+|---|---|---|
+| Retain | [Yaber Pro V9](https://www.yaber.com/collections/home-cinema/products/v9-home-cinema) | Native 1920x1080, manufacturer-rated 600 ANSI lumens, auto focus/keystone, HDMI inputs; 4K support is input compatibility, not native 4K. Manufacturer's displayed offer was below $300 when checked, but not a durable promise. |
+| Replace VS250 | [Epson EpiqVision Flex CO-W01 V11HA86020](https://epson.com/For-Home/Projectors/Streaming-Entertainment/EpiqVision%C2%AE-Flex-CO-W01-Portable-Projector/p/V11HA86020), [Epson support](https://files.support.epson.com/docid/cpd6/cpd62244/source/product_info/concepts/projector_features_cow01.html) | WXGA native 1280x800, 3,000 ISO-rated white lumens and separately rated color brightness; HDMI streaming source required, no bundled smart streaming. Official offer above $300 at review. |
+| Retain with limits | [ViewSonic PA503S](https://www.viewsonic.com/us/pa503s-4000-lumens-svga-home-with-hdmi-and-vertical-keystone.html) | Current US page: native 800x600 SVGA, 4,000 ANSI lumens, 1.9-2.1 throw ratio, long room placement; official offer above $300 at review. Primarily bright business/general projection, not native HD cinema. |
+| Remove | [Epson VS250](https://epson.com/For-Work/Projectors/Portable/VS250-SVGA-3LCD-Projector/p/V11H838220), [BenQ HT2050A](https://www.benq.com/en-us/projector/cinema/ht2050a/spec.html) | Epson names CO-W01 as VS250 replacement. BenQ's 1080p model is not verified within original budget; do not call it a mid-range under-$300 pick. |
+
+Brightness standards and room/screen size matter: [ProjectorCentral glossary](https://www.projectorcentral.com/glossary.cfm) describes ANSI/ISO, while each manufacturer supplies its own rating. Do not compare raw marketing lumens or imply these models were tested side by side. The old Capsule's battery runtime and size lacked exact generation verification; unspecified WiMiUS K9 is omitted. New H1/SEO remove fixed under-$300 claim while keeping slug for inbound links. Existing featured-image licensing/product match remains unverified. Related URLs: `/best-smart-tvs-under-300-for-2025-viewing-experience/` and `/best-portable-outdoor-grills-under-300-for-2025/`. Editorial decision: research-led rewrite after revision-guarded backup.
+
+## Historical Phase 3 screening (superseded)
 
 Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verification.**
 
@@ -20,7 +33,7 @@ Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verifi
 - Exact Amazon disclosure in post body: False
 - JSON-LD present: True (semantics unverified)
 - Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+- Historical screening decision: superseded by the researched Phase 4 decision above.
 
 ## Product Candidates (Unverified)
 - Nebula by Anker Capsule Mini Projector
@@ -66,5 +79,5 @@ Detected rating markers: rating
 |---|---|---|---|---|---|
 | PENDING | PENDING | PENDING | PENDING | PENDING | No recommendation approved yet |
 
-## Editorial Decision
-BLOCKED - REQUIRES MANUAL VERIFICATION. Screened fields above must be reviewed in context before a publish decision. Do not infer truth from a regex match or Amazon search result.
+## Historical editorial note
+Screening did not constitute verification. The Phase 4 primary-source review and publish decision are recorded above.
