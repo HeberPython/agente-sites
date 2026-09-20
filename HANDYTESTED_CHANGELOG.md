@@ -76,3 +76,6 @@ Published the researched smoothie-blender rewrite for post 175 after focused tes
 # Phase 4 smart-home automation release (2026-09-20)
 
 Published the smart-home automation rewrite for post 173 after manufacturer verification, local tests, [dry-run 35539248856](https://github.com/HeberPython/agente-sites/actions/runs/35539248856) and [apply 35539266719](https://github.com/HeberPython/agente-sites/actions/runs/35539266719) with original-post backup and live-public verification. Four products now have distinct use cases and installation/compatibility limits. Phase 4 stands at 14/37, with kitchen gadgets next.
+# Phase 4 kitchen gadgets release (2026-09-20)
+
+Published the kitchen-gadgets rewrite for post 171 after manufacturer and USDA research, local tests, [dry-run 35539514318](https://github.com/HeberPython/agente-sites/actions/runs/35539514318), and [apply 35539528239](https://github.com/HeberPython/agente-sites/actions/runs/35539528239) with original-post backup. Public article and related guides returned HTTP 200. The new article removes the discontinued TOA-60 and mistaken BN701 Smart Torque claim; it compares three precise products by job without invented testing or prices. Phase 4 stands at 15/37, smart-home devices next.

@@ -1,72 +1,13 @@
-# Best Smart Home Devices Under $300 for 2025
+# Smart-home devices: editorial evidence
 
-Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verification.**
+Checked 2026-09-20. P1, WordPress ID 168, canonical https://handytested.com/best-smart-home-devices-under-300-for-2025/. Source-based comparison, not hands-on testing. No fixed Amazon price, rating, ASIN or measured energy/security claim. Three tagged Amazon searches are not direct product links. Featured-image rights/product match unverified.
 
-- URL: https://handytested.com/best-smart-home-devices-under-300-for-2025/
-- WordPress ID: 168
-- Slug: best-smart-home-devices-under-300-for-2025
-- Priority: P1
-- Category: smart-home
-- Published / modified: 2026-08-07T10:12:14 / 2026-09-12T13:18:17
-- Search intent: COMMERCIAL INVESTIGATION
-- Primary topic / likely keyword: Best Smart Home Devices Under $300 for 2025
-- Proposed title: PENDING EDITORIAL REVIEW
-- Secondary topics: PENDING EDITORIAL REVIEW
-- Current SEO title: Best Smart Home Devices Under $300 for 2025
-- Current meta description: Discover the best smart home devices under 300 that enhance convenience and security in your home in 2025. Upgrade your lifestyle affordably!
-- Canonical: https://handytested.com/best-smart-home-devices-under-300-for-2025/
-- H1: Best Smart Home Devices Under $300 for 2025
-- Title includes year: True
-- Exact Amazon disclosure in post body: False
-- JSON-LD present: True (semantics unverified)
-- Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+| Product | Primary evidence | Supported details and caveats |
+| --- | --- | --- |
+| Ring Battery Doorbell Plus (2nd Gen), also labeled Battery Doorbell 2K Plus | https://ring.com/products/battery-doorbell-plus-2nd-gen | Battery video doorbell, 2K video, optional 8-24 VAC wiring, optional subscription; recording, person alerts and advanced features need compatible Ring Protect. Do not conflate earlier Plus or generic Video Doorbell 2nd gen. |
+| ecobee Smart Thermostat Enhanced | https://www.ecobee.com/en-us/smart-thermostats/smart-thermostat-enhanced/ ; https://www.ecobee.com/en-us/compatibility/thermostat/ | 24 VAC HVAC and Wi-Fi, included Power Extender Kit, manufacturer compatibility checker; no universal system fit or assured savings. Verify wiring, equipment and installation. |
+| Kasa KP125M Matter smart plug with energy monitoring | https://www.tp-link.com/us/home-networking/smart-plug/kp125m/ ; https://www.tp-link.com/us/support/faq/3777/ | Matter-certified plug with schedules and energy monitoring. Cross-platform Matter support differs by controller/app; do not promise energy telemetry in every ecosystem. Check electrical load, indoor use and network/controller requirements. |
 
-## Product Candidates (Unverified)
-- Amazon Echo Show 10 (3rd Gen)
-- Philips Hue White and Color Ambiance Starter Kit
-- TP-Link Kasa Smart Wi-Fi Plug
-- Ring Video Doorbell (2nd Gen)
-- Amazon Echo Show 8
-- Ring Battery Doorbell Plus
-- Kasa Smart Plug HS103P4
+Original Echo Show 10 3rd gen/Echo Show 8, generic Hue starter kit, Ring Video Doorbell 2nd gen and HS103P4 four-pack are not carried over because those exact generations/bundles do not form a verified current product set. Hue lighting and Echo control already have dedicated, separately researched guides. Current manufacturer pricing was seen under $300 for ecobee Enhanced, but Amazon offer remains variable, so budget claim removed from title. Privacy/recording subscription and installation requirements are purchasing costs.
 
-## Test/Experience Claims To Verify
-- None detected by screening.
-
-## Price Passages To Verify
-- As smart home technology continues to evolve, finding the best smart home devices under $300 allows you to enhance your home’s convenience and security without overspending. This article will explore essential gadgets that provide excellent functionality, making daily tasks simpler while helping to keep your home secure. From smart displays to versatile lighting solutions and security systems, we’ve evaluated a range of products to guide you in making informed decisions, ensuring a smoother shopping experience for your smart home needs.
-- In our evaluation, we focus on several criteria: product specifications, user reviews from long-term owners, seller reliability, warranty options, and safety considerations. We also take into account specific buyer use cases to ensure recommendations are tailored to actual needs and lifestyles. This comprehensive approach provides insights into how each device performs in real-world scenarios, helping users find the best smart home devices under $300 for their unique situation.
-- When shopping for smart home devices under $300, consider these five key criteria: 1. Compatibility — Ensure that devices work with your existing ecosystem (Amazon Alexa, Google Assistant, etc.). 2. Features — Look for functionalities that suit your lifestyle, such as voice control or custom automations. 3. Installation — Assess the ease of installation; some devices require technical skills while others are plug-and-play. 4. Security — Choose products with built-in security measures, especially for cameras and smart locks. 5. Customer Support — Opt for brands known for reliable customer service, which is helpful if you encounter any issues post-purchase.
-
-Detected dollar values (including CTAs): $300, $300,
-
-## Rating Passages To Verify
-- None detected by screening.
-
-Detected rating markers: none
-
-## Amazon Links
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Amazon%20Echo%20Show%2010%20%283rd%20Gen%29&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Philips%20Hue%20White%20and%20Color%20Ambiance%20Starter%20Kit&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=TP-Link%20Kasa%20Smart%20Wi-Fi%20Plug&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Ring%20Video%20Doorbell%20%282nd%20Gen%29&tag=handytested0d-20
-- Amazon Echo Show 8 | SEARCH | tag OK | https://www.amazon.com/s?k=Amazon+Echo+Show+8&tag=handytested0d-20
-- Ring Battery Doorbell Plus | SEARCH | tag OK | https://www.amazon.com/s?k=Ring+Battery+Doorbell+Plus&tag=handytested0d-20
-- Kasa Smart Plug HS103P4 | SEARCH | tag OK | https://www.amazon.com/s?k=Kasa+Smart+Plug+HS103P4&tag=handytested0d-20
-
-## Images
-- Featured media: {"url": "https://handytested.com/wp-content/uploads/2026/08/best-smart-home-devices-under-300-for-2025.jpg", "alt": "", "width": 1080, "height": 720}
-- Body image elements: []
-- Licensing and product match: UNVERIFIED
-
-## Internal Links
-- None detected by screening.
-
-## Source Evidence
-| Product | Manufacturer / primary source | Source type | Checked | Supported claim | Status / notes |
-|---|---|---|---|---|---|
-| PENDING | PENDING | PENDING | PENDING | PENDING | No recommendation approved yet |
-
-## Editorial Decision
-BLOCKED - REQUIRES MANUAL VERIFICATION. Screened fields above must be reviewed in context before a publish decision. Do not infer truth from a regex match or Amazon search result.
+Internal guides: `/top-smart-home-automation-devices-under-300-for-2025/` and `/best-smart-home-security-cameras-under-300-for-2025/` (check 200). Validate H1, exact disclosure, three tagged searches, canonical/SEO and live content after backup/release.
