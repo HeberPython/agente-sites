@@ -88,4 +88,8 @@ The table above uses `LICENSING UNCERTAIN` as a rights status, not a visual-qual
 | Wireless earbuds under $100 | GENERIC BUT ACCEPTABLE: earbuds and case | Keep pending licensing evidence. |
 | Cordless drills | GENERIC BUT ACCEPTABLE: cordless drill | Keep pending licensing evidence. |
 
-No image was replaced in this audit. Image rights, exact model identity, compression, and final alt-text changes remain pending evidence and source approval.
+No image was replaced in this audit. Image rights, exact model identity, and compression remain pending evidence and source approval.
+
+## Alt-text update (2026-09-21)
+
+Seventeen visually relevant featured images with blank alt text received literal descriptions of the visible scene, without product-model or performance claims. The guarded release backed up the original media records (run `35662002618`, artifact `10667764458`); all 17 new values were independently confirmed through the public WordPress media API. Eleven previously blank featured images remain without invented descriptions because the visual review found product mismatches or uncertain subject identity. The table above is the pre-change baseline; see `handytested_phase5_image_alt.py` for the exact published values.

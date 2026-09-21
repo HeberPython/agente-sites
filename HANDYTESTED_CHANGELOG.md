@@ -1,5 +1,15 @@
 # HandyTested changelog
 
+## 2026-09-21: Phase 5 technical and site-consistency releases (in progress)
+
+- Homepage Top Picks / all 38 posts: stale excerpts and card copy replaced with current research-led WordPress titles/excerpts; guarded [dry-run 35658793524](https://github.com/HeberPython/agente-sites/actions/runs/35658793524), [apply 35658847655](https://github.com/HeberPython/agente-sites/actions/runs/35658847655), backup `10666459030`; public REST, homepage and archive checked.
+- Eight populated category archives: generic descriptions replaced with concise task-specific copy without slug changes; [dry-run 35660220801](https://github.com/HeberPython/agente-sites/actions/runs/35660220801), [apply 35660264309](https://github.com/HeberPython/agente-sites/actions/runs/35660264309), backup `10666616174`; public category REST and archive checked.
+- `/deals/` and home/menu/footer labels: false live-deal framing and two links to unpublished 404 promotions removed; Value Picks now links six published guides; [dry-run 35660636389](https://github.com/HeberPython/agente-sites/actions/runs/35660636389), [apply 35660671838](https://github.com/HeberPython/agente-sites/actions/runs/35660671838), backup `10667262340`; public Deals/home checked.
+- Homepage Top Picks image links: three unnamed links now have article-title accessible names; [dry-run 35661308021](https://github.com/HeberPython/agente-sites/actions/runs/35661308021), [apply 35661341192](https://github.com/HeberPython/agente-sites/actions/runs/35661341192), backup `10667698317`; public browser check found zero unnamed home links.
+- Homepage Rank Math SEO title/description: outdated Amazon Deals promise replaced with research-led buying-guide/value-picks copy, self-canonical retained; [dry-run 35661632683](https://github.com/HeberPython/agente-sites/actions/runs/35661632683), [apply 35661655709](https://github.com/HeberPython/agente-sites/actions/runs/35661655709), backup `10667387621`; public metadata checked.
+- Seventeen relevant featured-image media records: empty alt changed to literal visual descriptions without implying exact model; [dry-run 35661952413](https://github.com/HeberPython/agente-sites/actions/runs/35661952413), [apply 35662002618](https://github.com/HeberPython/agente-sites/actions/runs/35662002618), backup `10667764458`; all 17 public media records checked. Eleven mismatched/uncertain images retain blank alt pending valid replacement or identification.
+- Read-only audits: 57-URL baseline, Rank Math sitemap discrepancy (38 published, 35 XML, five missing/two stale), 111 tagged Amazon search destinations, 81 article-body internal links, 38 image/rights records, structured data, browser/AdSense lab samples and overlapping content intents. No direct ASIN or invented price was added. `HANDYTESTED_PHASE5_REPORT.md` and checkpoint list remaining work and precise private-admin actions; Phase 5 is not yet complete.
+
 ## 2026-09-19: audit and first editorial safeguards
 
 ### Before
