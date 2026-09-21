@@ -1,10 +1,10 @@
 # HandyTested Phase 4 checkpoint (2026-09-20)
 
-This is an execution checkpoint, not a final completion claim. Read the Phase 4 request and `HANDYTESTED_PHASE4_REPORT.md` before resuming. Do not redo the twenty-one completed articles unless live QA reveals a regression.
+This is an execution checkpoint, not a final completion claim. Read the Phase 4 request and `HANDYTESTED_PHASE4_REPORT.md` before resuming. Do not redo the twenty-two completed articles unless live QA reveals a regression.
 
 ## Completed and published
 
-All twenty-one kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
+All twenty-two kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
 
 | Article | Post ID | Apply run / backup artifact name |
 |---|---:|---|
@@ -29,12 +29,13 @@ All twenty-one kept their original slug/self-canonical, gained a research-led En
 | Home projectors | 156 | https://github.com/HeberPython/agente-sites/actions/runs/35543972541 / `handytested-phase4-projectors-backup` (artifact ID 10615309833) |
 | Ergonomic office chairs | 150 | https://github.com/HeberPython/agente-sites/actions/runs/35545757765 / `handytested-phase4-office-chairs-backup` (artifact ID 10616072522) |
 | Pet-owner carpet cleaners | 146 | https://github.com/HeberPython/agente-sites/actions/runs/35546015997 / `handytested-phase4-carpet-cleaners-backup` (artifact ID 10616453355) |
+| Cordless brad nailers | 143 | https://github.com/HeberPython/agente-sites/actions/runs/35546221316 / `handytested-phase4-nailers-backup` (artifact ID 10615903508) |
 
 WordPress original-post backup artifacts are attached to those apply runs and retained for 30 days. Random orbital sanders had an initial failed apply (run `35534136103`) because an unrelated related-guide fetch timed out; its rollback restored the prior post, a second dry-run `35534259258` passed, and the successful apply is the one above.
 
 ## Next article and batch
 
-**NEXT ARTICLE:** `best-cordless-nail-guns-under-300-for-diy-projects` (P1), then follow the exact P1 and P2 order in `HANDYTESTED_PHASE3_REPORT.md`. Seven P0 and fourteen P1 are complete; 9 P1 and 7 P2 remain. None of those 16 has been researched or published in Phase 4 yet. Do not mark them genuinely blocked merely because Phase 3 worksheets said "Screened; blocked".
+**NEXT ARTICLE:** `best-camping-gear-under-300-for-outdoor-adventures` (P1), then follow the exact P1 and P2 order in `HANDYTESTED_PHASE3_REPORT.md`. Seven P0 and fifteen P1 are complete; 8 P1 and 7 P2 remain. None of those 15 has been researched or published in Phase 4 yet. Do not mark them genuinely blocked merely because Phase 3 worksheets said "Screened; blocked".
 
 ## Research already obtained for next work
 
@@ -43,6 +44,8 @@ The projector record distinguishes native resolution and ANSI/ISO brightness for
 Office-chair research is in `handytested_sources/top-5-ergonomic-office-chairs-under-300-for-comfort.md`: SIHOO M18, FlexiSpot OC3B, and an exact HON Ignition 2.0 configuration, with OSHA fit guidance. The unsupported Sayl under-$300 claim and generic variants were removed. Twelve tests, dry-run 35545740963, apply 35545757765, backup artifact 10616072522, public metadata/content verification and independent HTTP 200 passed.
 
 Carpet-cleaner research is in `handytested_sources/best-carpet-cleaners-for-pet-owners-in-2025.md`: BISSELL Little Green 3353, Hoover FH55000V and BISSELL HydroSteam 3432. The old dry-vacuum category error, unsupported model figures and blanket pet-safety/drying promises were removed. Twelve tests, dry-run 35546003390, apply 35546015997, backup artifact 10616453355, public metadata/content verification and independent HTTP 200 passed.
+
+Brad-nailer research is in `handytested_sources/best-cordless-nail-guns-under-300-for-diy-projects.md`: DEWALT DCN680B, RYOBI P321 and CRAFTSMAN CMCN618C1. The old pneumatic BOSTITCH and discontinued P320, unsupported noise/runtime and fixed budget promise were removed. Twelve tests, dry-run 35546209971, apply 35546221316, backup artifact 10615903508, public metadata/content verification and independent HTTP 200 passed.
 
 ## Outstanding cross-cutting issues
 
@@ -55,4 +58,4 @@ Carpet-cleaner research is in `handytested_sources/best-carpet-cleaners-for-pet-
 
 ## Resume instruction
 
-In `C:\Users\Heber\agente-sites` on `main`, read `git status --short` and this checkpoint; start public-source research for `best-cordless-nail-guns-under-300-for-diy-projects`. For each article: read snapshot and source record, research current exact models, write original English copy plus source evidence, validate locally, stage only task files, commit/push, run its GitHub Actions dry-run, apply with backup, check live, update report/checkpoint, and immediately proceed to the next. Do not publish an article when its snapshot/revision guard fails; investigate that specific article and continue others. Do not return a plan in place of execution.
+In `C:\Users\Heber\agente-sites` on `main`, read `git status --short` and this checkpoint; start public-source research for `best-camping-gear-under-300-for-outdoor-adventures`. For each article: read snapshot and source record, research current exact models, write original English copy plus source evidence, validate locally, stage only task files, commit/push, run its GitHub Actions dry-run, apply with backup, check live, update report/checkpoint, and immediately proceed to the next. Do not publish an article when its snapshot/revision guard fails; investigate that specific article and continue others. Do not return a plan in place of execution.

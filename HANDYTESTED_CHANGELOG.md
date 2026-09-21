@@ -102,3 +102,7 @@ Published post 150 after manufacturer and OSHA research, 12 local tests, [dry-ru
 # Phase 4 pet-carpet-cleaner release (2026-09-20)
 
 Published post 146 after manufacturer/EPA research, 12 local tests, [dry-run 35546003390](https://github.com/HeberPython/agente-sites/actions/runs/35546003390) and [apply 35546015997](https://github.com/HeberPython/agente-sites/actions/runs/35546015997) with original-post backup artifact `10616453355`. Public metadata/content and independent HTTP 200 passed. The revision distinguishes BISSELL 3353 spot cleaning, Hoover FH55000V compact extraction and BISSELL 3432 whole-room extraction; it removes a dry vacuum from the category and avoids fabricated performance, drying-time and pet-safety assurances. Phase 4 stands at 21/37; cordless nail guns are next.
+
+# Phase 4 cordless-brad-nailer release (2026-09-20)
+
+Published post 143 after manufacturer/manual and OSHA research, 12 local tests, [dry-run 35546209971](https://github.com/HeberPython/agente-sites/actions/runs/35546209971) and [apply 35546221316](https://github.com/HeberPython/agente-sites/actions/runs/35546221316) with original-post backup artifact `10615903508`. Public metadata/content and independent HTTP 200 passed. The guide now compares exact DEWALT DCN680B, RYOBI P321 and CRAFTSMAN CMCN618C1 packages, removes a pneumatic tool and discontinued P320, and treats brad-nailer safety without invented runtime or fixed-price promises. Phase 4 stands at 22/37; camping gear is next.
