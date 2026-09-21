@@ -1,70 +1,23 @@
-# Best Kitchen Appliances Under $300 for Home Chefs
+# Kitchen Appliances by Task: Pressure, Blending and Coffee
 
-Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verification.**
+Researched: 2026-09-21 UTC. The Phase 3 BLOCKED label was automated screening, not a verified editorial finding; this record supersedes it.
 
 - URL: https://handytested.com/best-kitchen-appliances-under-300-for-home-chefs/
-- WordPress ID: 138
+- WordPress ID: 138; P1; baseline modified: 2026-09-12T13:18:30
 - Slug: best-kitchen-appliances-under-300-for-home-chefs
-- Priority: P1
-- Category: kitchen
-- Published / modified: 2026-06-03T13:58:02 / 2026-09-12T13:18:30
-- Search intent: COMMERCIAL INVESTIGATION
-- Primary topic / likely keyword: Best Kitchen Appliances Under $300 for Home Chefs
-- Proposed title: PENDING EDITORIAL REVIEW
-- Secondary topics: PENDING EDITORIAL REVIEW
-- Current SEO title: Best Kitchen Appliances Under $300 for Home Chefs
-- Current meta description: Discover the best kitchen appliances to buy 2024, all under $300, perfect for home chefs looking to elevate their cooking experience.
-- Canonical: https://handytested.com/best-kitchen-appliances-under-300-for-home-chefs/
-- H1: Best Kitchen Appliances Under $300 for Home Chefs
-- Title includes year: False
-- Exact Amazon disclosure in post body: False
-- JSON-LD present: True (semantics unverified)
-- Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+- Decision: rewrite and publish after revision guard, backup and live checks.
+- H1: Kitchen Appliances by Task: Pressure, Blending and Coffee
+- SEO title: Kitchen Appliances by Task: Pressure, Blending and Coffee | HandyTested
+- Description: Compare exact Instant Pot Duo Plus 6QT, Ninja BN701 and Hamilton Beach FlexBrew Trio 49916G models by kitchen job, capacity and trade-offs.
+- Three exact-model tagged Amazon searches, not invented ASIN/product links. Exact disclosure in body.
 
-## Product Candidates (Unverified)
-- Breville BFP800XL Sous Chef Food Processor
-- Ninja BN701 Professional Plus Bender
-- Instant Pot Duo 7-in-1 Electric Pressure Cooker
-- Hamilton Beach 49980A 2-Way Brewer
-- Ninja AF101 air fryer
-- Instant Pot Duo Plus 9-in-1 pressure cooker
-- Ninja BN701 Professional Plus blender
+## Source evidence
 
-## Test/Experience Claims To Verify
-- None detected by screening.
+| Exact model | Primary source | Supported claims and limits |
+|---|---|---|
+| Instant Pot Duo Plus 6QT WhisperQuiet 112-0169-01 | https://instantpot.com/products/instant-pot-duo-plus-6qt-multi-use-pressure-cooker-whisper-quiet | 6 qt, nine functions, stainless inner pot, 1000 W, steam-release design. Distinguish standard Duo and other Duo Plus revisions. Manual governs fill/vent safety. |
+| Ninja Professional Plus Blender with Auto-iQ BN701 | https://www.sharkninja.com/ninja-professional-plus-blender-with-auto-iq/BN701.html | 72 oz pitcher, 64 oz maximum liquid capacity, three presets; 1400 peak W versus 1200 operating W. No personal cup in this configuration. Not a food processor. |
+| Hamilton Beach FlexBrew Trio Black Stainless 49916G | https://hamiltonbeach.com/coffee-makers | Current catalog lists Add to Cart, grounds/pod single serving and 12-cup carafe; 56 oz removable single-serve reservoir. Distinct from archived 49916/49980A; verify Amazon seller and exact SKU. |
+| FlexBrew family manual | https://useandcares.hamiltonbeach.com/files/840355802.pdf | Use/care context; check exact SKU's package. |
 
-## Price Passages To Verify
-- When shopping for kitchen appliances under $300, consider these important factors:
-
-Detected dollar values (including CTAs): $300,
-
-## Rating Passages To Verify
-- None detected by screening.
-
-Detected rating markers: none
-
-## Amazon Links
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Breville%20BFP800XL%20Sous%20Chef%20Food%20Processor&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Ninja%20BN701%20Professional%20Plus%20Bender&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Instant%20Pot%20Duo%207-in-1%20Electric%20Pressure%20Cooker&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Hamilton%20Beach%2049980A%202-Way%20Brewer&tag=handytested0d-20
-- Ninja AF101 air fryer | SEARCH | tag OK | https://www.amazon.com/s?k=Ninja+AF101+air+fryer&tag=handytested0d-20
-- Instant Pot Duo Plus 9-in-1 pressure cooker | SEARCH | tag OK | https://www.amazon.com/s?k=Instant+Pot+Duo+Plus+9-in-1+pressure+cooker&tag=handytested0d-20
-- Ninja BN701 Professional Plus blender | SEARCH | tag OK | https://www.amazon.com/s?k=Ninja+BN701+Professional+Plus+blender&tag=handytested0d-20
-
-## Images
-- Featured media: {"url": "https://handytested.com/wp-content/uploads/2026/06/best-kitchen-appliances-under-300-for-home-chefs.jpg", "alt": "", "width": 1080, "height": 720}
-- Body image elements: []
-- Licensing and product match: UNVERIFIED
-
-## Internal Links
-- None detected by screening.
-
-## Source Evidence
-| Product | Manufacturer / primary source | Source type | Checked | Supported claim | Status / notes |
-|---|---|---|---|---|---|
-| PENDING | PENDING | PENDING | PENDING | PENDING | No recommendation approved yet |
-
-## Editorial Decision
-BLOCKED - REQUIRES MANUAL VERIFICATION. Screened fields above must be reviewed in context before a publish decision. Do not infer truth from a regex match or Amazon search result.
+The former under-$300 promise lacked a current price verification. Breville BFP800XL, old Hamilton Beach 49980A, duplicate BN701 and unverified Ninja AF101 are removed. No first-hand use, price, ratings, performance or ASINs asserted. Featured image https://handytested.com/wp-content/uploads/2026/06/best-kitchen-appliances-under-300-for-home-chefs.jpg has unverified license and model match; leave unchanged, flag separate review. Related guides: /best-kitchen-gadgets-under-300-for-modern-chefs/ and /best-high-performance-blenders-for-home-smoothies/. Confirm live at release.
