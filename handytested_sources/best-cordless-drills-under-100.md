@@ -20,7 +20,7 @@ Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verifi
 - Exact Amazon disclosure in post body: False
 - JSON-LD present: True (semantics unverified)
 - Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+- Update decision: APPROVED after Phase 4 primary-source verification; publish only with revision guard and backup
 
 ## Product Candidates (Unverified)
 - DeWalt DCD777C2 20V Cordless Drill
@@ -70,4 +70,19 @@ Detected rating markers: 4.1/5, 4.3/5, 4.8/5, rated
 | PENDING | PENDING | PENDING | PENDING | PENDING | No recommendation approved yet |
 
 ## Editorial Decision
-BLOCKED - REQUIRES MANUAL VERIFICATION. Screened fields above must be reviewed in context before a publish decision. Do not infer truth from a regex match or Amazon search result.
+Phase 3 screening was not a product verification. Phase 4 approval below supersedes its blocked label; old ratings, fixed-price promises and performance claims must be removed.
+
+## Phase 4 primary-source verification (2026-09-21)
+
+| Exact model/kit | Manufacturer source | Supported facts and caveats |
+|---|---|---|
+| DEWALT DCD771C2 | https://www.dewalt.com/en-us/product/dcd771c2/20v-max-compact-drilldriver-kit ; https://www.dewalt.com/GLOBALBOM/QU/DCD771C2/2/Instruction_Manual/EN/N457137_DCD771.pdf | 1/2-inch ratcheting chuck, two-speed 0-450/0-1500 RPM transmission, two batteries, charger and bag; manufacturer page and different manual types should not be combined into a new runtime claim |
+| BLACK+DECKER BDC120VA100 | https://www.blackanddecker.com/products/bdc120va100 | Exact 100-piece POWERCONNECT kit with LD120 drill, one battery, charger, case and assorted bits; 24-position clutch; do not conflate with LD120VA or bare drill |
+| CRAFTSMAN CMCD700C1 | https://www.craftsman.com/en-us/product/cmcd700c1/v20-cordless-12-drill-driver-kit-1-15ah-battery-and-charger | 1/2-inch keyless chuck, two-speed 0-350/0-1500 RPM gearbox, LED, one V20 battery and charger; page title says 1.5Ah while Includes lists 1.3Ah, so article asks buyer to verify package rather than asserting one capacity |
+| General drill safety | https://www.dewalt.com/GLOBALBOM/QU/DCD771C2/2/Instruction_Manual/EN/N457137_DCD771.pdf | Secure work, check for hidden wiring/pipes, wear eye protection and remove battery before adjusting/changing bits; these are not tested performance claims |
+
+Old DCD777C2/LDX120C/PH05Z lineup and appended LD120VA search are not retained. Six old tagged searches become three exact-kit tagged searches; no ASIN or direct product URL is invented. Remove the fixed under-$100 promise, ratings and unverified durability/runtime rankings. Related guides: cordless circular saws and home DIY tool sets. Featured image licensing/product match remains unverified.
+
+Approved title: Cordless Drill Kits for Home DIY. SEO title: Cordless Drill Kits for Home DIY | HandyTested. Meta description: Compare DEWALT DCD771C2, BLACK+DECKER BDC120VA100 and CRAFTSMAN CMCD700C1 by chuck, speed, included batteries and kit contents. Baseline modified: 2026-09-12T13:19:01. Preserve the slug and self-canonical.
+
+Publication decision: APPROVED only after guarded validation, backup, publish and live verification.
