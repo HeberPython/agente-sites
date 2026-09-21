@@ -7,16 +7,16 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 29 / 29 / 29 |
-| Pending, not genuinely blocked | 8 (1 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 30 / 30 / 30 |
+| Pending, not genuinely blocked | 7 (all P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 85 |
+| Retained recommended products with primary-source records | 88 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in twenty-nine revised bodies | 85 |
-| Contextual internal links in twenty-nine revised bodies | 62 |
-| Featured-image rights/product-match reviews still open | 29 |
+| Tagged Amazon searches in thirty revised bodies | 88 |
+| Contextual internal links in thirty revised bodies | 64 |
+| Featured-image rights/product-match reviews still open | 30 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
-| Year titles updated | 12 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners, security cameras, home tool sets, smart TVs, ANC headphones) |
+| Year titles updated | 13 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners, security cameras, home tool sets, smart TVs, ANC headphones, oscillating multi-tools) |
 
 No published article asserts first-hand testing by HandyTested. Manufacturer specifications are attributed, promotional or outdated prices are not used as fixed article prices, and no Amazon ASIN was guessed. Source mix so far: manufacturer product pages for every retained recommendation, relevant official manuals/support pages for tool/electrical safety, official sellers for some availability/budget checks, and EPA/Fluke safety guidance. Precise source-type totals remain to be reconciled for the final report.
 
@@ -53,8 +53,9 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-smart-tvs-under-300-for-2025-viewing-experience | P1 | 3 documented | Complete | [Live](https://handytested.com/best-smart-tvs-under-300-for-2025-viewing-experience/) |
 | best-noise-canceling-headphones-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-noise-canceling-headphones-under-300-for-2025/) |
 | best-laser-levels-for-diy-home-projects-under-60 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-laser-levels-for-diy-home-projects-under-60/) |
+| best-oscillating-multi-tools-under-75-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-oscillating-multi-tools-under-75-for-2025/) |
 
-The 8 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 7 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
@@ -66,7 +67,6 @@ The 8 remaining articles retain their Phase 3 state **pending Phase 4 research**
 |  |  | best-stud-finders-under-50-for-home-projects-2025 |
 |  |  | best-cordless-drills-under-100 |
 |  |  |  |
-|  | best-oscillating-multi-tools-under-75-for-2025 |  |
 
 ## Product changes
 

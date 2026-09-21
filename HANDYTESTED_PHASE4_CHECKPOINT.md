@@ -1,10 +1,10 @@
 # HandyTested Phase 4 checkpoint (2026-09-20)
 
-This is an execution checkpoint, not a final completion claim. Read the Phase 4 request and `HANDYTESTED_PHASE4_REPORT.md` before resuming. Do not redo the twenty-nine completed articles unless live QA reveals a regression.
+This is an execution checkpoint, not a final completion claim. Read the Phase 4 request and `HANDYTESTED_PHASE4_REPORT.md` before resuming. Do not redo the thirty completed articles unless live QA reveals a regression.
 
 ## Completed and published
 
-All twenty-nine kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
+All thirty kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
 
 | Article | Post ID | Apply run / backup artifact name |
 |---|---:|---|
@@ -37,12 +37,13 @@ All twenty-nine kept their original slug/self-canonical, gained a research-led E
 | Smart TVs | 78 | https://github.com/HeberPython/agente-sites/actions/runs/35619680160 / `handytested-phase4-smart-tvs-backup` (artifact ID 10647178474) |
 | Noise-canceling headphones | 72 | https://github.com/HeberPython/agente-sites/actions/runs/35623876339 / `handytested-phase4-anc-headphones-backup` (artifact ID 10651035244) |
 | Laser levels | 31 | https://github.com/HeberPython/agente-sites/actions/runs/35628150257 / `handytested-phase4-laser-levels-backup` (artifact ID 10652824486) |
+| Oscillating multi-tools | 28 | https://github.com/HeberPython/agente-sites/actions/runs/35632974267 / `handytested-phase4-oscillating-tools-backup` (artifact ID 10654957209) |
 
 WordPress original-post backup artifacts are attached to those apply runs and retained for 30 days. Random orbital sanders had an initial failed apply (run `35534136103`) because an unrelated related-guide fetch timed out; its rollback restored the prior post, a second dry-run `35534259258` passed, and the successful apply is the one above.
 
 ## Next article and batch
 
-**NEXT ARTICLE:** `best-oscillating-multi-tools-under-75-for-2025` (P1), then follow the exact P2 order in `HANDYTESTED_PHASE3_REPORT.md`. Seven P0 and twenty-two P1 are complete; 1 P1 and 7 P2 remain. None of those 8 has been researched or published in Phase 4 yet. Do not mark them genuinely blocked merely because Phase 3 worksheets said "Screened; blocked".
+**NEXT ARTICLE:** `best-cordless-ratchets-for-diy-mechanics-in-2025` (P2), then follow the exact P2 order in `HANDYTESTED_PHASE3_REPORT.md`. Seven P0 and twenty-three P1 are complete; 7 P2 remain. None of those 7 has been researched or published in Phase 4 yet. Do not mark them genuinely blocked merely because Phase 3 worksheets said "Screened; blocked".
 
 ## Research already obtained for next work
 
@@ -68,6 +69,8 @@ Noise-canceling-headphone research is in `handytested_sources/best-noise-canceli
 
 Laser-level research is in `handytested_sources/best-laser-levels-for-diy-home-projects-under-60.md`: Bosch GLL50-20, DEWALT DW088CG and BLACK+DECKER BDL220S by self-leveling, range and mounting use. Fabricated room/deck/drop tests, ratings, fixed prices and conflated accuracy/range claims were removed. Twelve tests and dry-run 35627963754 passed. First apply 35628018668 received HTTP 403 on the initial WordPress read before backup/write. Repeat dry-run 35628091696 and apply 35628150257 passed with backup artifact 10652824486, public metadata/content checks and independent HTTP 200.
 
+Oscillating-tool research is in `handytested_sources/best-oscillating-multi-tools-under-75-for-2025.md`: DEWALT DCS356B, BLACK+DECKER BD200MTB and WEN 2312 by power source, speed control, package and accessory interface. Fabricated cutting/vibration/durability tests, ratings, fixed prices and stale or misidentified products were removed. Twelve tests, dry-run 35632830657 and apply 35632974267 passed with backup artifact 10654957209, public metadata/content checks and independent HTTP 200.
+
 ## Outstanding cross-cutting issues
 
 - Amazon CTAs are specific tagged searches, not verified direct product links. SiteStripe/ASIN verification remains pending; absence of a direct link does not block textual correction.
@@ -79,4 +82,4 @@ Laser-level research is in `handytested_sources/best-laser-levels-for-diy-home-p
 
 ## Resume instruction
 
-In `C:\Users\Heber\agente-sites` on `main`, read `git status --short` and this checkpoint; start public-source research for `best-oscillating-multi-tools-under-75-for-2025`. For each article: read snapshot and source record, research current exact models, write original English copy plus source evidence, validate locally, stage only task files, commit/push, run its GitHub Actions dry-run, apply with backup, check live, update report/checkpoint, and immediately proceed to the next. Do not publish an article when its snapshot/revision guard fails; investigate that specific article and continue others. Do not return a plan in place of execution.
+In `C:\Users\Heber\agente-sites` on `main`, read `git status --short` and this checkpoint; start public-source research for `best-cordless-ratchets-for-diy-mechanics-in-2025`. For each article: read snapshot and source record, research current exact models, write original English copy plus source evidence, validate locally, stage only task files, commit/push, run its GitHub Actions dry-run, apply with backup, check live, update report/checkpoint, and immediately proceed to the next. Do not publish an article when its snapshot/revision guard fails; investigate that specific article and continue others. Do not return a plan in place of execution.
