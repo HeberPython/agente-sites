@@ -1,0 +1,19 @@
+name: HandyTested - Phase 5 Sitemap Diagnostics
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sitemap-read-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Validate Python
+        run: python -m py_compile handytested_phase5_sitemap_diagnostics.py
+      - name: Read post status and exposed SEO metadata
+        env:
+          HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
+        run: python handytested_phase5_sitemap_diagnostics.py

@@ -10,6 +10,7 @@
 - 111 current tagged Amazon.com search URLs audited for destination/tag; zero verified direct ASIN links. No fabricated prices, ratings or availability.
 - Sampled responsive, schema, robots, disclosure, indexability, Pinterest anonymous view and unthrottled lab performance. Intermittent 320px AdSense iframe overflow reproduced once.
 - Earbuds, smart-home and kitchen intent overlaps reviewed; no unsupported merge/redirect.
+- Sitewide internal GET crawl: 57 source documents and 57 distinct internal destinations, all HTTP 200; author archive redirects to home. HEAD is unreliable (many false 500 responses). No natural cross-article mentions for the four no-incoming-body-link topics, so no forced links.
 
 ## Published, validated and backups
 
@@ -24,7 +25,7 @@
 
 ## Next exact task
 
-**Crawl sitewide internal anchors from public posts, pages, home, categories and search/archive templates (not just article bodies); classify 200/3xx/404 and fix any confirmed content-owned broken URLs through revision-guarded dry-run, backup, apply and live verification.** Start by fetching current public REST post/page content and rendered home/category navigation, deduplicate internal destinations, then test them. The old two 404 Deals links have already been removed; do not re-fix them. After this task, continue the second contextual cluster-link pass for the four no-incoming-body-link posts only where semantic context actually exists, then return to the remaining Phase 5 report risks.
+**Investigate the five missing and two stale Rank Math post-sitemap entries through supported authenticated WordPress REST reads of each post's status, robots and Rank Math metadata; compare with one included post and with the public XML.** Do not alter posts, slugs, canonicals or plugin internals. If settings are not exposed by REST, retain the exact manual WordPress action below and continue to external-manufacturer citation link checks, author/archive UX, Astra/footer, AdSense and accessibility. The sitewide internal GET crawl is already complete; do not repeat it without a regression.
 
 ## Manual admin actions, not global blockers
 
