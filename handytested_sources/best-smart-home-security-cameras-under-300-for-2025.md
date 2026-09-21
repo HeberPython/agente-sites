@@ -1,71 +1,22 @@
-# Best Smart Home Security Cameras Under $300 for 2025
+# Home Security Cameras by Location and Recording Needs
 
-Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verification.**
+Researched: 2026-09-21 UTC. Phase 3's BLOCKED label was automated screening, not an actual public-research barrier; this manual primary-source record supersedes it.
 
 - URL: https://handytested.com/best-smart-home-security-cameras-under-300-for-2025/
-- WordPress ID: 136
+- WordPress ID 136; P1; baseline modified 2026-09-12T13:18:31
 - Slug: best-smart-home-security-cameras-under-300-for-2025
-- Priority: P1
-- Category: smart-home
-- Published / modified: 2026-06-01T14:44:56 / 2026-09-12T13:18:31
-- Search intent: COMMERCIAL INVESTIGATION
-- Primary topic / likely keyword: Best Smart Home Security Cameras Under $300 for 2025
-- Proposed title: PENDING EDITORIAL REVIEW
-- Secondary topics: PENDING EDITORIAL REVIEW
-- Current SEO title: Best Smart Home Security Cameras Under $300 for 2025
-- Current meta description: Discover the best smart home security cameras under $300 in our comprehensive review for 2025. Secure your home without breaking the bank!
-- Canonical: https://handytested.com/best-smart-home-security-cameras-under-300-for-2025/
-- H1: Best Smart Home Security Cameras Under $300 for 2025
-- Title includes year: True
-- Exact Amazon disclosure in post body: False
-- JSON-LD present: True (semantics unverified)
-- Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+- Decision: rewrite after revision guard, backup and live checks.
+- H1: Home Security Cameras by Location and Recording Needs
+- SEO title: Home Security Cameras by Location and Recording Needs | HandyTested
+- Description: Compare Ring Indoor Cam 2K, Blink Outdoor 4 and Arlo Essential Outdoor 2K VMC3050 by power, storage, plans and placement.
+- Exact disclosure; three tagged exact-model Amazon searches, no invented ASIN or direct product URLs.
 
-## Product Candidates (Unverified)
-- Ring Indoor Cam
-- Arlo Essential Spotlight Camera
-- Nest Cam (battery)
-- Eufy Security 2K Indoor Cam
-- Ring Stick Up Cam Battery
-- Blink Outdoor 4 security camera
-- Arlo Essential 2K outdoor security camera
+## Primary source evidence
 
-## Test/Experience Claims To Verify
-- None detected by screening.
+| Exact model | Primary source | Supported facts and caveats |
+|---|---|---|
+| Ring Indoor Cam 2K, 2025 release | https://ring.com/products/indoor-cam-plus | Plug-in USB-C, 2560 x 1440, sliding detachable lens cover, 2.4 GHz Wi-Fi. Live view and notifications without subscription; review/save/share missed recordings requires compatible Ring subscription. Named Indoor Cam Plus on same URL; do not confuse with older Indoor Cam 2nd Gen. |
+| Blink Outdoor 4 BCM00500U | https://support.blinkforhome.com/en_GB/outdoor4-camera-tech-specs ; https://support.blinkforhome.com/1801814 | 1080p, two non-rechargeable AA lithium batteries; battery life varies. Sync Module required. Cloud clip storage needs subscription after trial. Local storage needs compatible Sync Module 2 + USB drive or XR + microSD (not Core). Person detection requires plan/trial. |
+| Arlo Essential Outdoor 2K 2nd Gen VMC3050 | https://kb.arlo.com/000063761/Arlo-Essential-Outdoor-2nd-Generation-Spec-Sheet ; https://www.arlo.com/en-us/cameras/essential/arlo-essential-v2.html | VMC3050 2560 x 1440, 130-degree diagonal view, rechargeable battery, 2.4 GHz Wi-Fi. HD VMC2050 is different. Live view/motion notification remain without plan after trial; cloud history/object detection require subscription. Optional compatible SmartHub may support local storage; not included. |
 
-## Price Passages To Verify
-- If you’re looking to enhance your home security with smart technology, our best smart home security cameras review for 2025 will guide you in choosing the perfect model for your needs. With options under $300, there’s something for every budget. With the rise of smart home tech, securing your home has never been more accessible. Whether you’re a first-time user or a tech enthusiast, we’ll help you discover the best options to make an informed choice faster.
-- Our top choice for the best smart home security camera under $300 is the Arlo Essential Spotlight Camera , thanks to its high-quality video and extra safety features. The Ring Indoor Cam is the best value for beginners, simplifying the smart home journey. Finally, for those seeking superior resolution, the Eufy Security 2K Indoor Cam is a great premium pick. Choose the one that fits your specific needs!
-
-Detected dollar values (including CTAs): $300, $300,
-
-## Rating Passages To Verify
-- None detected by screening.
-
-Detected rating markers: none
-
-## Amazon Links
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Ring%20Indoor%20Cam&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Arlo%20Essential%20Spotlight%20Camera&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Nest%20Cam%20%28battery%29&tag=handytested0d-20
-- Check Current Amazon Options → | SEARCH | tag OK | https://www.amazon.com/s?k=Eufy%20Security%202K%20Indoor%20Cam&tag=handytested0d-20
-- Ring Stick Up Cam Battery | SEARCH | tag OK | https://www.amazon.com/s?k=Ring+Stick+Up+Cam+Battery&tag=handytested0d-20
-- Blink Outdoor 4 security camera | SEARCH | tag OK | https://www.amazon.com/s?k=Blink+Outdoor+4+security+camera&tag=handytested0d-20
-- Arlo Essential 2K outdoor security camera | SEARCH | tag OK | https://www.amazon.com/s?k=Arlo+Essential+2K+outdoor+security+camera&tag=handytested0d-20
-
-## Images
-- Featured media: {"url": "https://handytested.com/wp-content/uploads/2026/06/best-smart-home-security-cameras-under-300-for-202.jpg", "alt": "", "width": 1080, "height": 720}
-- Body image elements: []
-- Licensing and product match: UNVERIFIED
-
-## Internal Links
-- None detected by screening.
-
-## Source Evidence
-| Product | Manufacturer / primary source | Source type | Checked | Supported claim | Status / notes |
-|---|---|---|---|---|---|
-| PENDING | PENDING | PENDING | PENDING | PENDING | No recommendation approved yet |
-
-## Editorial Decision
-BLOCKED - REQUIRES MANUAL VERIFICATION. Screened fields above must be reviewed in context before a publish decision. Do not infer truth from a regex match or Amazon search result.
+No guarantee of safety, detection accuracy, continuous recording, fixed battery life or a current under-$300 checkout price. The old Ring Indoor Cam, unspecified Arlo Spotlight/Nest/Eufy and mixed-generation links were not all exact current model comparisons; exclude them. Avoid making a 2025 claim in a 2026 rewrite. Featured media https://handytested.com/wp-content/uploads/2026/06/best-smart-home-security-cameras-under-300-for-202.jpg, 1080 x 720, empty alt: license and model match unverified; leave unchanged, flag separate review. Related /best-smart-home-devices-under-300-for-2025/ and /best-smart-home-hubs-under-150-for-2025/ must return HTTP 200 at release.
