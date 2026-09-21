@@ -1,4 +1,4 @@
-# HandyTested Phase 4 report (interim, 2026-09-20)
+# HandyTested Phase 4 report (interim, 2026-09-21)
 
 **Status: in progress.** This is not the final 37-article report. See `HANDYTESTED_PHASE4_CHECKPOINT.md` for exact continuation state.
 
@@ -7,16 +7,16 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 34 / 34 / 34 |
-| Pending, not genuinely blocked | 3 (all P2) |
+| Fully researched / rewritten / published in Phase 4 | 35 / 35 / 35 |
+| Pending, not genuinely blocked | 2 (all P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 100 |
+| Retained recommended products with primary-source records | 103 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in thirty-four revised bodies | 100 |
-| Contextual internal links in thirty-four revised bodies | 72 |
-| Featured-image rights/product-match reviews still open | 34 |
+| Tagged Amazon searches in thirty-five revised bodies | 103 |
+| Contextual internal links in thirty-five revised bodies | 74 |
+| Featured-image rights/product-match reviews still open | 35 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
-| Year titles updated | 15 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners, security cameras, home tool sets, smart TVs, ANC headphones, oscillating multi-tools, cordless ratchets, electric screwdrivers) |
+| Year titles updated | 16 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners, security cameras, home tool sets, smart TVs, ANC headphones, oscillating multi-tools, cordless ratchets, electric screwdrivers, rotary tools) |
 
 No published article asserts first-hand testing by HandyTested. Manufacturer specifications are attributed, promotional or outdated prices are not used as fixed article prices, and no Amazon ASIN was guessed. Source mix so far: manufacturer product pages for every retained recommendation, relevant official manuals/support pages for tool/electrical safety, official sellers for some availability/budget checks, and EPA/Fluke safety guidance. Precise source-type totals remain to be reconciled for the final report.
 
@@ -58,12 +58,12 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-electric-screwdrivers-for-diy-projects-in-2025 | P2 | 3 documented | Complete | [Live](https://handytested.com/best-electric-screwdrivers-for-diy-projects-in-2025/) |
 | top-5-digital-torque-wrenches-under-100-for-accurate-torque | P2 | 3 documented | Complete | [Live](https://handytested.com/top-5-digital-torque-wrenches-under-100-for-accurate-torque/) |
 | best-cordless-circular-saws-under-150-for-diy-projects | P2 | 3 documented | Complete | [Live](https://handytested.com/best-cordless-circular-saws-under-150-for-diy-projects/) |
+| best-rotary-tools-under-50-for-diy-projects-2025 | P2 | 3 documented | Complete | [Live](https://handytested.com/best-rotary-tools-under-50-for-diy-projects-2025/) |
 
-The 3 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 2 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
-|  |  | best-rotary-tools-under-50-for-diy-projects-2025 |
 |  |  | best-stud-finders-under-50-for-home-projects-2025 |
 |  |  | best-cordless-drills-under-100 |
 |  |  |  |
@@ -103,10 +103,11 @@ The 3 remaining articles retain their Phase 3 state **pending Phase 4 research**
 | Laser levels | GLL30, DW088K and out-of-stock BOX-1G mixed with fabricated home/deck/drop tests, shared accuracy, ratings and fixed prices | Replace/clarify | Bosch GLL50-20, DEWALT DW088CG and manual BLACK+DECKER BDL220S separated by self-leveling, beam, detector and mounting use | [Bosch](https://www.boschtools.com/us/en/products/gll50-20-0601065910), [DEWALT](https://www.dewalt.com/en-us/product/dw088cg/green-cross-line-laser), [BLACK+DECKER](https://www.blackanddecker.com/products/bdl220s) |
 | Digital torque wrenches | Generic or weakly identified EPAuto/Stalwart entries, fixed prices, ratings and unsupported five-under-$100 framing | Replace/clarify | GEARWRENCH 85076, ACDelco ARM601-3 and CRAFTSMAN CMMT99435 separated by range, accuracy disclosure, alerts and calibration limits | [GEARWRENCH](https://www.gearwrench.com/all-tools/torque-products/torque-wrenches/85076-38-drive-electronic-torque-wrench-10-100-ftlbs), [ACDelco](https://acdelco-tools.com/index.php?product_id=131&route=product%2Fproduct), [CRAFTSMAN](https://www.craftsman.com/en-us/product/cmmt99435/38-drive-digital-torque-wrench) |
 | Cordless circular saws | DCS570B/P508/XSH06Z mixed bare-tool and two-battery packages with fixed prices and ratings | Replace/clarify | DEWALT DCS565B, SKIL CR6413B-11 and Makita XSS02Z compared by exact package, platform, blade capacity and documented controls | [DEWALT](https://www.dewalt.com/en-us/product/dcs565b/20v-max-xr-6-12-brushless-cordless-circular-saw-tool-only), [SKIL](https://www.skil.com/products/pwrcore-20-brushless-6-1-2-in-circular-saw-kit-cr6413b), [Makita](https://makitatools.com/products/details/XSS02Z) |
+| Rotary tools | Fabricated hands-on tests, ratings, fixed prices and unsupported WEN speed figures | Remove/clarify | Dremel 3000-1/25, WEN 2305 and Dremel Stylo+ 2050-15 separated by workload, documented speed information and package | [Dremel 3000](https://www.dremel.com/us/en/blogs/3000-quick.-compact.-all-round), [WEN](https://wenproducts.com/products/Rotary-Tool-Kit-With-Flex-Shaft-2305), [Stylo+](https://www.dremel.com/us/en/p/2050-15-f0132050ac) |
 
 ## Validation and open items
 
 - Each article passed focused local tests, GitHub Actions dry-run, apply and public release checks for H1, canonical, title, description, disclosure, tagged CTAs and related-link presence. Backup run links are in the checkpoint.
 - Browser QA at 320/375/1280 px was sampled across batches. Article tables were internally scrollable on mobile. AdSense iframes caused page-level overflow on sampled smart-hub, earbuds, voltage and robot pages; this is not fixed and should be handled separately without disabling ads blindly.
-- No Phase 4 article is recorded as genuinely blocked. The pending 3 must each receive fresh public research before a final state is assigned.
+- No Phase 4 article is recorded as genuinely blocked. The pending 2 must each receive fresh public research before a final state is assigned.
 - Search Console, Rank Math sitemap, global Astra styling/footer, Pinterest diagnostic admin, image rights and verified Amazon direct links remain outstanding but do not prevent careful text corrections.

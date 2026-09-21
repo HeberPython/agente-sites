@@ -154,3 +154,7 @@ Published post 62 after GEARWRENCH, ACDelco and CRAFTSMAN primary-source researc
 # Phase 4 cordless-circular-saw release (2026-09-21)
 
 Published post 59 after DEWALT, SKIL, Makita and manufacturer-manual research and 12 local tests. [Dry-run 35644507631](https://github.com/HeberPython/agente-sites/actions/runs/35644507631) and [apply 35644560930](https://github.com/HeberPython/agente-sites/actions/runs/35644560930) passed with original-post backup artifact `10660230583`, public metadata/content checks and independent HTTP 200. The rewrite compares DCS565B, CR6413B-11 and XSS02Z by package, platform and blade capacity, removing fixed prices, ratings, mixed package assumptions and the unsupported under-$150 promise. Phase 4 stands at 34/37; rotary tools are next.
+
+# Phase 4 rotary-tool release (2026-09-21)
+
+Published post 47 after Dremel and WEN primary-source research and 12 local tests. [Dry-run 35645629734](https://github.com/HeberPython/agente-sites/actions/runs/35645629734) and [apply 35645682838](https://github.com/HeberPython/agente-sites/actions/runs/35645682838) passed with original-post backup artifact `10659883475`, public metadata/content checks and independent HTTP 200. The rewrite compares Dremel 3000-1/25, WEN 2305 and Dremel Stylo+ 2050-15 by workload and package, removes fabricated hands-on testing, ratings, fixed prices and unsupported WEN figures, and discloses the Dremel 3000 source/version speed discrepancy. Phase 4 stands at 35/37; stud finders are next.
