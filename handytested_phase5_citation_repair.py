@@ -1,4 +1,4 @@
-"""Guarded replacement of four stale DEWALT PDF citations with exact product pages."""
+"""Guarded replacement of stale manual citations with current official sources."""
 
 from __future__ import annotations
 
@@ -37,6 +37,12 @@ REPAIRS = (
         "2026-09-21T21:44:41",
         '<a href="https://www.dewalt.com/GLOBALBOM/QU/DCS570B/1/Instruction_Manual/EN/N490072_DCS570.pdf" target="_blank" rel="noopener">DEWALT circular-saw safety manual</a>',
         '<a href="https://www.dewalt.com/en-us/product/dcs565b/20v-max-xr-6-12-brushless-cordless-circular-saw-tool-only" target="_blank" rel="noopener">DEWALT DCS565B product page with manual</a>',
+    ),
+    (
+        44,
+        "2026-09-21T21:44:48",
+        '<a href="https://www.zircon.com/wp-content/uploads/2016/11/ss_e50_instructions.pdf" target="_blank" rel="noopener">Zircon e50 manual</a>',
+        '<a href="https://www.zircon.com/product_instructions/ss_e50_instructions.pdf" target="_blank" rel="noopener">Zircon e50 manual</a>',
     ),
 )
 

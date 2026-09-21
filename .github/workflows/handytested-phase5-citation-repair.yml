@@ -13,7 +13,7 @@ on:
         description: "Exactly one guarded WordPress post ID"
         required: true
         type: choice
-        options: ['20', '143', '59']
+        options: ['20', '143', '59', '44']
 
 jobs:
   citations:
@@ -25,7 +25,7 @@ jobs:
         with: {python-version: "3.12"}
       - name: Validate Python
         run: python -m py_compile handytested_phase5_citation_repair.py
-      - name: Validate and optionally repair four citations
+      - name: Validate and optionally repair one citation
         env:
           HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
           MODE: ${{ github.event.inputs.mode }}
