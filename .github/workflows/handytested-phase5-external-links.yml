@@ -1,0 +1,24 @@
+name: HandyTested - Phase 5 External Citation Check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  citations-read-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Validate Python
+        run: python -m py_compile handytested_phase5_external_links.py
+      - name: Check public article citations
+        run: python handytested_phase5_external_links.py
+      - name: Preserve audit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: handytested-phase5-external-links
+          path: handytested-phase5-external-links.json
+          retention-days: 30
