@@ -20,7 +20,7 @@ Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verifi
 - Exact Amazon disclosure in post body: False
 - JSON-LD present: True (semantics unverified)
 - Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+- Update decision: PUBLISHED after Phase 4 primary-source verification and guarded release (2026-09-21)
 
 ## Product Candidates (Unverified)
 - Franklin Sensors ProSensor 710 Stud Finder

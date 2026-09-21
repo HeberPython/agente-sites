@@ -1,10 +1,10 @@
 # HandyTested Phase 4 checkpoint (2026-09-21)
 
-This is an execution checkpoint, not a final completion claim. Read the Phase 4 request and `HANDYTESTED_PHASE4_REPORT.md` before resuming. Do not redo the thirty-five completed articles unless live QA reveals a regression.
+This is an execution checkpoint, not a final completion claim. Read the Phase 4 request and `HANDYTESTED_PHASE4_REPORT.md` before resuming. Do not redo the thirty-six completed articles unless live QA reveals a regression.
 
 ## Completed and published
 
-All thirty-five kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
+All thirty-six kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
 
 | Article | Post ID | Apply run / backup artifact name |
 |---|---:|---|
@@ -43,12 +43,13 @@ All thirty-five kept their original slug/self-canonical, gained a research-led E
 | Digital torque wrenches | 62 | https://github.com/HeberPython/agente-sites/actions/runs/35639478118 / `handytested-phase4-digital-torque-backup` (artifact ID 10657009494) |
 | Cordless circular saws | 59 | https://github.com/HeberPython/agente-sites/actions/runs/35644560930 / `handytested-phase4-circular-saws-backup` (artifact ID 10660230583) |
 | Rotary tools | 47 | https://github.com/HeberPython/agente-sites/actions/runs/35645682838 / `handytested-phase4-rotary-tools-backup` (artifact ID 10659883475) |
+| Stud finders | 44 | https://github.com/HeberPython/agente-sites/actions/runs/35650069460 / `handytested-phase4-stud-finders-backup` (artifact ID 10661213547) |
 
 WordPress original-post backup artifacts are attached to those apply runs and retained for 30 days. Random orbital sanders had an initial failed apply (run `35534136103`) because an unrelated related-guide fetch timed out; its rollback restored the prior post, a second dry-run `35534259258` passed, and the successful apply is the one above.
 
 ## Next article and batch
 
-**NEXT ARTICLE:** `best-stud-finders-under-50-for-home-projects-2025` (P2), then follow the exact P2 order in `HANDYTESTED_PHASE3_REPORT.md`. Seven P0, twenty-three P1 and five P2 are complete; 2 P2 remain. Neither has been researched or published in Phase 4 yet. Do not mark them genuinely blocked merely because Phase 3 worksheets said "Screened; blocked".
+**NEXT ARTICLE:** `best-cordless-drills-under-100` (P2), the final Phase 4 queue item in `HANDYTESTED_PHASE3_REPORT.md`. Seven P0, twenty-three P1 and six P2 are complete; 1 P2 remains. It has not been researched or published in Phase 4 yet. Do not mark it genuinely blocked merely because Phase 3 screening said "Screened; blocked".
 
 ## Research already obtained for next work
 
@@ -86,6 +87,8 @@ Circular-saw research is in `handytested_sources/best-cordless-circular-saws-und
 
 Rotary-tool research is in `handytested_sources/best-rotary-tools-under-50-for-diy-projects-2025.md`: Dremel 3000-1/25, WEN 2305 and Dremel Stylo+ 2050-15 by documented workload, speed information and package. Fabricated hands-on tests, ratings, fixed prices and unsupported WEN figures were removed; the Dremel 3000 page/manual speed discrepancy is disclosed. Twelve tests, dry-run 35645629734 and apply 35645682838 passed with backup artifact 10659883475, public metadata/content checks and independent HTTP 200.
 
+Stud-finder research is in `handytested_sources/best-stud-finders-under-50-for-home-projects-2025.md`: Franklin ProSensor M90, Zircon StudSensor e50 and CRAFTSMAN CMHT77621 by center/edge finding, depth and AC-warning limits. Invented wall tests, ratings, fixed prices and unsupported safety assurances were removed. Twelve tests and dry-run 35649804562 passed; first apply 35649863861 failed on the initial WordPress read because runner networking was unavailable, before backup/write. Repeat dry-run 35650031295 and apply 35650069460 passed with backup artifact 10661213547, public metadata/content checks and independent HTTP 200.
+
 ## Outstanding cross-cutting issues
 
 - Amazon CTAs are specific tagged searches, not verified direct product links. SiteStripe/ASIN verification remains pending; absence of a direct link does not block textual correction.
@@ -97,4 +100,4 @@ Rotary-tool research is in `handytested_sources/best-rotary-tools-under-50-for-d
 
 ## Resume instruction
 
-In `C:\Users\Heber\agente-sites` on `main`, read `git status --short` and this checkpoint; start public-source research for `best-stud-finders-under-50-for-home-projects-2025`. For each article: read snapshot and source record, research current exact models, write original English copy plus source evidence, validate locally, stage only task files, commit/push, run its GitHub Actions dry-run, apply with backup, check live, update report/checkpoint, and immediately proceed to the next. Do not publish an article when its snapshot/revision guard fails; investigate that specific article and continue others. Do not return a plan in place of execution.
+In `C:\Users\Heber\agente-sites` on `main`, read `git status --short` and this checkpoint; start public-source research for `best-cordless-drills-under-100`. For each article: read snapshot and source record, research current exact models, write original English copy plus source evidence, validate locally, stage only task files, commit/push, run its GitHub Actions dry-run, apply with backup, check live, update report/checkpoint, and immediately proceed to the next. Do not publish an article when its snapshot/revision guard fails; investigate that specific article and continue others. Do not return a plan in place of execution.
