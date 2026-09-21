@@ -7,16 +7,16 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 24 / 24 / 24 |
-| Pending, not genuinely blocked | 13 (6 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 25 / 25 / 25 |
+| Pending, not genuinely blocked | 12 (5 P1, 7 P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 70 |
+| Retained recommended products with primary-source records | 73 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in twenty-four revised bodies | 70 |
-| Contextual internal links in twenty-four revised bodies | 52 |
-| Featured-image rights/product-match reviews still open | 24 |
+| Tagged Amazon searches in twenty-five revised bodies | 73 |
+| Contextual internal links in twenty-five revised bodies | 54 |
+| Featured-image rights/product-match reviews still open | 25 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
-| Year titles updated | 8 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners) |
+| Year titles updated | 9 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners, security cameras) |
 
 No published article asserts first-hand testing by HandyTested. Manufacturer specifications are attributed, promotional or outdated prices are not used as fixed article prices, and no Amazon ASIN was guessed. Source mix so far: manufacturer product pages for every retained recommendation, relevant official manuals/support pages for tool/electrical safety, official sellers for some availability/budget checks, and EPA/Fluke safety guidance. Precise source-type totals remain to be reconciled for the final report.
 
@@ -48,8 +48,9 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-cordless-nail-guns-under-300-for-diy-projects | P1 | 3 documented | Complete | [Live](https://handytested.com/best-cordless-nail-guns-under-300-for-diy-projects/) |
 | best-camping-gear-under-300-for-outdoor-adventures | P1 | 3 documented | Complete | [Live](https://handytested.com/best-camping-gear-under-300-for-outdoor-adventures/) |
 | best-kitchen-appliances-under-300-for-home-chefs | P1 | 3 documented | Complete | [Live](https://handytested.com/best-kitchen-appliances-under-300-for-home-chefs/) |
+| best-smart-home-security-cameras-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-smart-home-security-cameras-under-300-for-2025/) |
 
-The 13 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 12 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
@@ -59,7 +60,7 @@ The 13 remaining articles retain their Phase 3 state **pending Phase 4 research*
 |  |  | best-cordless-circular-saws-under-150-for-diy-projects |
 |  |  | best-rotary-tools-under-50-for-diy-projects-2025 |
 |  |  | best-stud-finders-under-50-for-home-projects-2025 |
-|  | best-smart-home-security-cameras-under-300-for-2025 | best-cordless-drills-under-100 |
+|  |  | best-cordless-drills-under-100 |
 |  | best-home-diy-tool-sets-for-under-300-in-2025 |  |
 |  | best-smart-tvs-under-300-for-2025-viewing-experience |  |
 |  | best-noise-canceling-headphones-under-300-for-2025 |  |
@@ -94,10 +95,11 @@ The 13 remaining articles retain their Phase 3 state **pending Phase 4 research*
 | Brad nailers | Pneumatic BOSTITCH in cordless list, discontinued P320, unverified noise/runtime and fixed under-$300 bundle promise | Remove/replace | DEWALT DCN680B bare tool, RYOBI P321 bare tool, CRAFTSMAN CMCN618C1 kit; explain fastener limits and sequential-actuation safety | [DEWALT](https://www.dewalt.com/en-us/product/dcn680b/20v-max-xr-18ga-cordless-brad-nailer-tool-only), [RYOBI](https://www.ryobitools.com/products/33287177158), [CRAFTSMAN](https://www.craftsman.com/en-us/product/cmcn618c1/v20-cordless-brad-nailer-1-15ah-battery-and-charger), [OSHA](https://www.osha.gov/nail-gun-safety) |
 | Camping gear | Mixed backpacking/car-camping categories, incomplete under-$300 kit promise and Celsius 0F comfort assumption | Clarify/exclude | Coleman Sundome 4-person, Triton two-burner and original Helinox Chair One by role; exclude sold-out Celsius XXL, flag conditional comfort and stove CO hazard | [Coleman tent](https://www.coleman.com/camp-sports/tents-by-size/4-person-tents/sundome-4-person-camping-tent/SP_271238.html), [stove](https://www.coleman.com/grills-stoves/camping-stoves/multi-burner/triton-2-burner-propane-camping-stove/SAP_2157352.html), [Helinox](https://helinox.com/products/chair-one), [NPS](https://home.nps.gov/seki/planyourvisit/camping-safety.htm) |
 | Kitchen appliances | Fixed under-$300 claim, archived Hamilton Beach 49980A, duplicate BN701, old product mix | Replace/clarify | Instant Pot Duo Plus 6QT WhisperQuiet 112-0169-01, Ninja BN701 and current Hamilton Beach 49916G by distinct job; distinguish pitcher/liquid capacity and SKU variants | [Instant Pot](https://instantpot.com/products/instant-pot-duo-plus-6qt-multi-use-pressure-cooker-whisper-quiet), [Ninja](https://www.sharkninja.com/ninja-professional-plus-blender-with-auto-iq/BN701.html), [Hamilton Beach](https://hamiltonbeach.com/coffee-makers) |
+| Security cameras | Mixed older/generic generations; implied free recording, safety and fixed budget | Replace/clarify | Ring Indoor Cam 2K, Blink Outdoor 4 BCM00500U and Arlo Essential Outdoor 2K VMC3050; distinguish plan, Sync Module, variant, power and placement | [Ring](https://ring.com/products/indoor-cam-plus), [Blink](https://support.blinkforhome.com/1801814), [Arlo](https://kb.arlo.com/000063761/Arlo-Essential-Outdoor-2nd-Generation-Spec-Sheet) |
 
 ## Validation and open items
 
 - Each article passed focused local tests, GitHub Actions dry-run, apply and public release checks for H1, canonical, title, description, disclosure, tagged CTAs and related-link presence. Backup run links are in the checkpoint.
 - Browser QA at 320/375/1280 px was sampled across batches. Article tables were internally scrollable on mobile. AdSense iframes caused page-level overflow on sampled smart-hub, earbuds, voltage and robot pages; this is not fixed and should be handled separately without disabling ads blindly.
-- No Phase 4 article is recorded as genuinely blocked. The pending 13 must each receive fresh public research before a final state is assigned.
+- No Phase 4 article is recorded as genuinely blocked. The pending 12 must each receive fresh public research before a final state is assigned.
 - Search Console, Rank Math sitemap, global Astra styling/footer, Pinterest diagnostic admin, image rights and verified Amazon direct links remain outstanding but do not prevent careful text corrections.
