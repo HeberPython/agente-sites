@@ -1,10 +1,10 @@
 # HandyTested Phase 4 checkpoint (2026-09-20)
 
-This is an execution checkpoint, not a final completion claim. Read the Phase 4 request and `HANDYTESTED_PHASE4_REPORT.md` before resuming. Do not redo the twenty-three completed articles unless live QA reveals a regression.
+This is an execution checkpoint, not a final completion claim. Read the Phase 4 request and `HANDYTESTED_PHASE4_REPORT.md` before resuming. Do not redo the twenty-four completed articles unless live QA reveals a regression.
 
 ## Completed and published
 
-All twenty-three kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
+All twenty-four kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
 
 | Article | Post ID | Apply run / backup artifact name |
 |---|---:|---|
@@ -31,12 +31,13 @@ All twenty-three kept their original slug/self-canonical, gained a research-led 
 | Pet-owner carpet cleaners | 146 | https://github.com/HeberPython/agente-sites/actions/runs/35546015997 / `handytested-phase4-carpet-cleaners-backup` (artifact ID 10616453355) |
 | Cordless brad nailers | 143 | https://github.com/HeberPython/agente-sites/actions/runs/35546221316 / `handytested-phase4-nailers-backup` (artifact ID 10615903508) |
 | Car-camping gear | 141 | https://github.com/HeberPython/agente-sites/actions/runs/35546505034 / `handytested-phase4-camping-backup` (artifact ID 10615739044) |
+| Kitchen appliances | 138 | https://github.com/HeberPython/agente-sites/actions/runs/35546917645 / `handytested-phase4-kitchen-appliances-backup` (artifact ID 10616449755) |
 
 WordPress original-post backup artifacts are attached to those apply runs and retained for 30 days. Random orbital sanders had an initial failed apply (run `35534136103`) because an unrelated related-guide fetch timed out; its rollback restored the prior post, a second dry-run `35534259258` passed, and the successful apply is the one above.
 
 ## Next article and batch
 
-**NEXT ARTICLE:** `best-kitchen-appliances-under-300-for-home-chefs` (P1), then follow the exact P1 and P2 order in `HANDYTESTED_PHASE3_REPORT.md`. Seven P0 and sixteen P1 are complete; 7 P1 and 7 P2 remain. None of those 14 has been researched or published in Phase 4 yet. Do not mark them genuinely blocked merely because Phase 3 worksheets said "Screened; blocked".
+**NEXT ARTICLE:** `best-smart-home-security-cameras-under-300-for-2025` (P1), then follow the exact P1 and P2 order in `HANDYTESTED_PHASE3_REPORT.md`. Seven P0 and seventeen P1 are complete; 6 P1 and 7 P2 remain. None of those 13 has been researched or published in Phase 4 yet. Do not mark them genuinely blocked merely because Phase 3 worksheets said "Screened; blocked".
 
 ## Research already obtained for next work
 
@@ -50,6 +51,8 @@ Brad-nailer research is in `handytested_sources/best-cordless-nail-guns-under-30
 
 Camping research is in `handytested_sources/best-camping-gear-under-300-for-outdoor-adventures.md`: Coleman Sundome 4-person, Coleman Triton and Helinox original Chair One, with NPS carbon-monoxide guidance. The incomplete under-$300 kit promise and cold-comfort assumption were removed. Dry-run 35546444398 passed; first apply 35546460184 failed HTTP 403 on the initial WordPress read before backup/write. Repeat dry-run 35546487498 and apply 35546505034 passed with backup artifact 10615739044, public metadata/content checks and independent HTTP 200.
 
+Kitchen-appliance research is in `handytested_sources/best-kitchen-appliances-under-300-for-home-chefs.md`: Instant Pot Duo Plus 6QT WhisperQuiet 112-0169-01, Ninja BN701 and Hamilton Beach FlexBrew Trio 49916G. The old unverified under-$300 ceiling, archived 49980A and duplicate BN701 were removed. Twelve tests, dry-run 35546898756 and apply 35546917645 passed with backup artifact 10616449755, public metadata/content checks and independent HTTP 200.
+
 ## Outstanding cross-cutting issues
 
 - Amazon CTAs are specific tagged searches, not verified direct product links. SiteStripe/ASIN verification remains pending; absence of a direct link does not block textual correction.
@@ -61,4 +64,4 @@ Camping research is in `handytested_sources/best-camping-gear-under-300-for-outd
 
 ## Resume instruction
 
-In `C:\Users\Heber\agente-sites` on `main`, read `git status --short` and this checkpoint; start public-source research for `best-kitchen-appliances-under-300-for-home-chefs`. For each article: read snapshot and source record, research current exact models, write original English copy plus source evidence, validate locally, stage only task files, commit/push, run its GitHub Actions dry-run, apply with backup, check live, update report/checkpoint, and immediately proceed to the next. Do not publish an article when its snapshot/revision guard fails; investigate that specific article and continue others. Do not return a plan in place of execution.
+In `C:\Users\Heber\agente-sites` on `main`, read `git status --short` and this checkpoint; start public-source research for `best-smart-home-security-cameras-under-300-for-2025`. For each article: read snapshot and source record, research current exact models, write original English copy plus source evidence, validate locally, stage only task files, commit/push, run its GitHub Actions dry-run, apply with backup, check live, update report/checkpoint, and immediately proceed to the next. Do not publish an article when its snapshot/revision guard fails; investigate that specific article and continue others. Do not return a plan in place of execution.

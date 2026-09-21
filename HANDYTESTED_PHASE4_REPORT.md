@@ -7,14 +7,14 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 23 / 23 / 23 |
-| Pending, not genuinely blocked | 14 (7 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 24 / 24 / 24 |
+| Pending, not genuinely blocked | 13 (6 P1, 7 P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 67 |
+| Retained recommended products with primary-source records | 70 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in twenty-three revised bodies | 67 |
-| Contextual internal links in twenty-three revised bodies | 50 |
-| Featured-image rights/product-match reviews still open | 23 |
+| Tagged Amazon searches in twenty-four revised bodies | 70 |
+| Contextual internal links in twenty-four revised bodies | 52 |
+| Featured-image rights/product-match reviews still open | 24 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
 | Year titles updated | 8 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners) |
 
@@ -47,8 +47,9 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-carpet-cleaners-for-pet-owners-in-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-carpet-cleaners-for-pet-owners-in-2025/) |
 | best-cordless-nail-guns-under-300-for-diy-projects | P1 | 3 documented | Complete | [Live](https://handytested.com/best-cordless-nail-guns-under-300-for-diy-projects/) |
 | best-camping-gear-under-300-for-outdoor-adventures | P1 | 3 documented | Complete | [Live](https://handytested.com/best-camping-gear-under-300-for-outdoor-adventures/) |
+| best-kitchen-appliances-under-300-for-home-chefs | P1 | 3 documented | Complete | [Live](https://handytested.com/best-kitchen-appliances-under-300-for-home-chefs/) |
 
-The 14 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 13 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
@@ -57,7 +58,7 @@ The 14 remaining articles retain their Phase 3 state **pending Phase 4 research*
 |  |  | top-5-digital-torque-wrenches-under-100-for-accurate-torque |
 |  |  | best-cordless-circular-saws-under-150-for-diy-projects |
 |  |  | best-rotary-tools-under-50-for-diy-projects-2025 |
-|  | best-kitchen-appliances-under-300-for-home-chefs | best-stud-finders-under-50-for-home-projects-2025 |
+|  |  | best-stud-finders-under-50-for-home-projects-2025 |
 |  | best-smart-home-security-cameras-under-300-for-2025 | best-cordless-drills-under-100 |
 |  | best-home-diy-tool-sets-for-under-300-in-2025 |  |
 |  | best-smart-tvs-under-300-for-2025-viewing-experience |  |
@@ -92,10 +93,11 @@ The 14 remaining articles retain their Phase 3 state **pending Phase 4 research*
 | Carpet cleaners | Dry Eureka vacuum grouped with wet extractors; unspecified ProHeat/Rug Doctor variants and unconditional stain, dry-time, pet-safety claims | Remove/clarify | BISSELL 3353 spot extractor, Hoover FH55000V compact upright, BISSELL 3432 full-size upright; distinguish modes, variants and moisture care | [BISSELL 3353](https://www.bissell.com/en-us/product/little-green-pet-deluxe-portable-carpet-cleaner-3353.html), [Hoover](https://hoover.com/collections/carpet-no-promo/products/powerdash-pet-advanced-3), [BISSELL 3432](https://www.bissell.com/en-us/product/revolution-hydrosteam-pet-carpet-cleaner-3432.html), [EPA](https://www.epa.gov/mold/mold-course-chapter-4) |
 | Brad nailers | Pneumatic BOSTITCH in cordless list, discontinued P320, unverified noise/runtime and fixed under-$300 bundle promise | Remove/replace | DEWALT DCN680B bare tool, RYOBI P321 bare tool, CRAFTSMAN CMCN618C1 kit; explain fastener limits and sequential-actuation safety | [DEWALT](https://www.dewalt.com/en-us/product/dcn680b/20v-max-xr-18ga-cordless-brad-nailer-tool-only), [RYOBI](https://www.ryobitools.com/products/33287177158), [CRAFTSMAN](https://www.craftsman.com/en-us/product/cmcn618c1/v20-cordless-brad-nailer-1-15ah-battery-and-charger), [OSHA](https://www.osha.gov/nail-gun-safety) |
 | Camping gear | Mixed backpacking/car-camping categories, incomplete under-$300 kit promise and Celsius 0F comfort assumption | Clarify/exclude | Coleman Sundome 4-person, Triton two-burner and original Helinox Chair One by role; exclude sold-out Celsius XXL, flag conditional comfort and stove CO hazard | [Coleman tent](https://www.coleman.com/camp-sports/tents-by-size/4-person-tents/sundome-4-person-camping-tent/SP_271238.html), [stove](https://www.coleman.com/grills-stoves/camping-stoves/multi-burner/triton-2-burner-propane-camping-stove/SAP_2157352.html), [Helinox](https://helinox.com/products/chair-one), [NPS](https://home.nps.gov/seki/planyourvisit/camping-safety.htm) |
+| Kitchen appliances | Fixed under-$300 claim, archived Hamilton Beach 49980A, duplicate BN701, old product mix | Replace/clarify | Instant Pot Duo Plus 6QT WhisperQuiet 112-0169-01, Ninja BN701 and current Hamilton Beach 49916G by distinct job; distinguish pitcher/liquid capacity and SKU variants | [Instant Pot](https://instantpot.com/products/instant-pot-duo-plus-6qt-multi-use-pressure-cooker-whisper-quiet), [Ninja](https://www.sharkninja.com/ninja-professional-plus-blender-with-auto-iq/BN701.html), [Hamilton Beach](https://hamiltonbeach.com/coffee-makers) |
 
 ## Validation and open items
 
 - Each article passed focused local tests, GitHub Actions dry-run, apply and public release checks for H1, canonical, title, description, disclosure, tagged CTAs and related-link presence. Backup run links are in the checkpoint.
 - Browser QA at 320/375/1280 px was sampled across batches. Article tables were internally scrollable on mobile. AdSense iframes caused page-level overflow on sampled smart-hub, earbuds, voltage and robot pages; this is not fixed and should be handled separately without disabling ads blindly.
-- No Phase 4 article is recorded as genuinely blocked. The pending 18 must each receive fresh public research before a final state is assigned.
+- No Phase 4 article is recorded as genuinely blocked. The pending 13 must each receive fresh public research before a final state is assigned.
 - Search Console, Rank Math sitemap, global Astra styling/footer, Pinterest diagnostic admin, image rights and verified Amazon direct links remain outstanding but do not prevent careful text corrections.
