@@ -7,14 +7,14 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 28 / 28 / 28 |
-| Pending, not genuinely blocked | 9 (2 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 29 / 29 / 29 |
+| Pending, not genuinely blocked | 8 (1 P1, 7 P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 82 |
+| Retained recommended products with primary-source records | 85 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in twenty-eight revised bodies | 82 |
-| Contextual internal links in twenty-eight revised bodies | 60 |
-| Featured-image rights/product-match reviews still open | 28 |
+| Tagged Amazon searches in twenty-nine revised bodies | 85 |
+| Contextual internal links in twenty-nine revised bodies | 62 |
+| Featured-image rights/product-match reviews still open | 29 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
 | Year titles updated | 12 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners, security cameras, home tool sets, smart TVs, ANC headphones) |
 
@@ -52,8 +52,9 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-home-diy-tool-sets-for-under-300-in-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-home-diy-tool-sets-for-under-300-in-2025/) |
 | best-smart-tvs-under-300-for-2025-viewing-experience | P1 | 3 documented | Complete | [Live](https://handytested.com/best-smart-tvs-under-300-for-2025-viewing-experience/) |
 | best-noise-canceling-headphones-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-noise-canceling-headphones-under-300-for-2025/) |
+| best-laser-levels-for-diy-home-projects-under-60 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-laser-levels-for-diy-home-projects-under-60/) |
 
-The 9 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 8 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
@@ -65,7 +66,6 @@ The 9 remaining articles retain their Phase 3 state **pending Phase 4 research**
 |  |  | best-stud-finders-under-50-for-home-projects-2025 |
 |  |  | best-cordless-drills-under-100 |
 |  |  |  |
-|  | best-laser-levels-for-diy-home-projects-under-60 |  |
 |  | best-oscillating-multi-tools-under-75-for-2025 |  |
 
 ## Product changes
@@ -100,10 +100,11 @@ The 9 remaining articles retain their Phase 3 state **pending Phase 4 research**
 | Home tool sets | Generic families, fabricated hands-on tests/runtime/weights, unsupported ratings and fixed price ranges | Replace/clarify | BLACK+DECKER BDPK70284C1AEV household kit, DEWALT DCK240C2 drill/impact combo and CRAFTSMAN CMMT45306 mechanics set by distinct task | [BLACK+DECKER](https://www.blackanddecker.com/products/bdpk70284c1aev), [DEWALT](https://www.dewalt.com/en-us/product/dck240c2/20v-max-lithium-ion-drill-driverimpact-driver-combo-kit13-ah), [CRAFTSMAN](https://www.craftsman.com/en-us/product/cmmt45306/230pc-versastack-mechanics-tool-set) |
 | Smart TVs | Stale mixed-size lineup, invented hands-on picture/sound tests, ratings, low-latency assurances and fixed price ranges | Replace/clarify | Amazon Fire TV 4-Series 4K50N402, Hisense 50A6N and Roku Select Series 50R4C5 compared by platform, HDR, gaming limits and inputs | [Amazon](https://digprjsurvey.amazon.com/csad/help/node/TD5J6m5VSEfhP4FI5Y), [Hisense](https://www.hisense-usa.com/product-page/televisions-50-class-a6-series-led-4k-uhd-google-smart-tv-50a6n), [Roku](https://support.roku.com/en-us/article/roku-branded-tv-product-information) |
 | ANC headphones | WH-1000XM5/QC45/AirPods Max/Life Q30 mixed generations; invented real-world testing, rankings, ratings and fixed prices | Replace/clarify | Sony WH-1000XM6, Bose QuietComfort Headphones and soundcore Space One Pro A3062 with attributed battery, codec, wired-use and app limits | [Sony](https://www.sony.com/electronics/support/wireless-headphones-bluetooth-headphones/wh-1000xm6/specifications), [Bose](https://support.bose.com/s/article/quietcomfort-headphones-specifications?language=en_CA), [soundcore](https://www.soundcore.com/products/a3062-noise-cancelling-headphones) |
+| Laser levels | GLL30, DW088K and out-of-stock BOX-1G mixed with fabricated home/deck/drop tests, shared accuracy, ratings and fixed prices | Replace/clarify | Bosch GLL50-20, DEWALT DW088CG and manual BLACK+DECKER BDL220S separated by self-leveling, beam, detector and mounting use | [Bosch](https://www.boschtools.com/us/en/products/gll50-20-0601065910), [DEWALT](https://www.dewalt.com/en-us/product/dw088cg/green-cross-line-laser), [BLACK+DECKER](https://www.blackanddecker.com/products/bdl220s) |
 
 ## Validation and open items
 
 - Each article passed focused local tests, GitHub Actions dry-run, apply and public release checks for H1, canonical, title, description, disclosure, tagged CTAs and related-link presence. Backup run links are in the checkpoint.
 - Browser QA at 320/375/1280 px was sampled across batches. Article tables were internally scrollable on mobile. AdSense iframes caused page-level overflow on sampled smart-hub, earbuds, voltage and robot pages; this is not fixed and should be handled separately without disabling ads blindly.
-- No Phase 4 article is recorded as genuinely blocked. The pending 9 must each receive fresh public research before a final state is assigned.
+- No Phase 4 article is recorded as genuinely blocked. The pending 8 must each receive fresh public research before a final state is assigned.
 - Search Console, Rank Math sitemap, global Astra styling/footer, Pinterest diagnostic admin, image rights and verified Amazon direct links remain outstanding but do not prevent careful text corrections.
