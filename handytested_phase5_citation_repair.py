@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import re
 
 from handytested_phase2 import request
 
@@ -39,6 +40,32 @@ REPAIRS = (
 )
 
 
+def anchor_parts(anchor: str) -> tuple[str, str]:
+    match = re.search(r'href="([^"]+)"[^>]*>([^<]+)</a>', anchor)
+    if not match:
+        raise ValueError("Invalid configured anchor")
+    return match.group(1), match.group(2)
+
+
+def replace_anchor(raw: str, old: str, new: str) -> str:
+    old_url, old_label = anchor_parts(old)
+    new_url, new_label = anchor_parts(new)
+    pattern = re.compile(
+        r'(<a\b[^>]*\bhref=")' + re.escape(old_url) + r'("[^>]*>)'
+        + re.escape(old_label) + r'(</a>)'
+    )
+    if len(pattern.findall(raw)) != 1:
+        raise RuntimeError(f"Citation anchor changed for {old_url}")
+    updated = pattern.sub(
+        lambda match: match.group(1) + new_url + match.group(2) + new_label + match.group(3),
+        raw,
+        count=1,
+    )
+    if old_url in updated or updated.count(new_url) != raw.count(new_url) + 1:
+        raise RuntimeError(f"Citation replacement failed for {old_url}")
+    return updated
+
+
 def main() -> None:
     if MODE not in {"dry-run", "apply"}:
         raise ValueError("MODE must be dry-run or apply")
@@ -49,9 +76,7 @@ def main() -> None:
         raw = post["content"]["raw"]
         if post["id"] != post_id or post["status"] != "publish" or post["modified_gmt"] != modified:
             raise RuntimeError(f"Post {post_id} revision/status changed")
-        if raw.count(old) != 1 or new in raw:
-            raise RuntimeError(f"Post {post_id} citation changed")
-        updated = raw.replace(old, new, 1)
+        updated = replace_anchor(raw, old, new)
         if updated.count("handytested0d-20") != raw.count("handytested0d-20") or "As an Amazon Associate I earn from qualifying purchases." not in updated:
             raise RuntimeError(f"Post {post_id} commercial safeguards changed")
         originals[post_id] = post
@@ -70,7 +95,9 @@ def main() -> None:
             changed.append(post_id)
             live = request(f"/posts/{post_id}?_fields=id,status,content")
             rendered = live["content"]["rendered"]
-            if live["status"] != "publish" or old in rendered or new not in rendered:
+            old_url, _ = anchor_parts(old)
+            new_url, new_label = anchor_parts(new)
+            if live["status"] != "publish" or old_url in rendered or new_url not in rendered or new_label not in rendered:
                 raise RuntimeError(f"Post {post_id} citation not publicly verified")
         print("Published and REST-verified four exact-model citation updates")
     except Exception:
