@@ -142,3 +142,7 @@ Published post 28 after DEWALT, BLACK+DECKER and WEN primary-source research and
 # Phase 4 cordless-ratchet release (2026-09-21)
 
 Published post 84 after DEWALT, Milwaukee and CRAFTSMAN primary-source research and 12 local tests. [Dry-run 35634004487](https://github.com/HeberPython/agente-sites/actions/runs/35634004487) and [apply 35634133101](https://github.com/HeberPython/agente-sites/actions/runs/35634133101) passed with original-post backup artifact `10655742537`, public metadata/content checks and independent HTTP 200. The rewrite compares DCF513B, 2457-21 and CMCF930B by actual battery platform and package, removing generic models, unsupported Sunex 4970, ratings, fixed prices and unverified durability claims. Phase 4 stands at 31/37; electric screwdrivers are next.
+
+# Phase 4 electric-screwdriver release (2026-09-21)
+
+Published post 81 after SKIL, BLACK+DECKER and WORX primary-source research and 12 local tests. [Dry-run 35638198516](https://github.com/HeberPython/agente-sites/actions/runs/35638198516) and [apply 35638300625](https://github.com/HeberPython/agente-sites/actions/runs/35638300625) passed with original-post backup artifact `10657530788`, public metadata/content checks and independent HTTP 200. The rewrite compares exact 4V screwdrivers by control, charging and package, removes drill/drivers, ratings and fixed prices, and states that SKIL's circuit sensor does not prove de-energization. Phase 4 stands at 32/37; digital torque wrenches are next.

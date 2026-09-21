@@ -7,16 +7,16 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 31 / 31 / 31 |
-| Pending, not genuinely blocked | 6 (all P2) |
+| Fully researched / rewritten / published in Phase 4 | 32 / 32 / 32 |
+| Pending, not genuinely blocked | 5 (all P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 91 |
+| Retained recommended products with primary-source records | 94 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in thirty-one revised bodies | 91 |
-| Contextual internal links in thirty-one revised bodies | 66 |
-| Featured-image rights/product-match reviews still open | 31 |
+| Tagged Amazon searches in thirty-two revised bodies | 94 |
+| Contextual internal links in thirty-two revised bodies | 68 |
+| Featured-image rights/product-match reviews still open | 32 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
-| Year titles updated | 14 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners, security cameras, home tool sets, smart TVs, ANC headphones, oscillating multi-tools, cordless ratchets) |
+| Year titles updated | 15 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners, security cameras, home tool sets, smart TVs, ANC headphones, oscillating multi-tools, cordless ratchets, electric screwdrivers) |
 
 No published article asserts first-hand testing by HandyTested. Manufacturer specifications are attributed, promotional or outdated prices are not used as fixed article prices, and no Amazon ASIN was guessed. Source mix so far: manufacturer product pages for every retained recommendation, relevant official manuals/support pages for tool/electrical safety, official sellers for some availability/budget checks, and EPA/Fluke safety guidance. Precise source-type totals remain to be reconciled for the final report.
 
@@ -55,12 +55,12 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-laser-levels-for-diy-home-projects-under-60 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-laser-levels-for-diy-home-projects-under-60/) |
 | best-oscillating-multi-tools-under-75-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-oscillating-multi-tools-under-75-for-2025/) |
 | best-cordless-ratchets-for-diy-mechanics-in-2025 | P2 | 3 documented | Complete | [Live](https://handytested.com/best-cordless-ratchets-for-diy-mechanics-in-2025/) |
+| best-electric-screwdrivers-for-diy-projects-in-2025 | P2 | 3 documented | Complete | [Live](https://handytested.com/best-electric-screwdrivers-for-diy-projects-in-2025/) |
 
-The 6 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 5 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
-|  |  | best-electric-screwdrivers-for-diy-projects-in-2025 |
 |  |  | top-5-digital-torque-wrenches-under-100-for-accurate-torque |
 |  |  | best-cordless-circular-saws-under-150-for-diy-projects |
 |  |  | best-rotary-tools-under-50-for-diy-projects-2025 |
