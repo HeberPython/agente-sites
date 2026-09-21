@@ -1,21 +1,21 @@
-# HandyTested Phase 4 report (interim, 2026-09-21)
+# HandyTested Phase 4 final editorial report (2026-09-21)
 
-**Status: in progress.** This is not the final 37-article report. See `HANDYTESTED_PHASE4_CHECKPOINT.md` for exact continuation state.
+**Status: complete.** All 37 queued articles received research, original rewrites, guarded WordPress updates, original-post backups and live-public release checks. See `HANDYTESTED_PHASE4_CHECKPOINT.md` for the per-article release ledger. Cross-cutting site, image-rights and direct Amazon-link work remains separate.
 
 ## Summary
 
-| Measure | Interim result |
+| Measure | Final editorial result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 36 / 36 / 36 |
-| Pending, not genuinely blocked | 1 (P2) |
+| Fully researched / rewritten / published in Phase 4 | 37 / 37 / 37 |
+| Pending, not genuinely blocked | 0 |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 106 |
+| Retained recommended products with primary-source records | 109 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in thirty-six revised bodies | 106 |
-| Contextual internal links in thirty-six revised bodies | 76 |
-| Featured-image rights/product-match reviews still open | 36 |
-| Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
+| Tagged Amazon searches in thirty-seven revised bodies | 109 |
+| Contextual internal links in thirty-seven revised bodies | 78 |
+| Featured-image rights/product-match reviews still open | 37 |
+| Products removed/replaced, individual price/rating/test claims removed | Item-level count not reconstructed; corrections documented in source records and product-change table |
 | Year titles updated | 17 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners, security cameras, home tool sets, smart TVs, ANC headphones, oscillating multi-tools, cordless ratchets, electric screwdrivers, rotary tools, stud finders) |
 
 No published article asserts first-hand testing by HandyTested. Manufacturer specifications are attributed, promotional or outdated prices are not used as fixed article prices, and no Amazon ASIN was guessed. Source mix so far: manufacturer product pages for every retained recommendation, relevant official manuals/support pages for tool/electrical safety, official sellers for some availability/budget checks, and EPA/Fluke safety guidance. Precise source-type totals remain to be reconciled for the final report.
@@ -60,13 +60,9 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-cordless-circular-saws-under-150-for-diy-projects | P2 | 3 documented | Complete | [Live](https://handytested.com/best-cordless-circular-saws-under-150-for-diy-projects/) |
 | best-rotary-tools-under-50-for-diy-projects-2025 | P2 | 3 documented | Complete | [Live](https://handytested.com/best-rotary-tools-under-50-for-diy-projects-2025/) |
 | best-stud-finders-under-50-for-home-projects-2025 | P2 | 3 documented | Complete | [Live](https://handytested.com/best-stud-finders-under-50-for-home-projects-2025/) |
+| best-cordless-drills-under-100 | P2 | 3 documented | Complete | [Live](https://handytested.com/best-cordless-drills-under-100/) |
 
-The remaining article retains its Phase 3 state **pending Phase 4 research**, not "actually blocked":
-
-| Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
-|---|---|---|
-|  |  | best-cordless-drills-under-100 |
-|  |  |  |
+The earlier Phase 3 screening statuses are historical. No article remains pending or genuinely blocked in this Phase 4 editorial queue.
 
 ## Product changes
 
@@ -105,10 +101,11 @@ The remaining article retains its Phase 3 state **pending Phase 4 research**, no
 | Cordless circular saws | DCS570B/P508/XSH06Z mixed bare-tool and two-battery packages with fixed prices and ratings | Replace/clarify | DEWALT DCS565B, SKIL CR6413B-11 and Makita XSS02Z compared by exact package, platform, blade capacity and documented controls | [DEWALT](https://www.dewalt.com/en-us/product/dcs565b/20v-max-xr-6-12-brushless-cordless-circular-saw-tool-only), [SKIL](https://www.skil.com/products/pwrcore-20-brushless-6-1-2-in-circular-saw-kit-cr6413b), [Makita](https://makitatools.com/products/details/XSS02Z) |
 | Rotary tools | Fabricated hands-on tests, ratings, fixed prices and unsupported WEN speed figures | Remove/clarify | Dremel 3000-1/25, WEN 2305 and Dremel Stylo+ 2050-15 separated by workload, documented speed information and package | [Dremel 3000](https://www.dremel.com/us/en/blogs/3000-quick.-compact.-all-round), [WEN](https://wenproducts.com/products/Rotary-Tool-Kit-With-Flex-Shaft-2305), [Stylo+](https://www.dremel.com/us/en/p/2050-15-f0132050ac) |
 | Stud finders | Fabricated wall tests, ratings, fixed budget and AC-alert safety assurances; unsupported current CMHT77623 listing | Remove/clarify | Franklin M90, Zircon e50 and CRAFTSMAN CMHT77621 by center/edge finding, wall depth and AC-warning limits | [Franklin](https://franklinsensors.com/prosensor-m90/), [Zircon manual](https://www.zircon.com/wp-content/uploads/2016/11/ss_e50_instructions.pdf), [CRAFTSMAN](https://www.craftsman.com/en-us/product/cmht77621/centre-finding-1-12-deep-stud-finder-ac-detection) |
+| Cordless drills | Mixed DCD777C2/LDX120C/PH05Z lineup, fixed under-$100 and unsupported runtime/durability ratings | Replace/clarify | Exact DEWALT DCD771C2, BLACK+DECKER BDC120VA100 and CRAFTSMAN CMCD700C1 kits; disclose CRAFTSMAN battery-capacity page discrepancy | [DEWALT](https://www.dewalt.com/en-us/product/dcd771c2/20v-max-compact-drilldriver-kit), [BLACK+DECKER](https://www.blackanddecker.com/products/bdc120va100), [CRAFTSMAN](https://www.craftsman.com/en-us/product/cmcd700c1/v20-cordless-12-drill-driver-kit-1-15ah-battery-and-charger) |
 
 ## Validation and open items
 
 - Each article passed focused local tests, GitHub Actions dry-run, apply and public release checks for H1, canonical, title, description, disclosure, tagged CTAs and related-link presence. Backup run links are in the checkpoint.
 - Browser QA at 320/375/1280 px was sampled across batches. Article tables were internally scrollable on mobile. AdSense iframes caused page-level overflow on sampled smart-hub, earbuds, voltage and robot pages; this is not fixed and should be handled separately without disabling ads blindly.
-- No Phase 4 article is recorded as genuinely blocked. The final pending article needs fresh public research before a final state is assigned.
+- No Phase 4 article was genuinely blocked. All 37 final article states are published, with successful apply runs and backups in the checkpoint.
 - Search Console, Rank Math sitemap, global Astra styling/footer, Pinterest diagnostic admin, image rights and verified Amazon direct links remain outstanding but do not prevent careful text corrections.

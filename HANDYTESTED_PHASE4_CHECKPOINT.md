@@ -1,10 +1,10 @@
 # HandyTested Phase 4 checkpoint (2026-09-21)
 
-This is an execution checkpoint, not a final completion claim. Read the Phase 4 request and `HANDYTESTED_PHASE4_REPORT.md` before resuming. Do not redo the thirty-six completed articles unless live QA reveals a regression.
+The 37-article Phase 4 editorial queue is complete. This file is retained as the release ledger; see `HANDYTESTED_PHASE4_REPORT.md` for final outcomes. Do not redo completed articles unless live QA reveals a regression.
 
 ## Completed and published
 
-All thirty-six kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
+All thirty-seven kept their original slug/self-canonical, gained a research-led English article and exact Amazon Associate disclosure, reduced model-specific tagged Amazon searches, source record, revision-guarded dry-run, pre-write backup, WordPress/Rank Math update and live-public release checks. No direct ASIN was invented.
 
 | Article | Post ID | Apply run / backup artifact name |
 |---|---:|---|
@@ -44,12 +44,13 @@ All thirty-six kept their original slug/self-canonical, gained a research-led En
 | Cordless circular saws | 59 | https://github.com/HeberPython/agente-sites/actions/runs/35644560930 / `handytested-phase4-circular-saws-backup` (artifact ID 10660230583) |
 | Rotary tools | 47 | https://github.com/HeberPython/agente-sites/actions/runs/35645682838 / `handytested-phase4-rotary-tools-backup` (artifact ID 10659883475) |
 | Stud finders | 44 | https://github.com/HeberPython/agente-sites/actions/runs/35650069460 / `handytested-phase4-stud-finders-backup` (artifact ID 10661213547) |
+| Cordless drills | 20 | https://github.com/HeberPython/agente-sites/actions/runs/35650720386 / `handytested-phase4-cordless-drills-backup` (artifact ID 10661564235) |
 
 WordPress original-post backup artifacts are attached to those apply runs and retained for 30 days. Random orbital sanders had an initial failed apply (run `35534136103`) because an unrelated related-guide fetch timed out; its rollback restored the prior post, a second dry-run `35534259258` passed, and the successful apply is the one above.
 
 ## Next article and batch
 
-**NEXT ARTICLE:** `best-cordless-drills-under-100` (P2), the final Phase 4 queue item in `HANDYTESTED_PHASE3_REPORT.md`. Seven P0, twenty-three P1 and six P2 are complete; 1 P2 remains. It has not been researched or published in Phase 4 yet. Do not mark it genuinely blocked merely because Phase 3 screening said "Screened; blocked".
+**Queue complete:** Seven P0, twenty-three P1 and seven P2 are complete; 0 articles remain. The Phase 3 "Screened; blocked" states were superseded by Phase 4 public research and publication.
 
 ## Research already obtained for next work
 
@@ -89,6 +90,8 @@ Rotary-tool research is in `handytested_sources/best-rotary-tools-under-50-for-d
 
 Stud-finder research is in `handytested_sources/best-stud-finders-under-50-for-home-projects-2025.md`: Franklin ProSensor M90, Zircon StudSensor e50 and CRAFTSMAN CMHT77621 by center/edge finding, depth and AC-warning limits. Invented wall tests, ratings, fixed prices and unsupported safety assurances were removed. Twelve tests and dry-run 35649804562 passed; first apply 35649863861 failed on the initial WordPress read because runner networking was unavailable, before backup/write. Repeat dry-run 35650031295 and apply 35650069460 passed with backup artifact 10661213547, public metadata/content checks and independent HTTP 200.
 
+Cordless-drill research is in `handytested_sources/best-cordless-drills-under-100.md`: DEWALT DCD771C2, BLACK+DECKER BDC120VA100 and CRAFTSMAN CMCD700C1 by exact kit, chuck, speed and battery/accessory package. Fixed-budget and unverified durability/runtime/rating claims were removed; the CRAFTSMAN page's battery-capacity discrepancy is disclosed. Twelve tests, dry-run 35650671679 and apply 35650720386 passed with backup artifact 10661564235, public metadata/content checks and independent HTTP 200.
+
 ## Outstanding cross-cutting issues
 
 - Amazon CTAs are specific tagged searches, not verified direct product links. SiteStripe/ASIN verification remains pending; absence of a direct link does not block textual correction.
@@ -98,6 +101,6 @@ Stud-finder research is in `handytested_sources/best-stud-finders-under-50-for-h
 - GitHub Actions emits Node 20 deprecation and upcoming Ubuntu label warnings; neither failed these releases.
 - Unrelated pre-existing untracked `astra.zip`, `astra_theme/`, `ht_install_astra.php` are user files. Do not alter them.
 
-## Resume instruction
+## Completion
 
-In `C:\Users\Heber\agente-sites` on `main`, read `git status --short` and this checkpoint; start public-source research for `best-cordless-drills-under-100`. For each article: read snapshot and source record, research current exact models, write original English copy plus source evidence, validate locally, stage only task files, commit/push, run its GitHub Actions dry-run, apply with backup, check live, update report/checkpoint, and immediately proceed to the next. Do not publish an article when its snapshot/revision guard fails; investigate that specific article and continue others. Do not return a plan in place of execution.
+Phase 4 is complete: 37/37 researched, rewritten, backed up, published and live-checked. No next article is queued. Retain this ledger and the final report; address cross-cutting issues only as separate work.

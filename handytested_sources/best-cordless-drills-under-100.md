@@ -20,7 +20,7 @@ Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verifi
 - Exact Amazon disclosure in post body: False
 - JSON-LD present: True (semantics unverified)
 - Public HTML fetched: True
-- Update decision: APPROVED after Phase 4 primary-source verification; publish only with revision guard and backup
+- Update decision: PUBLISHED after Phase 4 primary-source verification, revision guard and backup (2026-09-21)
 
 ## Product Candidates (Unverified)
 - DeWalt DCD777C2 20V Cordless Drill
@@ -85,4 +85,4 @@ Old DCD777C2/LDX120C/PH05Z lineup and appended LD120VA search are not retained. 
 
 Approved title: Cordless Drill Kits for Home DIY. SEO title: Cordless Drill Kits for Home DIY | HandyTested. Meta description: Compare DEWALT DCD771C2, BLACK+DECKER BDC120VA100 and CRAFTSMAN CMCD700C1 by chuck, speed, included batteries and kit contents. Baseline modified: 2026-09-12T13:19:01. Preserve the slug and self-canonical.
 
-Publication decision: APPROVED only after guarded validation, backup, publish and live verification.
+Publication decision: PUBLISHED. Twelve local tests, dry-run 35650671679 and apply 35650720386 passed with original-post backup artifact 10661564235, workflow public content/metadata checks and independent HTTP 200. Slug and canonical preserved.
