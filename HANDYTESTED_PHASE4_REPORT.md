@@ -7,14 +7,14 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 22 / 22 / 22 |
-| Pending, not genuinely blocked | 15 (8 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 23 / 23 / 23 |
+| Pending, not genuinely blocked | 14 (7 P1, 7 P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 64 |
+| Retained recommended products with primary-source records | 67 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in twenty-two revised bodies | 64 |
-| Contextual internal links in twenty-two revised bodies | 48 |
-| Featured-image rights/product-match reviews still open | 22 |
+| Tagged Amazon searches in twenty-three revised bodies | 67 |
+| Contextual internal links in twenty-three revised bodies | 50 |
+| Featured-image rights/product-match reviews still open | 23 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
 | Year titles updated | 8 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners) |
 
@@ -46,8 +46,9 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | top-5-ergonomic-office-chairs-under-300-for-comfort | P1 | 3 documented | Complete | [Live](https://handytested.com/top-5-ergonomic-office-chairs-under-300-for-comfort/) |
 | best-carpet-cleaners-for-pet-owners-in-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-carpet-cleaners-for-pet-owners-in-2025/) |
 | best-cordless-nail-guns-under-300-for-diy-projects | P1 | 3 documented | Complete | [Live](https://handytested.com/best-cordless-nail-guns-under-300-for-diy-projects/) |
+| best-camping-gear-under-300-for-outdoor-adventures | P1 | 3 documented | Complete | [Live](https://handytested.com/best-camping-gear-under-300-for-outdoor-adventures/) |
 
-The 15 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 14 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
@@ -55,7 +56,7 @@ The 15 remaining articles retain their Phase 3 state **pending Phase 4 research*
 |  |  | best-electric-screwdrivers-for-diy-projects-in-2025 |
 |  |  | top-5-digital-torque-wrenches-under-100-for-accurate-torque |
 |  |  | best-cordless-circular-saws-under-150-for-diy-projects |
-|  | best-camping-gear-under-300-for-outdoor-adventures | best-rotary-tools-under-50-for-diy-projects-2025 |
+|  |  | best-rotary-tools-under-50-for-diy-projects-2025 |
 |  | best-kitchen-appliances-under-300-for-home-chefs | best-stud-finders-under-50-for-home-projects-2025 |
 |  | best-smart-home-security-cameras-under-300-for-2025 | best-cordless-drills-under-100 |
 |  | best-home-diy-tool-sets-for-under-300-in-2025 |  |
@@ -90,6 +91,7 @@ The 15 remaining articles retain their Phase 3 state **pending Phase 4 research*
 | Office chairs | Sayl under $300, unspecified Furmax/AmazonBasics models, generic Ignition options and back-pain/productivity assurances | Remove/clarify | SIHOO M18, FlexiSpot OC3B and exact HON Ignition 2.0 configuration; compare seat and workstation fit without budget or treatment guarantee | [SIHOO](https://www.sihoo.com/products/m18-ergonomic-chair), [FlexiSpot](https://www.flexispot.com/office-chairs/ergonomic-office-chair-oc3b), [HON](https://www.hon.com/chairs/ignition/hitlmy1ahimcu10alsbt), [OSHA](https://www.osha.gov/etools/computer-workstations/components/chairs) |
 | Carpet cleaners | Dry Eureka vacuum grouped with wet extractors; unspecified ProHeat/Rug Doctor variants and unconditional stain, dry-time, pet-safety claims | Remove/clarify | BISSELL 3353 spot extractor, Hoover FH55000V compact upright, BISSELL 3432 full-size upright; distinguish modes, variants and moisture care | [BISSELL 3353](https://www.bissell.com/en-us/product/little-green-pet-deluxe-portable-carpet-cleaner-3353.html), [Hoover](https://hoover.com/collections/carpet-no-promo/products/powerdash-pet-advanced-3), [BISSELL 3432](https://www.bissell.com/en-us/product/revolution-hydrosteam-pet-carpet-cleaner-3432.html), [EPA](https://www.epa.gov/mold/mold-course-chapter-4) |
 | Brad nailers | Pneumatic BOSTITCH in cordless list, discontinued P320, unverified noise/runtime and fixed under-$300 bundle promise | Remove/replace | DEWALT DCN680B bare tool, RYOBI P321 bare tool, CRAFTSMAN CMCN618C1 kit; explain fastener limits and sequential-actuation safety | [DEWALT](https://www.dewalt.com/en-us/product/dcn680b/20v-max-xr-18ga-cordless-brad-nailer-tool-only), [RYOBI](https://www.ryobitools.com/products/33287177158), [CRAFTSMAN](https://www.craftsman.com/en-us/product/cmcn618c1/v20-cordless-brad-nailer-1-15ah-battery-and-charger), [OSHA](https://www.osha.gov/nail-gun-safety) |
+| Camping gear | Mixed backpacking/car-camping categories, incomplete under-$300 kit promise and Celsius 0F comfort assumption | Clarify/exclude | Coleman Sundome 4-person, Triton two-burner and original Helinox Chair One by role; exclude sold-out Celsius XXL, flag conditional comfort and stove CO hazard | [Coleman tent](https://www.coleman.com/camp-sports/tents-by-size/4-person-tents/sundome-4-person-camping-tent/SP_271238.html), [stove](https://www.coleman.com/grills-stoves/camping-stoves/multi-burner/triton-2-burner-propane-camping-stove/SAP_2157352.html), [Helinox](https://helinox.com/products/chair-one), [NPS](https://home.nps.gov/seki/planyourvisit/camping-safety.htm) |
 
 ## Validation and open items
 
