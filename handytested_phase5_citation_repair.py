@@ -12,6 +12,7 @@ from handytested_phase2 import request
 
 MODE = os.environ.get("MODE", "dry-run")
 BACKUP = Path(os.environ.get("BACKUP_DIR", "handytested-phase5-citation-backup"))
+POST_ID = int(os.environ.get("POST_ID", "0"))
 REPAIRS = (
     (
         56,
@@ -69,9 +70,12 @@ def replace_anchor(raw: str, old: str, new: str) -> str:
 def main() -> None:
     if MODE not in {"dry-run", "apply"}:
         raise ValueError("MODE must be dry-run or apply")
+    selected = [row for row in REPAIRS if row[0] == POST_ID]
+    if len(selected) != 1:
+        raise ValueError("POST_ID must identify exactly one configured post")
     originals: dict[int, dict] = {}
     replacements: dict[int, str] = {}
-    for post_id, modified, old, new in REPAIRS:
+    for post_id, modified, old, new in selected:
         post = request(f"/posts/{post_id}?context=edit")
         raw = post["content"]["raw"]
         if post["id"] != post_id or post["status"] != "publish" or post["modified_gmt"] != modified:
@@ -86,24 +90,16 @@ def main() -> None:
         return
     BACKUP.mkdir(parents=True, exist_ok=True)
     (BACKUP / "originals.json").write_text(json.dumps(originals, ensure_ascii=False, indent=2), encoding="utf-8")
-    changed: list[int] = []
-    try:
-        for post_id, _, old, new in REPAIRS:
-            result = request(f"/posts/{post_id}", {"content": replacements[post_id]})
-            if result.get("id") != post_id:
-                raise RuntimeError(f"Post {post_id} update not acknowledged")
-            changed.append(post_id)
-            live = request(f"/posts/{post_id}?_fields=id,status,content")
-            rendered = live["content"]["rendered"]
-            old_url, _ = anchor_parts(old)
-            new_url, new_label = anchor_parts(new)
-            if live["status"] != "publish" or old_url in rendered or new_url not in rendered or new_label not in rendered:
-                raise RuntimeError(f"Post {post_id} citation not publicly verified")
-        print("Published and REST-verified four exact-model citation updates")
-    except Exception:
-        for post_id in reversed(changed):
-            request(f"/posts/{post_id}", {"content": originals[post_id]["content"]["raw"]})
-        raise
+    post_id, _, old, new = selected[0]
+    result = request(f"/posts/{post_id}", {"content": replacements[post_id]})
+    if result.get("id") != post_id:
+        raise RuntimeError(f"Post {post_id} update not acknowledged; inspect live state before retry")
+    rendered = result["content"]["rendered"]
+    old_url, _ = anchor_parts(old)
+    new_url, new_label = anchor_parts(new)
+    if result["status"] != "publish" or old_url in rendered or new_url not in rendered or new_label not in rendered:
+        raise RuntimeError(f"Post {post_id} update response failed validation; inspect live state before retry")
+    print(f"Published post {post_id}; independent public validation still required")
 
 
 if __name__ == "__main__":

@@ -9,6 +9,11 @@ on:
         default: dry-run
         type: choice
         options: [dry-run, apply]
+      post_id:
+        description: "Exactly one guarded WordPress post ID"
+        required: true
+        type: choice
+        options: ['20', '143', '59']
 
 jobs:
   citations:
@@ -24,12 +29,13 @@ jobs:
         env:
           HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
           MODE: ${{ github.event.inputs.mode }}
-          BACKUP_DIR: handytested-phase5-citation-backup
+          POST_ID: ${{ github.event.inputs.post_id }}
+          BACKUP_DIR: handytested-phase5-citation-backup-${{ github.event.inputs.post_id }}
         run: python handytested_phase5_citation_repair.py
       - name: Preserve pre-write backup
         if: ${{ always() && github.event.inputs.mode == 'apply' }}
         uses: actions/upload-artifact@v4
         with:
-          name: handytested-phase5-citation-backup
-          path: handytested-phase5-citation-backup/
+          name: handytested-phase5-citation-backup-${{ github.event.inputs.post_id }}
+          path: handytested-phase5-citation-backup-${{ github.event.inputs.post_id }}/
           retention-days: 30
