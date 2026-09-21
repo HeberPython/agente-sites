@@ -138,3 +138,7 @@ Published post 31 after Bosch, DEWALT and BLACK+DECKER primary-source research a
 # Phase 4 oscillating multi-tool release (2026-09-21)
 
 Published post 28 after DEWALT, BLACK+DECKER and WEN primary-source research and 12 local tests. [Dry-run 35632830657](https://github.com/HeberPython/agente-sites/actions/runs/35632830657) and [apply 35632974267](https://github.com/HeberPython/agente-sites/actions/runs/35632974267) passed with original-post backup artifact `10654957209`, public metadata/content checks and independent HTTP 200. The rewrite compares DCS356B, BD200MTB and WEN 2312 by power source and package, removing fabricated hands-on testing, ratings, fixed prices and stale or misidentified models. Phase 4 stands at 30/37; cordless ratchets are next.
+
+# Phase 4 cordless-ratchet release (2026-09-21)
+
+Published post 84 after DEWALT, Milwaukee and CRAFTSMAN primary-source research and 12 local tests. [Dry-run 35634004487](https://github.com/HeberPython/agente-sites/actions/runs/35634004487) and [apply 35634133101](https://github.com/HeberPython/agente-sites/actions/runs/35634133101) passed with original-post backup artifact `10655742537`, public metadata/content checks and independent HTTP 200. The rewrite compares DCF513B, 2457-21 and CMCF930B by actual battery platform and package, removing generic models, unsupported Sunex 4970, ratings, fixed prices and unverified durability claims. Phase 4 stands at 31/37; electric screwdrivers are next.
