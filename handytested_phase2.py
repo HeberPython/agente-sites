@@ -47,7 +47,7 @@ MENU = (
     ("DIY", "/category/diy/"),
     ("Electronics", "/category/electronics/"),
     ("Learn", "/how-we-review/"),
-    ("Deals", "/deals/"),
+    ("Value Picks", "/deals/"),
     ("Search", "/#site-search"),
 )
 
@@ -121,7 +121,7 @@ def card(post: dict, label: str) -> str:
 def footer_html() -> str:
     columns = (
         ("Explore", (("Tools", "/category/tools/"), ("DIY", "/category/diy/"), ("Electronics", "/category/electronics/"), ("Smart Home", "/category/smart-home/"))),
-        ("Resources", (("Best Picks", "/#top-picks"), ("Deals", "/deals/"), ("How We Review", "/how-we-review/"))),
+        ("Resources", (("Best Picks", "/#top-picks"), ("Value Picks", "/deals/"), ("How We Review", "/how-we-review/"))),
         ("Company & Legal", (("About", "/about/"), ("Contact", "/contact/"), ("Editorial Policy", "/editorial-policy/"), ("Affiliate Disclosure", "/affiliate-disclosure/"), ("Privacy Policy", "/privacy-policy/"))),
     )
     links = "".join(
@@ -144,12 +144,12 @@ def home_html(categories: list[dict], posts: list[dict]) -> str:
     latest_block = '<!-- wp:latest-posts {"postsToShow":6,"displayPostContent":true,"displayPostContentRadio":"excerpt","excerptLength":20,"displayPostDate":true,"displayFeaturedImage":true,"featuredImageSizeSlug":"medium_large","addLinkToFeaturedImage":true,"className":"ht-latest-posts"} /-->'
     return f'''<style id="handytested-phase2-styles">{CSS}</style>
 <main class="ht-home" id="ht-main">
-<section class="ht-hero" aria-labelledby="ht-hero-title"><div class="ht-wrap"><p class="ht-eyebrow">HANDYTESTED / BUYING GUIDES</p><h1 id="ht-hero-title">Find the right tool.<br>Get the right price.</h1><p>We research tools, home gear and useful tech so you don't have to.</p><div class="ht-actions"><a class="ht-button ht-button-primary" href="#top-picks">Explore Our Picks</a><a class="ht-button ht-button-light" href="/deals/">See Latest Deals</a></div></div></section>
+<section class="ht-hero" aria-labelledby="ht-hero-title"><div class="ht-wrap"><p class="ht-eyebrow">HANDYTESTED / BUYING GUIDES</p><h1 id="ht-hero-title">Find the right tool.<br>Get the right price.</h1><p>We research tools, home gear and useful tech so you don't have to.</p><div class="ht-actions"><a class="ht-button ht-button-primary" href="#top-picks">Explore Our Picks</a><a class="ht-button ht-button-light" href="/deals/">Explore Value Picks</a></div></div></section>
 <div class="ht-trust"><div class="ht-wrap"><span>Research-led picks</span><span>Clear comparisons</span><span>DIY focused</span><span>Affiliate transparency</span></div></div>
 <section class="ht-section" id="top-picks"><div class="ht-wrap"><div class="ht-section-head"><div><p class="ht-eyebrow">START HERE</p><h2>Top Picks</h2><p>Focused guides for the gear people research before buying.</p></div><a class="ht-text-link" href="/category/tools/">Browse tools &#8594;</a></div><div class="ht-card-grid">{top}</div></div></section>
 <section class="ht-section ht-section-alt" id="categories"><div class="ht-wrap"><div class="ht-section-head"><div><p class="ht-eyebrow">FIND YOUR CATEGORY</p><h2>Shop by Category</h2></div></div><div class="ht-category-grid">{category_cards}</div></div></section>
 <section class="ht-section ht-latest" id="latest-guides"><div class="ht-wrap"><div class="ht-section-head"><div><p class="ht-eyebrow">FRESH RESEARCH</p><h2>Latest Guides</h2><p>Recently published buying guides, updated automatically by WordPress.</p></div></div>{latest_block}</div></section>
-<section class="ht-section ht-section-alt" id="deals"><div class="ht-wrap ht-split"><div><p class="ht-eyebrow">SHOP SMARTER</p><h2>Deals &amp; Value Picks</h2><p class="ht-section-intro">Good products are better when the price makes sense. Explore our latest value-focused picks and deal guides.</p><a class="ht-button ht-button-outline" href="/deals/">Explore Deals &amp; Offers</a></div><div><p class="ht-eyebrow">BEFORE CHECKOUT</p><p class="ht-section-intro">Prices and availability change. Confirm the exact model, seller, shipping and current price on Amazon before you buy.</p></div></div></section>
+<section class="ht-section ht-section-alt" id="deals"><div class="ht-wrap ht-split"><div><p class="ht-eyebrow">SHOP SMARTER</p><h2>Value Picks</h2><p class="ht-section-intro">Compare useful products by task, package and trade-offs, then check the current listing before buying.</p><a class="ht-button ht-button-outline" href="/deals/">Explore Value Picks</a></div><div><p class="ht-eyebrow">BEFORE CHECKOUT</p><p class="ht-section-intro">Prices and availability change. Confirm the exact model, seller, shipping and current price on Amazon before you buy.</p></div></div></section>
 <section class="ht-section ht-method" id="how-we-choose"><div class="ht-wrap ht-split"><div><p class="ht-eyebrow">OUR APPROACH</p><h2>How We Choose</h2><p class="ht-section-intro">We compare specifications, features, buyer feedback, brand reputation and overall value to help narrow down the options worth considering.</p><a class="ht-button ht-button-light" href="/how-we-review/">See Our Methodology</a></div><div id="site-search"><p class="ht-eyebrow">LOOKING FOR SOMETHING?</p><h2>Search the guides</h2><form class="ht-search" role="search" action="/" method="get"><label class="screen-reader-text" for="ht-search-input">Search HandyTested</label><input id="ht-search-input" type="search" name="s" placeholder="Tool, project or product" required><button class="ht-button ht-button-primary" type="submit">Search</button></form></div></div></section>
 </main><footer class="ht-home-footer">{footer_html()}</footer>'''
 
