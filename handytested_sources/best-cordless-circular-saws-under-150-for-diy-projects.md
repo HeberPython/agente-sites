@@ -1,66 +1,46 @@
-# Best Cordless Circular Saws Under $150 for DIY Projects
+# 6-1/2-Inch Cordless Circular Saws by Platform and Package
 
-Screened: 2026-09-20 18:31 UTC. **This is a review worksheet, not product verification.**
+Researched: 2026-09-21 UTC. This record supports a documentation-led comparison; it is not a claim of hands-on testing.
 
 - URL: https://handytested.com/best-cordless-circular-saws-under-150-for-diy-projects/
 - WordPress ID: 59
 - Slug: best-cordless-circular-saws-under-150-for-diy-projects
 - Priority: P2
 - Category: tools
-- Published / modified: 2026-05-18T09:02:31 / 2026-09-12T13:18:44
-- Search intent: COMMERCIAL INVESTIGATION
-- Primary topic / likely keyword: Best Cordless Circular Saws Under $150 for DIY Projects
-- Proposed title: PENDING EDITORIAL REVIEW
-- Secondary topics: PENDING EDITORIAL REVIEW
-- Current SEO title: Best Cordless Circular Saws Under $150 for DIY Projects - HandyTested
-- Current meta description: Find the best cordless circular saw under $150 that suits all your DIY needs. These powerful tools deliver outstanding performance without breaking the bank.
+- Baseline modified: 2026-09-12T13:18:44
+- Search intent: commercial investigation
+- Approved title: 6-1/2-Inch Cordless Circular Saws by Platform and Package
+- SEO title: 6-1/2-Inch Cordless Circular Saws by Platform and Package | HandyTested
+- Meta description: Compare DEWALT DCS565B, SKIL CR6413B-11 and Makita XSS02Z by blade speed, bevel range, battery platform and bare-tool versus kit package.
 - Canonical: https://handytested.com/best-cordless-circular-saws-under-150-for-diy-projects/
-- H1: Best Cordless Circular Saws Under $150 for DIY Projects
-- Title includes year: False
-- Exact Amazon disclosure in post body: False
-- JSON-LD present: True (semantics unverified)
-- Public HTML fetched: True
-- Update decision: BLOCKED - REQUIRES MANUAL VERIFICATION
+- Exact Amazon disclosure required: yes
+- Featured image: https://handytested.com/wp-content/uploads/2026/05/best-cordless-circular-saws-under-150-f.jpg (1080x608); licensing and exact product match remain unverified
 
-## Product Candidates (Unverified)
-- DEWALT DCS570B 20V MAX circular saw
-- Ryobi P508 18V ONE+ brushless circular saw
-- Makita XSS02Z 18V LXT circular saw
+## Verified products and primary evidence
 
-## Test/Experience Claims To Verify
-- None detected by screening.
+| Product | Primary source | Checked | Supported facts and editorial limits |
+|---|---|---|---|
+| DEWALT DCS565B | https://www.dewalt.com/en-us/product/dcs565b/20v-max-xr-6-12-brushless-cordless-circular-saw-tool-only | 2026-09-21 | 20V MAX XR, brushless, 6-1/2-inch blade, 4,950 no-load RPM, 0-50-degree bevel, electric brake, LED, rafter hook; tool-only listing, battery and charger sold separately |
+| SKIL CR6413B-11 | https://www.skil.com/products/pwrcore-20-brushless-6-1-2-in-circular-saw-kit-cr6413b | 2026-09-21 | PWR CORE 20 brushless 6-1/2-inch saw kit, 5,500 no-load RPM, 2-1/4-inch capacity at 90 degrees, 1-5/8 inch at 45 degrees, 0-45-degree bevel, electric brake, 2.0Ah battery and charger included |
+| Makita XSS02Z | https://makitatools.com/products/details/XSS02Z | 2026-09-21 | 18V LXT 6-1/2-inch brushed saw, 3,700 no-load RPM, 2-1/4-inch capacity at 90 degrees, 1-9/16 inch at 45 degrees, 0-50-degree bevel; blade included, battery and charger sold separately |
+| Circular-saw safety | https://www.dewalt.com/GLOBALBOM/QU/DCS570B/1/Instruction_Manual/EN/N490072_DCS570.pdf | 2026-09-21 | Supports battery removal before adjustment, lower-guard checks, work support, correct depth setting and kickback precautions; users must follow the manual for their exact saw |
 
-## Price Passages To Verify
-- If you’re a DIY enthusiast looking for the best cordless circular saw under $150, you’re in the right place. These saws are perfect for various projects, from cutting wood to trimming edges. We’ve selected a diverse range of options, ensuring you find the perfect tool to fit your needs and budget. This article highlights our top picks, offering you a glimpse into their features and benefits.
-- When searching for the best cordless circular saw under $150, consider the following criteria: 1. **Power**: Look for saws with brushless motors that offer higher RPMs for cleaner cuts. 2. **Battery Life**: A longer-lasting battery will allow you to work without interruptions. 3. **Weight and Design**: Lightweight models tend to be easier to maneuver, especially during prolonged use. 4. **Cutting Capacity**: Evaluate the maximum cutting depth and bevel capacity for versatile applications.
-- DEWALT DCS570B 7-1/4 Inch Circular Saw $149 Powerful cutting 4.7
-- Makita XSH06Z 18V X2 (36V) LXT Circular Saw $149 Heavy-duty tasks 4.6
-- Ryobi P508 One+ 18V 7-1/4 in. Brushless Cordless Circular Saw $129 Budget-friendly option 4.5
+## Editorial decisions
 
-Detected dollar values (including CTAs): $129, $149, $150,
+- Replace the old DCS570B/P508/XSH06Z table because it mixed bare tools and a 36V two-battery model while presenting transient prices and ratings as durable facts.
+- Remove the fixed under-$150 promise. Tool and kit prices change, and existing battery ownership materially changes total cost.
+- Compare three exact 6-1/2-inch products: two current brushless choices and one documented brushed LXT bare tool.
+- Attribute all specifications. HandyTested has not cut lumber, measured runtime, brake time, accuracy, dust collection or ergonomics.
+- Explain that battery/charger inclusion, blade location, blade size and platform fit matter more than no-load RPM alone.
+- Use three model-specific tagged Amazon searches because no direct product ASIN has been independently verified.
+- Add contextual links to the published home-tool-set and cordless-brad-nailer guides.
 
-## Rating Passages To Verify
-- Product Price Best For Rating ★
+## Amazon destinations
 
-Detected rating markers: Rating
+- DEWALT DCS565B: https://www.amazon.com/s?k=DEWALT+DCS565B+cordless+circular+saw&tag=handytested0d-20
+- SKIL CR6413B-11: https://www.amazon.com/s?k=SKIL+CR6413B-11+circular+saw+kit&tag=handytested0d-20
+- Makita XSS02Z: https://www.amazon.com/s?k=Makita+XSS02Z+circular+saw&tag=handytested0d-20
 
-## Amazon Links
-- DEWALT DCS570B 20V MAX circular saw | SEARCH | tag OK | https://www.amazon.com/s?k=DEWALT+DCS570B+20V+MAX+circular+saw&tag=handytested0d-20
-- Ryobi P508 18V ONE+ brushless circular saw | SEARCH | tag OK | https://www.amazon.com/s?k=Ryobi+P508+18V+ONE%2B+brushless+circular+saw&tag=handytested0d-20
-- Makita XSS02Z 18V LXT circular saw | SEARCH | tag OK | https://www.amazon.com/s?k=Makita+XSS02Z+18V+LXT+circular+saw&tag=handytested0d-20
+## Publication decision
 
-## Images
-- Featured media: {"url": "https://handytested.com/wp-content/uploads/2026/05/best-cordless-circular-saws-under-150-f.jpg", "alt": "", "width": 1080, "height": 608}
-- Body image elements: []
-- Licensing and product match: UNVERIFIED
-
-## Internal Links
-- None detected by screening.
-
-## Source Evidence
-| Product | Manufacturer / primary source | Source type | Checked | Supported claim | Status / notes |
-|---|---|---|---|---|---|
-| PENDING | PENDING | PENDING | PENDING | PENDING | No recommendation approved yet |
-
-## Editorial Decision
-BLOCKED - REQUIRES MANUAL VERIFICATION. Screened fields above must be reviewed in context before a publish decision. Do not infer truth from a regex match or Amazon search result.
+APPROVED after revision-guarded validation, backup, WordPress/Rank Math update and live verification. Preserve the slug and canonical.
