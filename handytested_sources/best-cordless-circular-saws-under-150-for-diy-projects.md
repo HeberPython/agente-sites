@@ -23,7 +23,9 @@ Researched: 2026-09-21 UTC. This record supports a documentation-led comparison;
 | DEWALT DCS565B | https://www.dewalt.com/en-us/product/dcs565b/20v-max-xr-6-12-brushless-cordless-circular-saw-tool-only | 2026-09-21 | 20V MAX XR, brushless, 6-1/2-inch blade, 4,950 no-load RPM, 0-50-degree bevel, electric brake, LED, rafter hook; tool-only listing, battery and charger sold separately |
 | SKIL CR6413B-11 | https://www.skil.com/products/pwrcore-20-brushless-6-1-2-in-circular-saw-kit-cr6413b | 2026-09-21 | PWR CORE 20 brushless 6-1/2-inch saw kit, 5,500 no-load RPM, 2-1/4-inch capacity at 90 degrees, 1-5/8 inch at 45 degrees, 0-45-degree bevel, electric brake, 2.0Ah battery and charger included |
 | Makita XSS02Z | https://makitatools.com/products/details/XSS02Z | 2026-09-21 | 18V LXT 6-1/2-inch brushed saw, 3,700 no-load RPM, 2-1/4-inch capacity at 90 degrees, 1-9/16 inch at 45 degrees, 0-50-degree bevel; blade included, battery and charger sold separately |
-| Circular-saw safety | https://www.dewalt.com/GLOBALBOM/QU/DCS570B/1/Instruction_Manual/EN/N490072_DCS570.pdf | 2026-09-21 | Supports battery removal before adjustment, lower-guard checks, work support, correct depth setting and kickback precautions; users must follow the manual for their exact saw |
+| Circular-saw safety | https://www.dewalt.com/en-us/product/dcs565b/20v-max-xr-6-12-brushless-cordless-circular-saw-tool-only (exact-model manual linked from page) | 2026-09-21 | Supports battery removal before adjustment, lower-guard checks, work support, correct depth setting and kickback precautions; users must follow the manual for their exact saw |
+
+Phase 5 citation correction (2026-09-21): the previous DCS570B PDF returned 404 and did not match the article's DCS565B recommendation. The published safety citation now points to DEWALT's DCS565B page and its manual. No new performance or safety claim was added.
 
 ## Editorial decisions
 

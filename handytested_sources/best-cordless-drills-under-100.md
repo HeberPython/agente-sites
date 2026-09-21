@@ -76,10 +76,12 @@ Phase 3 screening was not a product verification. Phase 4 approval below superse
 
 | Exact model/kit | Manufacturer source | Supported facts and caveats |
 |---|---|---|
-| DEWALT DCD771C2 | https://www.dewalt.com/en-us/product/dcd771c2/20v-max-compact-drilldriver-kit ; https://www.dewalt.com/GLOBALBOM/QU/DCD771C2/2/Instruction_Manual/EN/N457137_DCD771.pdf | 1/2-inch ratcheting chuck, two-speed 0-450/0-1500 RPM transmission, two batteries, charger and bag; manufacturer page and different manual types should not be combined into a new runtime claim |
+| DEWALT DCD771C2 | https://www.dewalt.com/en-us/product/dcd771c2/20v-max-compact-drilldriver-kit (manual linked from product page) | 1/2-inch ratcheting chuck, two-speed 0-450/0-1500 RPM transmission, two batteries, charger and bag; manufacturer page and different manual types should not be combined into a new runtime claim |
 | BLACK+DECKER BDC120VA100 | https://www.blackanddecker.com/products/bdc120va100 | Exact 100-piece POWERCONNECT kit with LD120 drill, one battery, charger, case and assorted bits; 24-position clutch; do not conflate with LD120VA or bare drill |
 | CRAFTSMAN CMCD700C1 | https://www.craftsman.com/en-us/product/cmcd700c1/v20-cordless-12-drill-driver-kit-1-15ah-battery-and-charger | 1/2-inch keyless chuck, two-speed 0-350/0-1500 RPM gearbox, LED, one V20 battery and charger; page title says 1.5Ah while Includes lists 1.3Ah, so article asks buyer to verify package rather than asserting one capacity |
-| General drill safety | https://www.dewalt.com/GLOBALBOM/QU/DCD771C2/2/Instruction_Manual/EN/N457137_DCD771.pdf | Secure work, check for hidden wiring/pipes, wear eye protection and remove battery before adjusting/changing bits; these are not tested performance claims |
+| General drill safety | https://www.dewalt.com/en-us/product/dcd771c2/20v-max-compact-drilldriver-kit (manual available from page) | Secure work, check for hidden wiring/pipes, wear eye protection and remove battery before adjusting/changing bits; these are not tested performance claims |
+
+Phase 5 citation correction (2026-09-21): the prior DEWALT type-specific PDF URL returned 404 in the citation audit. The published article now points to the official DCD771C2 product page and its manual section; product selection and affiliate search are unchanged.
 
 Old DCD777C2/LDX120C/PH05Z lineup and appended LD120VA search are not retained. Six old tagged searches become three exact-kit tagged searches; no ASIN or direct product URL is invented. Remove the fixed under-$100 promise, ratings and unverified durability/runtime rankings. Related guides: cordless circular saws and home DIY tool sets. Featured image licensing/product match remains unverified.
 

@@ -91,7 +91,7 @@ Phase 3 screening was not a product verification. Phase 4 approval below superse
 | Exact model | Manufacturer source | Supported facts and caveats |
 |---|---|---|
 | Franklin ProSensor M90 | https://franklinsensors.com/prosensor-m90/ ; https://franklinsensors.com/wp-content/uploads/2023/04/M150-M92-M90_english_instruction-sheet_032323_PRINT-1.pdf | Nine sensors and LEDs, up to 1.5-inch stated depth, center/edge display, no calibration, two AAA alkaline batteries; hidden objects can be missed and plaster/tile results vary |
-| Zircon StudSensor e50 | https://www.zircon.com/wp-content/uploads/2016/11/ss_e50_instructions.pdf ; https://www.zircon.com/wp-content/uploads/2017/03/2026B-ss_e50_datasheet.pdf | Edge finder; 3/4-inch StudScan and 1-1/2-inch DeepScan; SpotLite and WireWarning; dry interior walls, calibration required, AC warning may miss live wires |
+| Zircon StudSensor e50 | https://www.zircon.com/product_instructions/ss_e50_instructions.pdf ; https://www.zircon.com/products/studsensor-e50 | Edge finder; 3/4-inch StudScan and 1-1/2-inch DeepScan; SpotLite and WireWarning; dry interior walls, calibration required, AC warning may miss live wires |
 | CRAFTSMAN CMHT77621 | https://www.craftsman.com/en-us/product/cmht77621/centre-finding-1-12-deep-stud-finder-ac-detection | Current exact model; center indication, up to 1-1/2-inch stated depth, auto-calibration, LED/audible feedback and live-AC alert; not an independent field-accuracy or wire-clearance guarantee |
 
 The old TACKLIFE S02 and ProSensor 710 recommendations were excluded. The appended CMHT77623 search was not corroborated by CRAFTSMAN's current stud-finder catalog. Three exact-model tagged Amazon searches replace the six old searches; no ASIN is guessed. Related guides: laser levels and home DIY tool sets. Featured image licensing/product match remains unverified.
@@ -99,3 +99,5 @@ The old TACKLIFE S02 and ProSensor 710 recommendations were excluded. The append
 Approved title: Stud Finders for Drywall and Home Layout. SEO title: Stud Finders for Drywall and Home Layout | HandyTested. Meta description: Compare Franklin ProSensor M90, Zircon StudSensor e50 and CRAFTSMAN CMHT77621 by center or edge finding, scan depth, calibration and wiring-alert limits. Baseline modified: 2026-09-12T13:18:52. Preserve the slug and self-canonical.
 
 Publication decision: APPROVED only after guarded validation, backup, publish and live verification.
+
+Phase 5 citation correction (2026-09-21): the old WordPress-upload manual URL returned 400 in the automated check and redirected to a generic Zircon learning page in a public browser. The article now links the current official e50 instruction PDF; model and safety caveats remain unchanged.
