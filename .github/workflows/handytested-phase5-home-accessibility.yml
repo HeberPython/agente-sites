@@ -1,0 +1,35 @@
+name: HandyTested - Phase 5 Home Accessibility
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Dry-run before release"
+        required: true
+        default: dry-run
+        type: choice
+        options: [dry-run, apply]
+
+jobs:
+  homepage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Validate Python
+        run: python -m py_compile handytested_phase5_home_accessibility.py handytested_phase2.py
+      - name: Check baseline and optionally publish
+        env:
+          HT_WP_PASS: ${{ secrets.HT_WP_PASS }}
+          MODE: ${{ github.event.inputs.mode }}
+          BACKUP_DIR: handytested-phase5-home-accessibility-backup
+        run: python handytested_phase5_home_accessibility.py
+      - name: Preserve pre-write backup
+        if: ${{ always() && github.event.inputs.mode == 'apply' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: handytested-phase5-home-accessibility-backup
+          path: handytested-phase5-home-accessibility-backup/
+          retention-days: 30

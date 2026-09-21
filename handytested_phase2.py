@@ -113,7 +113,7 @@ def card(post: dict, label: str) -> str:
     width = int(image["width"])
     height = int(image["height"])
     return f'''<article class="ht-card">
-<a class="ht-card-media" href="{link}"><img src="{src}" width="{width}" height="{height}" alt="" loading="lazy" decoding="async"></a>
+<a class="ht-card-media" href="{link}" aria-label="{title}"><img src="{src}" width="{width}" height="{height}" alt="" loading="lazy" decoding="async"></a>
 <div class="ht-card-body"><p class="ht-card-label">{html.escape(label)}</p><h3><a href="{link}">{title}</a></h3><p>{excerpt}</p><a class="ht-text-link" href="{link}">See Our Picks &#8594;</a></div>
 </article>'''
 
