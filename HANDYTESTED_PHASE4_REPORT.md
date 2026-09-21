@@ -7,16 +7,16 @@
 | Measure | Interim result |
 |---|---:|
 | Total articles at start | 37 |
-| Fully researched / rewritten / published in Phase 4 | 26 / 26 / 26 |
-| Pending, not genuinely blocked | 11 (4 P1, 7 P2) |
+| Fully researched / rewritten / published in Phase 4 | 27 / 27 / 27 |
+| Pending, not genuinely blocked | 10 (3 P1, 7 P2) |
 | Actually blocked | 0 |
-| Retained recommended products with primary-source records | 76 |
+| Retained recommended products with primary-source records | 79 |
 | New verified direct Amazon product links | 0 |
-| Tagged Amazon searches in twenty-six revised bodies | 76 |
-| Contextual internal links in twenty-six revised bodies | 56 |
-| Featured-image rights/product-match reviews still open | 26 |
+| Tagged Amazon searches in twenty-seven revised bodies | 79 |
+| Contextual internal links in twenty-seven revised bodies | 58 |
+| Featured-image rights/product-match reviews still open | 27 |
 | Products removed/replaced, individual price/rating/test claims removed | Final item-level tally pending; see source records and product-change examples below |
-| Year titles updated | 10 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners, security cameras, home tool sets) |
+| Year titles updated | 11 (heat guns, multimeters, smart hubs, under-$100 earbuds, sanders, voltage testers, impact wrenches, carpet cleaners, security cameras, home tool sets, smart TVs) |
 
 No published article asserts first-hand testing by HandyTested. Manufacturer specifications are attributed, promotional or outdated prices are not used as fixed article prices, and no Amazon ASIN was guessed. Source mix so far: manufacturer product pages for every retained recommendation, relevant official manuals/support pages for tool/electrical safety, official sellers for some availability/budget checks, and EPA/Fluke safety guidance. Precise source-type totals remain to be reconciled for the final report.
 
@@ -50,8 +50,9 @@ No published article asserts first-hand testing by HandyTested. Manufacturer spe
 | best-kitchen-appliances-under-300-for-home-chefs | P1 | 3 documented | Complete | [Live](https://handytested.com/best-kitchen-appliances-under-300-for-home-chefs/) |
 | best-smart-home-security-cameras-under-300-for-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-smart-home-security-cameras-under-300-for-2025/) |
 | best-home-diy-tool-sets-for-under-300-in-2025 | P1 | 3 documented | Complete | [Live](https://handytested.com/best-home-diy-tool-sets-for-under-300-in-2025/) |
+| best-smart-tvs-under-300-for-2025-viewing-experience | P1 | 3 documented | Complete | [Live](https://handytested.com/best-smart-tvs-under-300-for-2025-viewing-experience/) |
 
-The 11 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
+The 10 remaining articles retain their Phase 3 state **pending Phase 4 research**, not "actually blocked":
 
 | Pending P1 (in queue order) | Pending P1 (continued) | Pending P2 |
 |---|---|---|
@@ -63,7 +64,6 @@ The 11 remaining articles retain their Phase 3 state **pending Phase 4 research*
 |  |  | best-stud-finders-under-50-for-home-projects-2025 |
 |  |  | best-cordless-drills-under-100 |
 |  |  |  |
-|  | best-smart-tvs-under-300-for-2025-viewing-experience |  |
 |  | best-noise-canceling-headphones-under-300-for-2025 |  |
 |  | best-laser-levels-for-diy-home-projects-under-60 |  |
 |  | best-oscillating-multi-tools-under-75-for-2025 |  |
@@ -98,10 +98,11 @@ The 11 remaining articles retain their Phase 3 state **pending Phase 4 research*
 | Kitchen appliances | Fixed under-$300 claim, archived Hamilton Beach 49980A, duplicate BN701, old product mix | Replace/clarify | Instant Pot Duo Plus 6QT WhisperQuiet 112-0169-01, Ninja BN701 and current Hamilton Beach 49916G by distinct job; distinguish pitcher/liquid capacity and SKU variants | [Instant Pot](https://instantpot.com/products/instant-pot-duo-plus-6qt-multi-use-pressure-cooker-whisper-quiet), [Ninja](https://www.sharkninja.com/ninja-professional-plus-blender-with-auto-iq/BN701.html), [Hamilton Beach](https://hamiltonbeach.com/coffee-makers) |
 | Security cameras | Mixed older/generic generations; implied free recording, safety and fixed budget | Replace/clarify | Ring Indoor Cam 2K, Blink Outdoor 4 BCM00500U and Arlo Essential Outdoor 2K VMC3050; distinguish plan, Sync Module, variant, power and placement | [Ring](https://ring.com/products/indoor-cam-plus), [Blink](https://support.blinkforhome.com/1801814), [Arlo](https://kb.arlo.com/000063761/Arlo-Essential-Outdoor-2nd-Generation-Spec-Sheet) |
 | Home tool sets | Generic families, fabricated hands-on tests/runtime/weights, unsupported ratings and fixed price ranges | Replace/clarify | BLACK+DECKER BDPK70284C1AEV household kit, DEWALT DCK240C2 drill/impact combo and CRAFTSMAN CMMT45306 mechanics set by distinct task | [BLACK+DECKER](https://www.blackanddecker.com/products/bdpk70284c1aev), [DEWALT](https://www.dewalt.com/en-us/product/dck240c2/20v-max-lithium-ion-drill-driverimpact-driver-combo-kit13-ah), [CRAFTSMAN](https://www.craftsman.com/en-us/product/cmmt45306/230pc-versastack-mechanics-tool-set) |
+| Smart TVs | Stale mixed-size lineup, invented hands-on picture/sound tests, ratings, low-latency assurances and fixed price ranges | Replace/clarify | Amazon Fire TV 4-Series 4K50N402, Hisense 50A6N and Roku Select Series 50R4C5 compared by platform, HDR, gaming limits and inputs | [Amazon](https://digprjsurvey.amazon.com/csad/help/node/TD5J6m5VSEfhP4FI5Y), [Hisense](https://www.hisense-usa.com/product-page/televisions-50-class-a6-series-led-4k-uhd-google-smart-tv-50a6n), [Roku](https://support.roku.com/en-us/article/roku-branded-tv-product-information) |
 
 ## Validation and open items
 
 - Each article passed focused local tests, GitHub Actions dry-run, apply and public release checks for H1, canonical, title, description, disclosure, tagged CTAs and related-link presence. Backup run links are in the checkpoint.
 - Browser QA at 320/375/1280 px was sampled across batches. Article tables were internally scrollable on mobile. AdSense iframes caused page-level overflow on sampled smart-hub, earbuds, voltage and robot pages; this is not fixed and should be handled separately without disabling ads blindly.
-- No Phase 4 article is recorded as genuinely blocked. The pending 11 must each receive fresh public research before a final state is assigned.
+- No Phase 4 article is recorded as genuinely blocked. The pending 10 must each receive fresh public research before a final state is assigned.
 - Search Console, Rank Math sitemap, global Astra styling/footer, Pinterest diagnostic admin, image rights and verified Amazon direct links remain outstanding but do not prevent careful text corrections.

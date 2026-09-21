@@ -122,3 +122,7 @@ Published post 136 after Ring, Blink and Arlo primary-source research and 12 loc
 # Phase 4 home-tool-set release (2026-09-21)
 
 Published post 90 after manufacturer research and 12 local tests. [Dry-run 35614956018](https://github.com/HeberPython/agente-sites/actions/runs/35614956018) and [apply 35614990780](https://github.com/HeberPython/agente-sites/actions/runs/35614990780) passed with original-post backup artifact `10645916262`, public metadata/content checks and independent HTTP 200. The rewrite compares BLACK+DECKER BDPK70284C1AEV, DEWALT DCK240C2 and CRAFTSMAN CMMT45306 by project type, removing fabricated hands-on tests, ratings, runtime, generic variants and fixed price ranges. Phase 4 stands at 26/37; smart TVs are next.
+
+# Phase 4 smart-TV release (2026-09-21)
+
+Published post 78 after Amazon, Hisense and Roku primary-source research and 12 local tests. [Dry-run 35619627634](https://github.com/HeberPython/agente-sites/actions/runs/35619627634) and [apply 35619680160](https://github.com/HeberPython/agente-sites/actions/runs/35619680160) passed with original-post backup artifact `10647178474`, public metadata/content checks and independent HTTP 200. The rewrite compares exact Amazon Fire TV 4-Series 4K50N402, Hisense 50A6N and Roku Select Series 50R4C5 models by platform and inputs, removing stale products, fabricated tests, ratings, fixed prices and unsupported gaming assurances. Phase 4 stands at 27/37; noise-canceling headphones are next.
