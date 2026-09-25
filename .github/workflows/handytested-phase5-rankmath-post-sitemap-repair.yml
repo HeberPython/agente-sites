@@ -1,0 +1,434 @@
+name: HandyTested - Phase 5 Rank Math Post Sitemap Repair
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repair-post-sitemap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HT_SSH_HOST: ${{ secrets.HT_SSH_HOST }}
+      HT_SSH_PORT: ${{ secrets.HT_SSH_PORT }}
+      HT_SSH_USER: ${{ secrets.HT_SSH_USER }}
+      HT_SSH_PRIVATE_KEY: ${{ secrets.HT_SSH_PRIVATE_KEY }}
+
+    steps:
+      - name: Validate required SSH settings
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in HT_SSH_HOST HT_SSH_PORT HT_SSH_USER HT_SSH_PRIVATE_KEY; do
+            if [ -z "${!name:-}" ]; then
+              echo "Required repository secret is unavailable: ${name}" >&2
+              exit 1
+            fi
+          done
+
+      - name: Configure temporary SSH credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p "${HOME}/.ssh"
+          printf '%s\n' "${HT_SSH_PRIVATE_KEY}" > "${HOME}/.ssh/handytested_hostinger"
+          chmod 600 "${HOME}/.ssh/handytested_hostinger"
+          ssh-keyscan -p "${HT_SSH_PORT}" -H "${HT_SSH_HOST}" > "${HOME}/.ssh/known_hosts"
+          chmod 600 "${HOME}/.ssh/known_hosts"
+          echo "Temporary SSH credentials configured."
+
+      - name: Preflight, targeted invalidation, rebuild, and validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh \
+            -i "${HOME}/.ssh/handytested_hostinger" \
+            -p "${HT_SSH_PORT}" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=20 \
+            "${HT_SSH_USER}@${HT_SSH_HOST}" 'bash -s' <<'REMOTE_REPAIR'
+          set -euo pipefail
+
+          readonly expected_home='https://handytested.com'
+          readonly expected_plugin_version='1.0.279'
+          readonly expected_published_count='38'
+          readonly expected_initial_sitemap_count='35'
+          readonly user_agent='HandyTested Phase 5 controlled sitemap repair'
+
+          readonly missing_slugs='best-robot-vacuums-for-pet-hair-under-300
+          best-indoor-hydroponic-gardening-systems-under-300
+          best-portable-outdoor-grills-under-300-for-2025
+          best-electric-lawn-mowers-under-300-for-2025
+          best-wireless-earbuds-under-300-for-2025'
+          readonly stale_slugs='top-father-s-day-gifts-for-2026-great-deals-and-ideas-2026-07-31
+          discover-the-best-amazon-deals-this-summer-2026-08-05'
+
+          fail() {
+            printf 'FAILURE: %s\n' "$1" >&2
+            exit 1
+          }
+
+          line_count() {
+            if [ -z "$1" ]; then
+              printf '0\n'
+              return
+            fi
+            printf '%s\n' "$1" | awk 'NF { count++ } END { print count + 0 }'
+          }
+
+          contains_line() {
+            needle="$1"
+            haystack="$2"
+            printf '%s\n' "${haystack}" | grep -Fqx -- "${needle}"
+          }
+
+          fetch_xml() {
+            url="$1"
+            marker='__HT_HTTP_STATUS__:'
+            raw_response="$(
+              curl --silent --show-error \
+                --max-time 30 \
+                --user-agent "${user_agent}" \
+                --write-out $'\n'"${marker}%{http_code}" \
+                "${url}"
+            )" || fail "GET failed for ${url}."
+            HTTP_STATUS="${raw_response##*${marker}}"
+            trailer=$'\n'"${marker}${HTTP_STATUS}"
+            HTTP_BODY="${raw_response%"${trailer}"}"
+          }
+
+          validate_xml() {
+            expected_root="$1"
+            actual_root="$(
+              printf '%s' "${HTTP_BODY}" | php -r '
+                libxml_use_internal_errors(true);
+                $xml = simplexml_load_string(stream_get_contents(STDIN));
+                if (false === $xml) {
+                    fwrite(STDERR, "Invalid XML.\n");
+                    exit(1);
+                }
+                echo $xml->getName();
+              '
+            )" || fail "XML parsing failed."
+            [ "${actual_root}" = "${expected_root}" ] \
+              || fail "Unexpected XML root ${actual_root}; expected ${expected_root}."
+          }
+
+          extract_locations() {
+            printf '%s' "${HTTP_BODY}" | php -r '
+              libxml_use_internal_errors(true);
+              $xml = simplexml_load_string(stream_get_contents(STDIN));
+              if (false === $xml) {
+                  exit(1);
+              }
+              $locations = $xml->xpath("//*[local-name()=\"loc\"]");
+              foreach ($locations as $location) {
+                  echo trim((string) $location), "\n";
+              }
+            ' | awk 'NF' | sort -u
+          }
+
+          xml_sha256() {
+            printf '%s' "${HTTP_BODY}" | sha256sum | awk '{ print $1 }'
+          }
+
+          collect_published_posts() {
+            ids="$(wp_read post list \
+              --post_type=post \
+              --post_status=publish \
+              --orderby=ID \
+              --order=ASC \
+              --field=ID)"
+            PUBLISHED_COUNT="$(line_count "${ids}")"
+            PUBLISHED_SLUGS=''
+            PUBLISHED_URLS=''
+
+            for post_id in ${ids}; do
+              case "${post_id}" in
+                ''|*[!0-9]*) fail "Unexpected non-numeric published post ID." ;;
+              esac
+              post_slug="$(wp_read post get "${post_id}" --field=post_name)"
+              post_url="$(wp_read post url "${post_id}")"
+              PUBLISHED_SLUGS="${PUBLISHED_SLUGS}${PUBLISHED_SLUGS:+$'\n'}${post_slug}"
+              PUBLISHED_URLS="${PUBLISHED_URLS}${PUBLISHED_URLS:+$'\n'}${post_url}"
+            done
+
+            PUBLISHED_SLUGS="$(printf '%s\n' "${PUBLISHED_SLUGS}" | awk 'NF' | sort -u)"
+            PUBLISHED_URLS="$(printf '%s\n' "${PUBLISHED_URLS}" | awk 'NF' | sort -u)"
+            [ "$(line_count "${PUBLISHED_SLUGS}")" = "${PUBLISHED_COUNT}" ] \
+              || fail "Published posts do not have a unique slug set."
+            [ "$(line_count "${PUBLISHED_URLS}")" = "${PUBLISHED_COUNT}" ] \
+              || fail "Published posts do not have a unique permalink set."
+          }
+
+          print_set_difference() {
+            label="$1"
+            left="$2"
+            right="$3"
+            found='false'
+            while IFS= read -r item; do
+              [ -n "${item}" ] || continue
+              if ! contains_line "${item}" "${right}"; then
+                printf '%s: %s\n' "${label}" "${item}"
+                found='true'
+              fi
+            done <<EOF
+          ${left}
+          EOF
+            if [ "${found}" = 'false' ]; then
+              printf '%s: (none)\n' "${label}"
+            fi
+          }
+
+          echo '== Phase 1: read-only preflight =='
+          wp_configs="$(
+            find "${HOME}" -maxdepth 8 -type f -name wp-config.php \
+              -path '*handytested.com*' -print 2>/dev/null
+          )"
+          [ -n "${wp_configs}" ] || fail 'No wp-config.php for handytested.com was found.'
+          wp_config_count="$(line_count "${wp_configs}")"
+          [ "${wp_config_count}" = '1' ] \
+            || fail "Expected one HandyTested installation, found ${wp_config_count}."
+          wp_path="$(cd -- "$(dirname -- "${wp_configs}")" && pwd -P)"
+          command -v wp >/dev/null 2>&1 || fail 'WP-CLI is unavailable.'
+          command -v curl >/dev/null 2>&1 || fail 'curl is unavailable.'
+          command -v php >/dev/null 2>&1 || fail 'PHP CLI is unavailable.'
+
+          wp_read() {
+            wp --path="${wp_path}" --skip-plugins --skip-themes "$@"
+          }
+
+          site_url="$(wp_read option get siteurl)"
+          home_url="$(wp_read option get home)"
+          site_url="${site_url%/}"
+          home_url="${home_url%/}"
+          [ "${site_url}" = "${expected_home}" ] \
+            || fail "Unexpected WordPress site URL: ${site_url}."
+          [ "${home_url}" = "${expected_home}" ] \
+            || fail "Unexpected WordPress home URL: ${home_url}."
+          printf 'WordPress installation: %s\n' "${expected_home}"
+
+          plugin_status="$(wp_read plugin get seo-by-rank-math --field=status)"
+          plugin_version="$(wp_read plugin get seo-by-rank-math --field=version)"
+          [ "${plugin_status}" = 'active' ] || fail 'Rank Math is not active.'
+          [ "${plugin_version}" = "${expected_plugin_version}" ] \
+            || fail "Unexpected Rank Math version: ${plugin_version}."
+
+          rank_math_runtime="$(
+            wp --path="${wp_path}" --skip-themes --quiet eval '
+              $class = "\\RankMath\\Sitemap\\Cache";
+              $method = "invalidate_storage";
+              $module = class_exists("\\RankMath\\Helper")
+                  && \\RankMath\\Helper::is_module_active("sitemap");
+              $exists = class_exists($class) && method_exists($class, $method);
+              $public = false;
+              $static = false;
+              if ($exists) {
+                  $reflection = new ReflectionMethod($class, $method);
+                  $public = $reflection->isPublic();
+                  $static = $reflection->isStatic();
+              }
+              printf(
+                  "HT_RANK_MATH_RUNTIME:%d|%d|%d|%d\n",
+                  $module ? 1 : 0,
+                  $exists ? 1 : 0,
+                  $public ? 1 : 0,
+                  $static ? 1 : 0
+              );
+            '
+          )" || fail 'Rank Math runtime inspection failed.'
+          runtime_marker="$(
+            printf '%s\n' "${rank_math_runtime}" \
+              | awk '/^HT_RANK_MATH_RUNTIME:/ { value = $0 } END { print value }'
+          )"
+          [ "${runtime_marker}" = 'HT_RANK_MATH_RUNTIME:1|1|1|1' ] \
+            || fail "Rank Math sitemap runtime guard failed: ${runtime_marker:-missing marker}."
+          printf 'Rank Math: active, version %s, sitemap module active.\n' "${plugin_version}"
+          echo 'RankMath\Sitemap\Cache::invalidate_storage is public and static.'
+
+          collect_published_posts
+          [ "${PUBLISHED_COUNT}" = "${expected_published_count}" ] \
+            || fail "Expected 38 published posts, found ${PUBLISHED_COUNT}."
+          readonly preflight_published_slugs="${PUBLISHED_SLUGS}"
+          readonly preflight_published_urls="${PUBLISHED_URLS}"
+          printf 'Published posts: %s\n' "${PUBLISHED_COUNT}"
+          echo 'Published slugs:'
+          printf '%s\n' "${PUBLISHED_SLUGS}"
+
+          fetch_xml "${expected_home}/sitemap_index.xml"
+          [ "${HTTP_STATUS}" = '200' ] \
+            || fail "sitemap_index.xml returned HTTP ${HTTP_STATUS}."
+          validate_xml 'sitemapindex'
+          printf 'sitemap_index.xml: HTTP 200, valid XML.\n'
+
+          fetch_xml "${expected_home}/post-sitemap.xml"
+          [ "${HTTP_STATUS}" = '200' ] \
+            || fail "post-sitemap.xml returned HTTP ${HTTP_STATUS}."
+          validate_xml 'urlset'
+          initial_post_sitemap_urls="$(extract_locations)" \
+            || fail 'Could not extract initial post sitemap URLs.'
+          initial_post_sitemap_count="$(line_count "${initial_post_sitemap_urls}")"
+          initial_post_sitemap_sha="$(xml_sha256)"
+          [ "${initial_post_sitemap_count}" = "${expected_initial_sitemap_count}" ] \
+            || fail "Expected 35 initial post sitemap URLs, found ${initial_post_sitemap_count}."
+          printf 'Initial post sitemap URLs: %s\n' "${initial_post_sitemap_count}"
+          printf 'Initial post sitemap SHA-256: %s\n' "${initial_post_sitemap_sha}"
+
+          initial_missing_count='0'
+          while IFS= read -r slug; do
+            [ -n "${slug}" ] || continue
+            url="${expected_home}/${slug}/"
+            contains_line "${url}" "${preflight_published_urls}" \
+              || fail "Expected published slug is not published: ${slug}."
+            if contains_line "${url}" "${initial_post_sitemap_urls}"; then
+              fail "Expected missing slug is already in the initial sitemap: ${slug}."
+            fi
+            initial_missing_count="$((initial_missing_count + 1))"
+          done <<EOF
+          ${missing_slugs}
+          EOF
+
+          initial_stale_count='0'
+          while IFS= read -r slug; do
+            [ -n "${slug}" ] || continue
+            url="${expected_home}/${slug}/"
+            if contains_line "${url}" "${preflight_published_urls}"; then
+              fail "Expected stale slug is currently published: ${slug}."
+            fi
+            contains_line "${url}" "${initial_post_sitemap_urls}" \
+              || fail "Expected stale slug is not in the initial sitemap: ${slug}."
+            initial_stale_count="$((initial_stale_count + 1))"
+          done <<EOF
+          ${stale_slugs}
+          EOF
+
+          actual_missing_count='0'
+          while IFS= read -r url; do
+            [ -n "${url}" ] || continue
+            if ! contains_line "${url}" "${initial_post_sitemap_urls}"; then
+              actual_missing_count="$((actual_missing_count + 1))"
+            fi
+          done <<EOF
+          ${preflight_published_urls}
+          EOF
+          actual_extra_count='0'
+          while IFS= read -r url; do
+            [ -n "${url}" ] || continue
+            if ! contains_line "${url}" "${preflight_published_urls}"; then
+              actual_extra_count="$((actual_extra_count + 1))"
+            fi
+          done <<EOF
+          ${initial_post_sitemap_urls}
+          EOF
+          [ "${initial_missing_count}" = '5' ] \
+            || fail 'Internal missing-slug guard did not inspect five slugs.'
+          [ "${initial_stale_count}" = '2' ] \
+            || fail 'Internal stale-slug guard did not inspect two slugs.'
+          [ "${actual_missing_count}" = '5' ] \
+            || fail "Initial sitemap has ${actual_missing_count} missing published URLs, expected 5."
+          [ "${actual_extra_count}" = '2' ] \
+            || fail "Initial sitemap has ${actual_extra_count} extra URLs, expected 2."
+
+          echo 'rank_math_sitemap_cache_files summary:'
+          wp_read eval '
+            $value = get_option("rank_math_sitemap_cache_files", null);
+            if (!is_array($value)) {
+                echo "type=" . gettype($value) . "\n";
+                return;
+            }
+            ksort($value);
+            echo "entries=" . count($value) . "\n";
+            foreach ($value as $file => $type) {
+                $safe_file = preg_match("/^rank_math_[a-f0-9]{32}\\.(xml|html)$/", $file)
+                    ? $file
+                    : "[unexpected filename sha256=" . hash("sha256", (string) $file) . "]";
+                echo $safe_file . " => " . sanitize_key((string) $type) . "\n";
+            }
+          '
+
+          echo 'PRECHECK PASSED: all read-only guards match the authorized initial state.'
+
+          echo '== Phase 2: single authorized intervention =='
+          wp --path="${wp_path}" --skip-themes eval '
+          if ( ! class_exists( "\RankMath\Sitemap\Cache" ) ) {
+              throw new RuntimeException( "Rank Math sitemap cache class unavailable." );
+          }
+          if ( ! is_callable( array( "\RankMath\Sitemap\Cache", "invalidate_storage" ) ) ) {
+              throw new RuntimeException( "Rank Math sitemap invalidation method unavailable." );
+          }
+          add_filter( "rank_math/pre_clear_cache", "__return_true" );
+          \RankMath\Sitemap\Cache::invalidate_storage( "post" );
+          \RankMath\Sitemap\Cache::invalidate_storage( "1" );
+          '
+          echo 'Authorized Rank Math post and index sitemap storage invalidation completed once.'
+
+          echo '== Phase 3: normal GET reconstruction =='
+          fetch_xml "${expected_home}/sitemap_index.xml"
+          [ "${HTTP_STATUS}" = '200' ] \
+            || fail "Rebuilt sitemap_index.xml returned HTTP ${HTTP_STATUS}."
+          validate_xml 'sitemapindex'
+          echo 'Rebuilt sitemap_index.xml: HTTP 200, valid XML.'
+
+          fetch_xml "${expected_home}/post-sitemap.xml"
+          [ "${HTTP_STATUS}" = '200' ] \
+            || fail "Rebuilt post-sitemap.xml returned HTTP ${HTTP_STATUS}."
+          validate_xml 'urlset'
+          final_post_sitemap_urls="$(extract_locations)" \
+            || fail 'Could not extract rebuilt post sitemap URLs.'
+          final_post_sitemap_count="$(line_count "${final_post_sitemap_urls}")"
+          final_post_sitemap_sha="$(xml_sha256)"
+
+          echo '== Phase 4: mandatory validation =='
+          collect_published_posts
+          [ "${PUBLISHED_COUNT}" = "${expected_published_count}" ] \
+            || fail "Published post count changed after intervention: ${PUBLISHED_COUNT}."
+          [ "${PUBLISHED_SLUGS}" = "${preflight_published_slugs}" ] \
+            || fail 'Published slug set changed after intervention.'
+          [ "${PUBLISHED_URLS}" = "${preflight_published_urls}" ] \
+            || fail 'Published permalink set changed after intervention.'
+          [ "${final_post_sitemap_count}" = "${expected_published_count}" ] \
+            || fail "Final post sitemap has ${final_post_sitemap_count} URLs, expected 38."
+          [ "${final_post_sitemap_urls}" = "${PUBLISHED_URLS}" ] \
+            || fail 'Final post sitemap set does not equal the published WordPress set.'
+
+          while IFS= read -r slug; do
+            [ -n "${slug}" ] || continue
+            contains_line "${expected_home}/${slug}/" "${final_post_sitemap_urls}" \
+              || fail "Required published slug remains absent: ${slug}."
+          done <<EOF
+          ${missing_slugs}
+          EOF
+          while IFS= read -r slug; do
+            [ -n "${slug}" ] || continue
+            if contains_line "${expected_home}/${slug}/" "${final_post_sitemap_urls}"; then
+              fail "Stale promotional slug remains present: ${slug}."
+            fi
+          done <<EOF
+          ${stale_slugs}
+          EOF
+
+          printf 'Final post sitemap URLs: %s\n' "${final_post_sitemap_count}"
+          printf 'Final post sitemap SHA-256: %s\n' "${final_post_sitemap_sha}"
+          print_set_difference 'Added URL' "${final_post_sitemap_urls}" "${initial_post_sitemap_urls}"
+          print_set_difference 'Removed URL' "${initial_post_sitemap_urls}" "${final_post_sitemap_urls}"
+          echo 'SUCCESS: published WordPress set == post sitemap set == 38 URLs.'
+          REMOTE_REPAIR
+
+      - name: Remove temporary SSH material
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          key="${HOME}/.ssh/handytested_hostinger"
+          known_hosts="${HOME}/.ssh/known_hosts"
+          if [ -f "${key}" ]; then
+            shred -u "${key}"
+          fi
+          if [ -f "${known_hosts}" ]; then
+            shred -u "${known_hosts}"
+          fi
