@@ -1,0 +1,276 @@
+name: HandyTested - Phase 5 Rank Math Installed Code Inspection (Read Only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-installed-code:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HT_SSH_HOST: ${{ secrets.HT_SSH_HOST }}
+      HT_SSH_PORT: ${{ secrets.HT_SSH_PORT }}
+      HT_SSH_USER: ${{ secrets.HT_SSH_USER }}
+      HT_SSH_PRIVATE_KEY: ${{ secrets.HT_SSH_PRIVATE_KEY }}
+
+    steps:
+      - name: Validate required SSH settings
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in HT_SSH_HOST HT_SSH_PORT HT_SSH_USER HT_SSH_PRIVATE_KEY; do
+            if [ -z "${!name:-}" ]; then
+              echo "Required repository secret is unavailable: ${name}" >&2
+              exit 1
+            fi
+          done
+
+      - name: Configure temporary SSH credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p "${HOME}/.ssh"
+          printf '%s\n' "${HT_SSH_PRIVATE_KEY}" > "${HOME}/.ssh/handytested_hostinger"
+          chmod 600 "${HOME}/.ssh/handytested_hostinger"
+          ssh-keyscan -p "${HT_SSH_PORT}" -H "${HT_SSH_HOST}" > "${HOME}/.ssh/known_hosts"
+          chmod 600 "${HOME}/.ssh/known_hosts"
+          echo "Temporary SSH credentials configured."
+
+      - name: Inspect installed Rank Math sitemap code and option structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh \
+            -i "${HOME}/.ssh/handytested_hostinger" \
+            -p "${HT_SSH_PORT}" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=20 \
+            "${HT_SSH_USER}@${HT_SSH_HOST}" 'bash -s' <<'REMOTE_INSPECTION'
+          set -euo pipefail
+
+          wp_configs="$(
+            find "${HOME}" -maxdepth 8 -type f -name wp-config.php \
+              -path '*handytested.com*' -print 2>/dev/null
+          )"
+          if [ -z "${wp_configs}" ]; then
+            echo "No wp-config.php for handytested.com was found under the remote HOME." >&2
+            exit 1
+          fi
+          wp_config_count="$(printf '%s\n' "${wp_configs}" | awk 'NF { count++ } END { print count + 0 }')"
+          if [ "${wp_config_count}" -ne 1 ]; then
+            echo "Expected one HandyTested installation, found ${wp_config_count}; refusing to choose." >&2
+            exit 1
+          fi
+          wp_path="$(cd -- "$(dirname -- "${wp_configs}")" && pwd -P)"
+
+          if ! command -v wp >/dev/null 2>&1; then
+            echo "WP-CLI is not available in the remote PATH." >&2
+            exit 1
+          fi
+
+          wp_read() {
+            wp --path="${wp_path}" --skip-plugins --skip-themes "$@"
+          }
+
+          db_prefix="$(wp_read db prefix)"
+          case "${db_prefix}" in
+            ''|*[!A-Za-z0-9_]*)
+              echo "Unexpected WordPress database prefix; refusing to build read-only queries." >&2
+              exit 1
+              ;;
+          esac
+
+          echo "== Installed plugin identity =="
+          printf 'WordPress path: %s\n' "${wp_path}"
+          wp_read plugin get seo-by-rank-math \
+            --fields=name,status,version --format=table
+
+          plugin_reported_path="$(wp_read plugin path seo-by-rank-math 2>/dev/null || true)"
+          if [ -f "${plugin_reported_path}" ]; then
+            plugin_main="${plugin_reported_path}"
+            plugin_dir="$(cd -- "$(dirname -- "${plugin_main}")" && pwd -P)"
+          elif [ -d "${plugin_reported_path}" ]; then
+            plugin_dir="$(cd -- "${plugin_reported_path}" && pwd -P)"
+            plugin_main="${plugin_dir}/rank-math.php"
+          else
+            plugin_dir="${wp_path}/wp-content/plugins/seo-by-rank-math"
+            plugin_main="${plugin_dir}/rank-math.php"
+          fi
+
+          if [ ! -d "${plugin_dir}" ] || [ ! -f "${plugin_main}" ]; then
+            echo "The Rank Math directory or main plugin file could not be resolved." >&2
+            exit 1
+          fi
+          case "${plugin_dir}" in
+            "${wp_path}"/wp-content/plugins/seo-by-rank-math)
+              ;;
+            *)
+              echo "Resolved Rank Math path is outside the expected plugin directory." >&2
+              exit 1
+              ;;
+          esac
+
+          printf 'WP-CLI reported path: %s\n' "${plugin_reported_path}"
+          printf 'Resolved plugin main file: %s\n' "${plugin_main}"
+          printf 'Resolved plugin directory: %s\n' "${plugin_dir}"
+
+          echo
+          echo "== rank_math_sitemap_cache_files option metadata =="
+          wp_read db query \
+            "SELECT option_name, OCTET_LENGTH(option_value) AS value_bytes, autoload FROM ${db_prefix}options WHERE option_name = 'rank_math_sitemap_cache_files'"
+
+          echo
+          echo "== rank_math_sitemap_cache_files structural summary =="
+          wp_read eval '
+            $missing = new stdClass();
+            $value = get_option("rank_math_sitemap_cache_files", $missing);
+            if ($value === $missing) {
+                echo "option: missing\n";
+                return;
+            }
+
+            $safe_string = static function ($string) {
+                $string = str_replace(ABSPATH, "ABSPATH/", $string);
+                $string = str_replace(WP_CONTENT_DIR, "WP_CONTENT_DIR/", $string);
+                if (strlen($string) > 200) {
+                    return "[string length=" . strlen($string)
+                        . " sha256=" . hash("sha256", $string) . "]";
+                }
+                return $string;
+            };
+
+            $summarize = static function ($item, $path, $depth = 0) use (&$summarize, $safe_string) {
+                if ($depth > 5) {
+                    echo $path . "\t[maximum depth reached]\n";
+                    return;
+                }
+                if (is_array($item)) {
+                    echo $path . "\tarray(count=" . count($item) . ")\n";
+                    $shown = 0;
+                    foreach ($item as $key => $child) {
+                        if ($shown >= 80) {
+                            echo $path . "\t[remaining entries omitted]\n";
+                            break;
+                        }
+                        $safe_key = preg_replace("/[^A-Za-z0-9_.:\/-]/", "?", (string) $key);
+                        $summarize($child, $path . "[" . $safe_key . "]", $depth + 1);
+                        $shown++;
+                    }
+                    return;
+                }
+                if (is_string($item)) {
+                    echo $path . "\tstring\t" . $safe_string($item) . "\n";
+                    return;
+                }
+                if (is_int($item) || is_float($item)) {
+                    echo $path . "\t" . gettype($item) . "\t" . $item;
+                    if ($item >= 946684800 && $item <= 4102444800) {
+                        echo "\tUTC=" . gmdate("c", (int) $item);
+                    }
+                    echo "\n";
+                    return;
+                }
+                if (is_bool($item) || is_null($item)) {
+                    echo $path . "\t" . gettype($item) . "\t"
+                        . wp_json_encode($item) . "\n";
+                    return;
+                }
+                echo $path . "\t" . gettype($item) . "\t[value omitted]\n";
+            };
+
+            $summarize($value, "root");
+          '
+
+          echo
+          echo "== Files containing exact cache option or invalidation symbols =="
+          matching_files="$(grep -RIlE --include='*.php' \
+            'rank_math_sitemap_cache_files|invalidate_storage|class[[:space:]]+Cache|cache_files' \
+            "${plugin_dir}" 2>/dev/null || true)"
+          if [ -z "${matching_files}" ]; then
+            echo "(no matching PHP file)"
+          else
+            for file in ${matching_files}; do
+              case "${file}" in
+                "${plugin_dir}"/*)
+                  printf '%s\n' "${file#"${plugin_dir}"/}"
+                  ;;
+                *)
+                  echo "Unexpected file outside Rank Math directory; refusing to read it." >&2
+                  exit 1
+                  ;;
+              esac
+            done
+          fi
+
+          echo
+          echo "== Minimal source excerpts for cache option, class, and method definitions =="
+          if [ -n "${matching_files}" ]; then
+            for file in ${matching_files}; do
+              printf '\n-- %s --\n' "${file#"${plugin_dir}"/}"
+              grep -nE -B 10 -A 35 \
+                'rank_math_sitemap_cache_files|invalidate_storage|class[[:space:]]+Cache|cache_files' \
+                "${file}" 2>/dev/null | awk 'NR <= 240 { print }' || true
+            done
+          else
+            echo "(none)"
+          fi
+
+          echo
+          echo "== Calls to invalidate_storage with local context =="
+          invalidate_calls="$(grep -RInE -B 12 -A 24 --include='*.php' \
+            '(::|->)invalidate_storage[[:space:]]*\(' \
+            "${plugin_dir}" 2>/dev/null \
+            | awk 'NR <= 500 { print }' || true)"
+          if [ -n "${invalidate_calls}" ]; then
+            printf '%s\n' "${invalidate_calls}"
+          else
+            echo "(none)"
+          fi
+
+          echo
+          echo "== Sitemap lifecycle hooks and normal invalidation triggers =="
+          lifecycle_matches="$(grep -RInE -B 10 -A 24 --include='*.php' \
+            'save_post|transition_post_status|wp_after_insert_post|before_delete_post|delete_post|created_term|edited_term|delete_term|update_option|permalink|sitemap.{0,50}(invalidate|cache|flush)|invalidate.{0,50}sitemap' \
+            "${plugin_dir}/includes/modules/sitemap" 2>/dev/null \
+            | awk 'NR <= 700 { print }' || true)"
+          if [ -n "${lifecycle_matches}" ]; then
+            printf '%s\n' "${lifecycle_matches}"
+          else
+            echo "(no selected lifecycle pattern matched)"
+          fi
+
+          echo
+          echo "== Rank Math WP-CLI sitemap command declarations in installed source =="
+          cli_declarations="$(grep -RInE -B 6 -A 12 --include='*.php' \
+            'WP_CLI::add_command|sitemap[[:space:]]+generate' \
+            "${plugin_dir}" 2>/dev/null \
+            | awk 'NR <= 240 { print }' || true)"
+          if [ -n "${cli_declarations}" ]; then
+            printf '%s\n' "${cli_declarations}"
+          else
+            echo "(none)"
+          fi
+
+          echo
+          echo "Read-only inspection complete. No discovered method or hook was invoked."
+          REMOTE_INSPECTION
+
+      - name: Remove temporary SSH material
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          key="${HOME}/.ssh/handytested_hostinger"
+          known_hosts="${HOME}/.ssh/known_hosts"
+          if [ -f "${key}" ]; then
+            shred -u "${key}"
+          fi
+          if [ -f "${known_hosts}" ]; then
+            shred -u "${known_hosts}"
+          fi
