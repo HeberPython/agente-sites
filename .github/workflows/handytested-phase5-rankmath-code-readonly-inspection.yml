@@ -272,6 +272,17 @@ jobs:
           printf '\n-- official CLI registration --\n'
           awk 'NR >= 442 && NR <= 458 { printf "%d:%s\n", NR, $0 }' "${plugin_bootstrap}"
 
+          printf '\n-- Helper option and cache methods --\n'
+          helper_matches="$(grep -RInE -B 12 -A 40 --include='*.php' \
+            'public static function (option|clear_cache)[[:space:]]*\(' \
+            "${plugin_dir}/includes" 2>/dev/null \
+            | awk 'NR <= 260 { print }' || true)"
+          if [ -n "${helper_matches}" ]; then
+            printf '%s\n' "${helper_matches}"
+          else
+            echo "(no matching Helper methods)"
+          fi
+
           echo
           echo "== Rank Math WP-CLI sitemap command declarations in installed source =="
           cli_declarations="$(grep -RInE -B 6 -A 12 --include='*.php' \
