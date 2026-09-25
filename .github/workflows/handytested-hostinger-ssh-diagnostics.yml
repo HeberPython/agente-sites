@@ -60,22 +60,23 @@ jobs:
           printf 'Remote HOME: %s\n' "${HOME}"
 
           echo "== WordPress discovery =="
-          mapfile -t wp_configs < <(
+          wp_configs="$(
             find "${HOME}" -maxdepth 8 -type f -name wp-config.php \
               -path '*handytested.com*' -print 2>/dev/null
-          )
+          )"
 
-          if [ "${#wp_configs[@]}" -eq 0 ]; then
+          if [ -z "${wp_configs}" ]; then
             echo "No wp-config.php for handytested.com was found under the remote HOME." >&2
             exit 1
           fi
-          if [ "${#wp_configs[@]}" -ne 1 ]; then
+          wp_config_count="$(printf '%s\n' "${wp_configs}" | awk 'NF { count++ } END { print count + 0 }')"
+          if [ "${wp_config_count}" -ne 1 ]; then
             echo "Multiple HandyTested wp-config.php files were found; refusing to choose automatically:" >&2
-            printf '%s\n' "${wp_configs[@]}" >&2
+            printf '%s\n' "${wp_configs}" >&2
             exit 1
           fi
 
-          wp_config="${wp_configs[0]}"
+          wp_config="${wp_configs}"
           wp_path="$(cd -- "$(dirname -- "${wp_config}")" && pwd -P)"
           printf 'WordPress path: %s\n' "${wp_path}"
 
