@@ -1,0 +1,458 @@
+name: HandyTested - Phase 5 Sitemap Cache Layer Diagnostics (Read Only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose-cache-layers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HT_SSH_HOST: ${{ secrets.HT_SSH_HOST }}
+      HT_SSH_PORT: ${{ secrets.HT_SSH_PORT }}
+      HT_SSH_USER: ${{ secrets.HT_SSH_USER }}
+      HT_SSH_PRIVATE_KEY: ${{ secrets.HT_SSH_PRIVATE_KEY }}
+
+    steps:
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate required SSH settings
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in HT_SSH_HOST HT_SSH_PORT HT_SSH_USER HT_SSH_PRIVATE_KEY; do
+            if [ -z "${!name:-}" ]; then
+              echo "Required repository secret is unavailable: ${name}" >&2
+              exit 1
+            fi
+          done
+
+      - name: Configure temporary SSH credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p "${HOME}/.ssh"
+          printf '%s\n' "${HT_SSH_PRIVATE_KEY}" > "${HOME}/.ssh/handytested_hostinger"
+          chmod 600 "${HOME}/.ssh/handytested_hostinger"
+          ssh-keyscan -p "${HT_SSH_PORT}" -H "${HT_SSH_HOST}" > "${HOME}/.ssh/known_hosts"
+          chmod 600 "${HOME}/.ssh/known_hosts"
+          echo "Temporary SSH credentials configured."
+
+      - name: Inspect sitemap cache layers without changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh \
+            -i "${HOME}/.ssh/handytested_hostinger" \
+            -p "${HT_SSH_PORT}" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=20 \
+            "${HT_SSH_USER}@${HT_SSH_HOST}" 'bash -s' <<'REMOTE_DIAGNOSTICS'
+          set -euo pipefail
+
+          wp_configs="$(
+            find "${HOME}" -maxdepth 8 -type f -name wp-config.php \
+              -path '*handytested.com*' -print 2>/dev/null
+          )"
+          if [ -z "${wp_configs}" ]; then
+            echo "No wp-config.php for handytested.com was found under the remote HOME." >&2
+            exit 1
+          fi
+          wp_config_count="$(printf '%s\n' "${wp_configs}" | awk 'NF { count++ } END { print count + 0 }')"
+          if [ "${wp_config_count}" -ne 1 ]; then
+            echo "Expected one HandyTested installation, found ${wp_config_count}; refusing to choose." >&2
+            exit 1
+          fi
+          wp_path="$(cd -- "$(dirname -- "${wp_configs}")" && pwd -P)"
+          printf 'WordPress path: %s\n' "${wp_path}"
+
+          if ! command -v wp >/dev/null 2>&1; then
+            echo "WP-CLI is not available in the remote PATH." >&2
+            exit 1
+          fi
+
+          wp_read() {
+            wp --path="${wp_path}" --skip-plugins --skip-themes "$@"
+          }
+
+          db_prefix="$(wp_read db prefix)"
+          case "${db_prefix}" in
+            ''|*[!A-Za-z0-9_]*)
+              echo "Unexpected WordPress database prefix; refusing to build read-only queries." >&2
+              exit 1
+              ;;
+          esac
+
+          echo
+          echo "== Baseline identity and versions =="
+          printf 'Remote user: %s\n' "$(id -un)"
+          printf 'Remote HOME: %s\n' "${HOME}"
+          printf 'WordPress version: %s\n' "$(wp_read core version)"
+          wp_read plugin get seo-by-rank-math \
+            --fields=name,status,version --format=table
+
+          rank_math_path="$(wp_read plugin path seo-by-rank-math 2>/dev/null || true)"
+          if [ -z "${rank_math_path}" ]; then
+            rank_math_path="${wp_path}/wp-content/plugins/seo-by-rank-math"
+          fi
+          printf 'Rank Math path: %s\n' "${rank_math_path}"
+
+          echo
+          echo "== 1. Rank Math sitemap cache/transient evidence =="
+          echo "Database transient rows whose names mention Rank Math or sitemap (values omitted):"
+          rank_math_transients="$(wp_read db query \
+            "SELECT option_name, OCTET_LENGTH(option_value) AS value_bytes, autoload FROM ${db_prefix}options WHERE (LEFT(option_name, 11) = '_transient_' OR LEFT(option_name, 16) = '_site_transient_') AND LOWER(option_name) REGEXP 'rank.?math|sitemap' ORDER BY option_name" \
+            --skip-column-names)"
+          if [ -n "${rank_math_transients}" ]; then
+            printf '%s\n' "${rank_math_transients}"
+          else
+            echo "(none in the options table; this does not exclude an external object cache)"
+          fi
+
+          echo
+          echo "Relevant option names and sizes (values omitted):"
+          relevant_options="$(wp_read db query \
+            "SELECT option_name, OCTET_LENGTH(option_value) AS value_bytes, autoload FROM ${db_prefix}options WHERE LEFT(option_name, 11) <> '_transient_' AND LEFT(option_name, 16) <> '_site_transient_' AND LOWER(option_name) REGEXP 'rank.?math|sitemap|litespeed|hostinger|redis|object.?cache' ORDER BY option_name LIMIT 250" \
+            --skip-column-names)"
+          if [ -n "${relevant_options}" ]; then
+            printf '%s\n' "${relevant_options}"
+          else
+            echo "(none)"
+          fi
+
+          echo
+          echo "Filtered Rank Math settings relevant to sitemap generation and exclusion:"
+          wp_read eval '
+            $option_names = array(
+                "rank-math-options-sitemap",
+                "rank-math-options-titles",
+                "rank-math-options-general"
+            );
+            foreach ($option_names as $option_name) {
+                echo "-- " . $option_name . " --\n";
+                $settings = get_option($option_name, null);
+                if (!is_array($settings)) {
+                    echo "(option missing or not an array)\n";
+                    continue;
+                }
+                $found = false;
+                ksort($settings);
+                foreach ($settings as $key => $value) {
+                    $relevant = strpos($key, "sitemap") !== false
+                        || strpos($key, "robots") !== false
+                        || strpos($key, "noindex_") === 0
+                        || strpos($key, "exclude_") === 0
+                        || strpos($key, "cache") !== false
+                        || in_array(
+                            $key,
+                            array(
+                                "items_per_page",
+                                "include_images",
+                                "include_featured_image",
+                                "disable_author_archives",
+                                "disable_date_archives"
+                            ),
+                            true
+                        );
+                    if (!$relevant) {
+                        continue;
+                    }
+                    echo $key . "\t" . wp_json_encode($value) . "\n";
+                    $found = true;
+                }
+                if (!$found) {
+                    echo "(no matching filtered keys)\n";
+                }
+            }
+            echo "-- rank_math_modules --\n";
+            echo wp_json_encode(get_option("rank_math_modules", array())) . "\n";
+          '
+
+          echo
+          echo "Rank Math files with sitemap/cache names:"
+          if [ -d "${rank_math_path}" ]; then
+            rank_math_files="$(find "${rank_math_path}" -type f \
+              \( -iname '*sitemap*' -o -iname '*cache*' \) -print 2>/dev/null \
+              | awk 'NR <= 250 { print }')"
+            if [ -n "${rank_math_files}" ]; then
+              printf '%s\n' "${rank_math_files}"
+            else
+              echo "(none)"
+            fi
+          else
+            echo "Rank Math plugin directory was not found at the reported path."
+          fi
+
+          echo
+          echo "== 2. WordPress object cache/transient evidence =="
+          if wp_cache_constant="$(wp_read config get WP_CACHE --type=constant 2>/dev/null)"; then
+            printf 'WP_CACHE: %s\n' "${wp_cache_constant}"
+          else
+            echo "WP_CACHE: (not defined)"
+          fi
+          wp_read eval '
+            global $wp_object_cache;
+            echo "External object cache: " . (wp_using_ext_object_cache() ? "true" : "false") . "\n";
+            echo "Object cache class: " . (is_object($wp_object_cache) ? get_class($wp_object_cache) : "none") . "\n";
+          '
+
+          echo
+          echo "WordPress drop-ins:"
+          if ! wp_read plugin list --status=dropin \
+            --fields=name,status,version --format=table; then
+            echo "Drop-in listing is unavailable in this WP-CLI build."
+          fi
+
+          echo
+          echo "Relevant drop-in file identity (selected header lines only):"
+          for dropin in object-cache.php advanced-cache.php db.php sunrise.php; do
+            dropin_path="${wp_path}/wp-content/${dropin}"
+            if [ -f "${dropin_path}" ]; then
+              printf '%s\n' "-- ${dropin_path} --"
+              stat -c 'size=%s bytes modified=%y' "${dropin_path}"
+              dropin_headers="$(grep -Eim 20 \
+                'Plugin Name|Description|Author|LiteSpeed|Hostinger|Redis|Memcached|Object Cache|cache' \
+                "${dropin_path}" 2>/dev/null || true)"
+              if [ -n "${dropin_headers}" ]; then
+                printf '%s\n' "${dropin_headers}"
+              else
+                echo "(no selected identity header matched)"
+              fi
+            else
+              printf '%s: absent\n' "${dropin}"
+            fi
+          done
+
+          echo
+          echo "Installed plugins whose names suggest caching or server integration:"
+          cache_plugins="$(wp_read plugin list \
+            --fields=name,status,version --format=csv \
+            | awk 'NR == 1 || tolower($0) ~ /cache|litespeed|hostinger|redis|memcache|performance|cdn/')"
+          printf '%s\n' "${cache_plugins}"
+
+          echo
+          echo "Database transient rows for common cache providers (values omitted):"
+          provider_transients="$(wp_read db query \
+            "SELECT option_name, OCTET_LENGTH(option_value) AS value_bytes, autoload FROM ${db_prefix}options WHERE (LEFT(option_name, 11) = '_transient_' OR LEFT(option_name, 16) = '_site_transient_') AND LOWER(option_name) REGEXP 'litespeed|hostinger|redis|object.?cache' ORDER BY option_name LIMIT 250" \
+            --skip-column-names)"
+          if [ -n "${provider_transients}" ]; then
+            printf '%s\n' "${provider_transients}"
+          else
+            echo "(none in the options table)"
+          fi
+
+          echo
+          echo "== 3. Hostinger/server cache evidence =="
+          echo "Must-use plugins:"
+          if ! wp_read plugin list --status=must-use \
+            --fields=name,status,version --format=table; then
+            echo "Must-use plugin listing is unavailable in this WP-CLI build."
+          fi
+
+          echo
+          echo "Cache-related directories under wp-content (names only):"
+          cache_directories="$(find "${wp_path}/wp-content" -maxdepth 4 -type d \
+            \( -iname '*cache*' -o -iname '*litespeed*' -o -iname '*hostinger*' \
+               -o -iname '*redis*' -o -iname '*object-cache*' \) -print 2>/dev/null \
+            | awk 'NR <= 250 { print }')"
+          if [ -n "${cache_directories}" ]; then
+            printf '%s\n' "${cache_directories}"
+          else
+            echo "(none)"
+          fi
+
+          echo
+          echo "Cached files whose names mention Rank Math or sitemap (paths only):"
+          if [ -d "${wp_path}/wp-content/cache" ]; then
+            cached_sitemap_files="$(find "${wp_path}/wp-content/cache" -maxdepth 8 -type f \
+              \( -iname '*sitemap*' -o -iname '*rank*math*' \) -print 2>/dev/null \
+              | awk 'NR <= 250 { print }')"
+            if [ -n "${cached_sitemap_files}" ]; then
+              printf '%s\n' "${cached_sitemap_files}"
+            else
+              echo "(none)"
+            fi
+          else
+            echo "wp-content/cache is absent."
+          fi
+
+          echo
+          echo "Server software reported to WordPress CLI:"
+          wp_read eval '
+            echo isset($_SERVER["SERVER_SOFTWARE"])
+                ? $_SERVER["SERVER_SOFTWARE"] . "\n"
+                : "(not available in CLI)\n";
+          '
+
+          echo
+          echo "== 4. Rewrite/permalink evidence =="
+          wp_read db query \
+            "SELECT option_name, option_value FROM ${db_prefix}options WHERE option_name IN ('permalink_structure', 'category_base', 'tag_base') ORDER BY option_name"
+          wp_read db query \
+            "SELECT option_name, OCTET_LENGTH(option_value) AS value_bytes, MD5(option_value) AS value_md5 FROM ${db_prefix}options WHERE option_name = 'rewrite_rules'"
+          printf 'Runtime rewrite rule count: '
+          if ! wp_read rewrite list --format=count; then
+            echo "Unavailable from this WP-CLI build."
+          fi
+
+          echo
+          echo "Selected .htaccess directives related to rewrite/cache only:"
+          htaccess_path="${wp_path}/.htaccess"
+          if [ -f "${htaccess_path}" ]; then
+            htaccess_lines="$(grep -Ein \
+              'Rewrite|LSCache|LiteSpeed|cache|Hostinger|sitemap|rank.?math' \
+              "${htaccess_path}" 2>/dev/null || true)"
+            if [ -n "${htaccess_lines}" ]; then
+              printf '%s\n' "${htaccess_lines}"
+            else
+              echo "(no selected directives matched)"
+            fi
+          else
+            echo ".htaccess is absent at the WordPress root."
+          fi
+
+          echo
+          echo "== 5. Rank Math installed-code generation/invalidation evidence =="
+          echo "The following are source references only; no discovered action is executed."
+          if [ -d "${rank_math_path}" ]; then
+            source_matches="$(grep -RInE --include='*.php' \
+              'delete_transient|set_transient|get_transient|wp_cache_(get|set|delete|flush)|flush_rewrite_rules|rank_math/sitemap|sitemap.{0,40}(cache|flush|invalidate|generate)|((cache|flush|invalidate|generate).{0,40}sitemap)' \
+              "${rank_math_path}" 2>/dev/null \
+              | awk 'NR <= 400 { print }')"
+            if [ -n "${source_matches}" ]; then
+              printf '%s\n' "${source_matches}"
+            else
+              echo "(no selected source pattern matched)"
+            fi
+          else
+            echo "Rank Math source directory is unavailable."
+          fi
+
+          echo
+          echo "== 6. Other read-only evidence =="
+          echo "Cron hooks whose names mention Rank Math, sitemap, cache, LiteSpeed, or Hostinger:"
+          cron_matches="$(wp_read cron event list \
+            --fields=hook,next_run_gmt,recurrence --format=csv 2>/dev/null \
+            | awk 'NR == 1 || tolower($0) ~ /rank.?math|sitemap|cache|litespeed|hostinger/' \
+            || true)"
+          if [ -n "${cron_matches}" ]; then
+            printf '%s\n' "${cron_matches}"
+          else
+            echo "(none or cron listing unavailable)"
+          fi
+          REMOTE_DIAGNOSTICS
+
+      - name: Inspect public sitemap cache headers without purge requests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PYTHON_DIAGNOSTICS'
+          import hashlib
+          import json
+          import urllib.request
+
+          base = "https://handytested.com"
+          sitemap_names = (
+              "sitemap_index.xml",
+              "post-sitemap.xml",
+              "page-sitemap.xml",
+              "category-sitemap.xml",
+          )
+          selected_headers = (
+              "server",
+              "cache-control",
+              "age",
+              "etag",
+              "expires",
+              "last-modified",
+              "vary",
+              "cf-cache-status",
+              "x-hcdn-cache-status",
+              "x-hostinger-cache",
+              "x-litespeed-cache",
+              "x-litespeed-cache-control",
+          )
+
+          def read(url):
+              request = urllib.request.Request(
+                  url,
+                  headers={"User-Agent": "HandyTested read-only cache-layer diagnostics"},
+              )
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  body = response.read()
+                  headers = {
+                      name: response.headers.get(name)
+                      for name in selected_headers
+                      if response.headers.get(name) is not None
+                  }
+                  return response.status, response.geturl(), body, headers
+
+          print("== Public XML headers and hashes: normal GET requests only ==")
+          for name in sitemap_names:
+              url = f"{base}/{name}"
+              first_status, first_url, first_body, first_headers = read(url)
+              second_status, second_url, second_body, second_headers = read(url)
+              print(
+                  json.dumps(
+                      {
+                          "sitemap": name,
+                          "first": {
+                              "status": first_status,
+                              "final_url": first_url,
+                              "bytes": len(first_body),
+                              "sha256": hashlib.sha256(first_body).hexdigest(),
+                              "selected_headers": first_headers,
+                          },
+                          "second": {
+                              "status": second_status,
+                              "final_url": second_url,
+                              "bytes": len(second_body),
+                              "sha256": hashlib.sha256(second_body).hexdigest(),
+                              "selected_headers": second_headers,
+                          },
+                          "same_body": first_body == second_body,
+                      },
+                      sort_keys=True,
+                  )
+              )
+          PYTHON_DIAGNOSTICS
+
+      - name: Summarize evidence categories
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat <<'SUMMARY'
+          Evidence sections collected for later classification:
+          1. Rank Math sitemap cache/transient
+          2. WordPress object cache/transient
+          3. Hostinger/server cache
+          4. rewrite/permalink
+          5. Rank Math configuration and installed-code behavior
+          6. other observed causes
+
+          This workflow reports evidence only. It does not purge, flush, regenerate,
+          update, delete, install, activate, deactivate, or edit anything.
+          SUMMARY
+
+      - name: Remove temporary SSH material
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          key="${HOME}/.ssh/handytested_hostinger"
+          known_hosts="${HOME}/.ssh/known_hosts"
+          if [ -f "${key}" ]; then
+            shred -u "${key}"
+          fi
+          if [ -f "${known_hosts}" ]; then
+            shred -u "${known_hosts}"
+          fi
