@@ -84,13 +84,29 @@ jobs:
             wp --path="${wp_path}" --skip-plugins --skip-themes "$@"
           }
 
+          db_prefix="$(wp_read db prefix)"
+          case "${db_prefix}" in
+            ''|*[!A-Za-z0-9_]*)
+              echo "Unexpected WordPress database prefix; refusing to build read-only queries." >&2
+              exit 1
+              ;;
+          esac
+
+          inspect_post_meta() {
+            post_id="$1"
+            wp_read db query \
+              "SELECT meta_key, meta_value FROM ${db_prefix}postmeta WHERE post_id = ${post_id} AND (LEFT(meta_key, 10) = 'rank_math_' OR meta_key = '_wp_old_slug') ORDER BY meta_key" \
+              --skip-column-names
+          }
+
           inspect_post() {
             slug="$1"
+            expected_type="${2:-any}"
             echo
-            printf '== Post: %s ==\n' "${slug}"
+            printf '== WordPress records for slug: %s ==\n' "${slug}"
             post_ids="$(wp_read post list \
-              --post_type=any \
-              --post_status=any \
+              --post_type="${expected_type}" \
+              --post_status=publish,draft,pending,private,future,trash \
               --name="${slug}" \
               --field=ID)"
             post_count="$(printf '%s\n' "${post_ids}" | awk 'NF { count++ } END { print count + 0 }')"
@@ -98,39 +114,34 @@ jobs:
               echo "No matching WordPress post was found."
               return
             fi
-            if [ "${post_count}" -ne 1 ]; then
-              printf 'Multiple IDs found: %s\n' "${post_ids}"
-              return
-            fi
+            printf 'Found %s matching record(s). Each record follows separately.\n' "${post_count}"
 
-            post_id="${post_ids}"
-            wp_read post get "${post_id}" \
-              --fields=ID,post_type,post_status,post_name,post_title,post_date,post_modified \
-              --format=table
-            printf 'Permalink: '
-            if ! wp_read post url "${post_id}"; then
-              echo "Unavailable for this status."
-            fi
+            for post_id in ${post_ids}; do
+              case "${post_id}" in
+                ''|*[!0-9]*)
+                  echo "Unexpected non-numeric post ID; refusing to query metadata." >&2
+                  exit 1
+                  ;;
+              esac
 
-            echo "Relevant Rank Math and WordPress metadata:"
-            wp_read eval '
-              $post_id = (int) $args[0];
-              $all_meta = get_post_meta($post_id);
-              $found = false;
-              foreach ($all_meta as $key => $values) {
-                  if (strpos($key, "rank_math_") !== 0 && $key !== "_wp_old_slug") {
-                      continue;
-                  }
-                  foreach ($values as $value) {
-                      $decoded = maybe_unserialize($value);
-                      echo $key . "\t" . wp_json_encode($decoded) . "\n";
-                      $found = true;
-                  }
-              }
-              if (!$found) {
-                  echo "(none)\n";
-              }
-            ' "${post_id}"
+              echo
+              printf '%s\n' "-- Record ID ${post_id} --"
+              wp_read post get "${post_id}" \
+                --fields=ID,post_type,post_status,post_name,post_title,post_date,post_modified \
+                --format=table
+              printf 'Permalink: '
+              if ! wp_read post url "${post_id}"; then
+                echo "Unavailable for this status."
+              fi
+
+              echo "Relevant Rank Math and WordPress metadata:"
+              post_meta="$(inspect_post_meta "${post_id}")"
+              if [ -n "${post_meta}" ]; then
+                printf '%s\n' "${post_meta}"
+              else
+                echo "(none)"
+              fi
+            done
           }
 
           for slug in \
@@ -145,38 +156,67 @@ jobs:
           done
 
           echo
-          echo "== Rank Math sitemap options (allowlisted keys only) =="
-          wp_read eval '
-            $settings = get_option("rank_math_options_sitemap", array());
-            $allowed = array(
-                "items_per_page",
-                "include_images",
-                "pt_post_sitemap",
-                "pt_page_sitemap",
-                "tax_category_sitemap",
-                "exclude_posts",
-                "exclude_terms"
-            );
-            foreach ($allowed as $key) {
-                $value = array_key_exists($key, $settings) ? $settings[$key] : "(not set)";
-                echo $key . "\t" . wp_json_encode($value) . "\n";
-            }
-          '
+          echo "== Rank Math option rows used for sitemap and robots settings =="
+          wp_read db query \
+            "SELECT option_name FROM ${db_prefix}options WHERE option_name IN ('rank-math-options-sitemap', 'rank-math-options-titles') ORDER BY option_name" \
+            --skip-column-names
 
           echo
-          echo "== Rank Math robots defaults (allowlisted keys only) =="
+          echo "== Rank Math sitemap and robots settings (filtered keys only) =="
           wp_read eval '
-            $settings = get_option("rank_math_options_titles", array());
-            $allowed = array("pt_post_robots", "pt_page_robots", "tax_category_robots");
-            foreach ($allowed as $key) {
-                $value = array_key_exists($key, $settings) ? $settings[$key] : "(not set)";
-                echo $key . "\t" . wp_json_encode($value) . "\n";
+            $option_names = array(
+                "rank-math-options-sitemap",
+                "rank-math-options-titles"
+            );
+            foreach ($option_names as $option_name) {
+                echo "-- " . $option_name . " --\n";
+                $settings = get_option($option_name, null);
+                if (!is_array($settings)) {
+                    echo "(option missing or not an array)\n";
+                    continue;
+                }
+
+                $found = false;
+                ksort($settings);
+                foreach ($settings as $key => $value) {
+                    $is_sitemap_key = in_array(
+                        $key,
+                        array(
+                            "items_per_page",
+                            "include_images",
+                            "include_featured_image",
+                            "authors_sitemap",
+                            "exclude_posts",
+                            "exclude_terms",
+                            "exclude_roles"
+                        ),
+                        true
+                    ) || preg_match("/^(pt_|tax_).*(sitemap|include_empty)$/", $key);
+                    $is_robots_key = strpos($key, "robots") !== false
+                        || strpos($key, "noindex_") === 0
+                        || in_array(
+                            $key,
+                            array(
+                                "disable_author_archives",
+                                "disable_date_archives",
+                                "noindex_empty_taxonomies"
+                            ),
+                            true
+                        );
+                    if (!$is_sitemap_key && !$is_robots_key) {
+                        continue;
+                    }
+                    echo $key . "\t" . wp_json_encode($value) . "\n";
+                    $found = true;
+                }
+                if (!$found) {
+                    echo "(no matching allowlisted keys)\n";
+                }
             }
           '
 
           echo
           echo "== Rank Math redirections mentioning target slugs =="
-          db_prefix="$(wp_read db prefix)"
           redirection_table="${db_prefix}rank_math_redirections"
           table_exists="$(wp_read db query \
             "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = '${redirection_table}'" \
@@ -190,44 +230,35 @@ jobs:
 
           echo
           echo "== Pinterest page =="
-          pinterest_id="$(wp_read post list \
-            --post_type=page --post_status=any --name=pinterest-connect --field=ID)"
-          if [ -n "${pinterest_id}" ]; then
-            wp_read post get "${pinterest_id}" \
-              --fields=ID,post_type,post_status,post_name,post_title,post_date,post_modified \
-              --format=table
-            wp_read eval '
-              $post_id = (int) $args[0];
-              foreach (get_post_meta($post_id) as $key => $values) {
-                  if (strpos($key, "rank_math_") !== 0) {
-                      continue;
-                  }
-                  foreach ($values as $value) {
-                      echo $key . "\t" . wp_json_encode(maybe_unserialize($value)) . "\n";
-                  }
-              }
-            ' "${pinterest_id}"
-          else
-            echo "Pinterest page was not found."
-          fi
+          inspect_post pinterest-connect page
 
           echo
           echo "== amazon-deals category =="
-          amazon_deals_id="$(wp_read term list category --slug=amazon-deals --field=term_id)"
-          if [ -n "${amazon_deals_id}" ]; then
-            wp_read term get category "${amazon_deals_id}" \
-              --fields=term_id,name,slug,count --format=table
-            wp_read eval '
-              $term_id = (int) $args[0];
-              foreach (get_term_meta($term_id) as $key => $values) {
-                  if (strpos($key, "rank_math_") !== 0) {
-                      continue;
-                  }
-                  foreach ($values as $value) {
-                      echo $key . "\t" . wp_json_encode(maybe_unserialize($value)) . "\n";
-                  }
-              }
-            ' "${amazon_deals_id}"
+          amazon_deals_ids="$(wp_read term list category --slug=amazon-deals --field=term_id)"
+          amazon_deals_count="$(printf '%s\n' "${amazon_deals_ids}" | awk 'NF { count++ } END { print count + 0 }')"
+          if [ "${amazon_deals_count}" -gt 0 ]; then
+            printf 'Found %s matching category record(s).\n' "${amazon_deals_count}"
+            for amazon_deals_id in ${amazon_deals_ids}; do
+              case "${amazon_deals_id}" in
+                ''|*[!0-9]*)
+                  echo "Unexpected non-numeric term ID; refusing to query metadata." >&2
+                  exit 1
+                  ;;
+              esac
+              echo
+              printf '%s\n' "-- Category term ID ${amazon_deals_id} --"
+              wp_read term get category "${amazon_deals_id}" \
+                --fields=term_id,name,slug,count --format=table
+              echo "Relevant Rank Math metadata:"
+              term_meta="$(wp_read db query \
+                "SELECT meta_key, meta_value FROM ${db_prefix}termmeta WHERE term_id = ${amazon_deals_id} AND LEFT(meta_key, 10) = 'rank_math_' ORDER BY meta_key" \
+                --skip-column-names)"
+              if [ -n "${term_meta}" ]; then
+                printf '%s\n' "${term_meta}"
+              else
+                echo "(none)"
+              fi
+            done
           else
             echo "amazon-deals category was not found."
           fi
