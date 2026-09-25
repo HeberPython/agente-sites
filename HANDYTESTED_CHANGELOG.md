@@ -1,5 +1,12 @@
 # HandyTested changelog
 
+## 2026-09-25: Phase 5 Rank Math post-sitemap reconciliation
+
+- Resolved the primary sitemap inconsistency through `HandyTested - Phase 5 Rank Math Post Sitemap Repair` at commit `d83991c`. Read-only diagnostics had confirmed stale Rank Math generated sitemap storage: WordPress had 38 published posts while `post-sitemap.xml` had 35 URLs, omitting five published guides and retaining two draft promotions.
+- After exact preflight guards, the repair used the installed Rank Math 1.0.279 mechanism `RankMath\Sitemap\Cache::invalidate_storage("post")` and `invalidate_storage("1")`, with `rank_math/pre_clear_cache` blocking external cache clearing. It did not change posts, slugs, canonicals, plugin settings, permalinks or editorial content.
+- The rebuilt sitemap received a new hash and now exactly equals the 38-post published WordPress set. Added: `best-robot-vacuums-for-pet-hair-under-300`, `best-indoor-hydroponic-gardening-systems-under-300`, `best-portable-outdoor-grills-under-300-for-2025`, `best-electric-lawn-mowers-under-300-for-2025`, and `best-wireless-earbuds-under-300-for-2025`. Removed: draft promotions `top-father-s-day-gifts-for-2026-great-deals-and-ideas-2026-07-31` and `discover-the-best-amazon-deals-this-summer-2026-08-05`. No legitimate published URL disappeared.
+- Hostinger/plugin cache purge (Etapa B) and rewrite/permalink flush (Etapa C) were not necessary. Do not rerun the repair, purge Hostinger or flush rewrites while the 38/38 sets remain equal. Pinterest and empty-taxonomy cleanup remain separate low-priority work.
+
 ## 2026-09-21: Phase 5 technical and site-consistency releases (in progress)
 
 - Homepage Top Picks / all 38 posts: stale excerpts and card copy replaced with current research-led WordPress titles/excerpts; guarded [dry-run 35658793524](https://github.com/HeberPython/agente-sites/actions/runs/35658793524), [apply 35658847655](https://github.com/HeberPython/agente-sites/actions/runs/35658847655), backup `10666459030`; public REST, homepage and archive checked.

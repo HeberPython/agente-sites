@@ -1,12 +1,12 @@
 # HandyTested Phase 5 checkpoint (2026-09-21)
 
-**PHASE 5 AUTOMATED WORK COMPLETE — MANUAL ADMIN ACTIONS REQUIRED.** Phase 5 as a whole is not complete: sitemap, AdSense account settings, Astra Customizer, Pinterest diagnostics, analytics business events and media rights still need private controls or owner evidence. Phase 4's 37 posts plus Paint Sprayers are complete and must not be redone without a concrete public regression. No batch is left partly applied. Preserve unrelated untracked user files `astra.zip`, `astra_theme/`, `ht_install_astra.php`.
+**PHASE 5 OPERATIONALLY STABLE — PRIMARY POST SITEMAP RECONCILED.** The critical Rank Math inconsistency is resolved: WordPress and `post-sitemap.xml` now contain the same 38 published posts. Remaining work is follow-up validation, monetization, measurement, accessibility and asset governance; none is currently classified P0. Phase 4's 37 posts plus Paint Sprayers are complete and must not be redone without a concrete public regression. No batch is left partly applied. Preserve unrelated untracked user files `astra.zip`, `astra_theme/`, `ht_install_astra.php`.
 
 ## Completed automatically
 
 - Public 57-URL baseline and focused Amazon, internal-link, image and intent inventories. See `HANDYTESTED_PHASE5_REPORT.md` and companion Phase 5 documents.
 - 38 excerpts/current homepage Top Picks; eight category descriptions; honest Value Picks page/labels; home SEO; named Top Picks image links; 17 safe featured-image alt texts.
-- Public sitemap recheck: 38 published posts versus 35 sitemap URLs, five missing and two stale unpublished entries. Cache-busted XML unchanged; no unsupported Rank Math edit made.
+- Historical sitemap diagnosis: 38 published posts versus 35 sitemap URLs, five missing and two stale unpublished entries. Cache-busted XML was unchanged before the targeted repair.
 - 111 current tagged Amazon.com search URLs audited for destination/tag; zero verified direct ASIN links. No fabricated prices, ratings or availability.
 - Sampled responsive, schema, robots, disclosure, indexability, Pinterest anonymous view and unthrottled lab performance. Intermittent 320px AdSense iframe overflow reproduced once.
 - Earbuds, smart-home and kitchen intent overlaps reviewed; no unsupported merge/redirect.
@@ -21,6 +21,7 @@
 - Contrast mapped to site custom CSS global orange: normal article/footer links and pagination are 3.99:1 on white (3.79:1 on `#f9f9f9`), including white text on orange active page; hovered CTA `#c73208` passes on white. A candidate `#c23b0a` passes on light backgrounds but fails as text on dark footer; scoped Customizer work required. Home embedded CTA/footer styles pass in samples.
 - Analytics: one Site Kit `gtag/js`, a sampled GA4 `page_view` request accepted HTTP 204, no public `gtm.js`, and no requested `affiliate_click`, `amazon_click`, `search_use` or `category_click` event in sampled inline code/dataLayer. No duplicate tag or unvalidated business event added.
 - Targeted 25-combination browser QA at 320/375/768/1280/1920px (home, Cordless Drills, Tools category, search, How We Review): no document-level overflow, one H1, parseable sampled JSON-LD, one GA and AdSense loader each; self-canonicals on publishable pages, article disclosure/CTA and internal table scroll intact. Search is noindex with no canonical in sample. This was not a new 57-URL crawl.
+- Rank Math post-sitemap repair completed through `HandyTested - Phase 5 Rank Math Post Sitemap Repair` at commit `d83991c`. After read-only guards confirmed the known 38/35 state, the workflow called `RankMath\Sitemap\Cache::invalidate_storage("post")` and `invalidate_storage("1")` with `rank_math/pre_clear_cache` preventing external cache cleanup. The rebuilt XML has a new hash and exactly matches all 38 published posts: the five omitted guides were added, both draft promotion URLs were removed, and no legitimate published URL disappeared. Hostinger purge and rewrite/permalink flush were not needed and must not be run for this resolved incident.
 
 ## Published, validated and backups
 
@@ -40,19 +41,19 @@
 
 ## Next exact action
 
-**With WordPress admin access, inspect Rank Math SEO > Sitemap Settings > General exclusions and affected post robots/canonical, refresh through the supported Links Per Sitemap and Permalinks saves, clear sitemap cache, then compare live XML against all 38 published posts.** Do not mark this resolved until the five missing posts appear, the two draft URLs disappear, and Pinterest/empty amazon-deals sitemap treatment is verified. After that perform Search Console inspection, AdSense placement changes, Astra/footer/contrast correction, Pinterest diagnostic check, GA4 event instrumentation/validation, Amazon SiteStripe verification and licensed image replacements in the priority order below. Every public admin change needs a before-state backup and live QA. No remaining safe automated edit is established with current REST/browser access; do not invent one. Do not re-run the healthy 57-URL crawl or five citation repairs absent a regression.
+**Validate the corrected sitemap in Google Search Console, then prioritize AdSense placement/CLS controls and exact Amazon listing verification.** Do not rerun the Rank Math repair, purge Hostinger cache or flush rewrites while the public post set remains equal to the 38 published posts. Every future public admin change needs a before-state backup and live QA. Do not re-run the healthy 57-URL crawl or five citation repairs absent a regression.
 
-## Manual admin actions, not global blockers
+## Remaining Phase 5 priorities
 
-1. **MANUAL RANK MATH ACTION REQUIRED:** WordPress Rank Math Sitemap Settings/Permalinks and server/CDN cache; reconcile five missing/two stale post URLs and noindex Pinterest/empty amazon-deals entries. Details and exact slugs in the report. The public REST lists a Rank Math `updateSettings` write route but exposes no read schema for the current sitemap values; no undocumented write was made.
-2. **MANUAL SEARCH CONSOLE ACTION REQUIRED:** inspect corrected sitemap, home, five missing posts, four stale-index candidates, three main categories and three trust pages in the report's order.
-3. **MANUAL ADSENSE ACTION REQUIRED:** Ads > By site > HandyTested > Edit; preview/exclude top banner placement and comparison-table area; review Ad intents text links and Vignette overlay. Re-measure after account changes. Do not CSS-hide ads.
-4. **MANUAL ASTRA ACTION REQUIRED:** Appearance > Customize > Footer Builder/Additional CSS; one consistent footer and scoped contrast correction. Back up current settings and test light/dark states. Do not edit untracked theme files.
-5. **MANUAL PINTEREST ACTION REQUIRED:** confirm OAuth redirect/callback dependency and gate authenticated token/board diagnostics; keep noindex and remove from sitemap via supported setting.
-6. **MANUAL ANALYTICS VALIDATION REQUIRED:** use existing Site Kit tag and approved sitewide hook for four business events, then GA4 DebugView/Realtime; one sampled page_view request is not proof of account reports.
-7. **MANUAL AMAZON SITESTRIPE ACTION REQUIRED:** exact US listing verification before replacing any of 111 correctly tagged searches.
-8. **LICENSE/REPLACEMENT REQUIRED:** document rights and source appropriate replacements for 11 problematic/uncertain featured images; do not invent alt or license.
+- **P0 — none identified.** The main indexation defect is resolved and no current evidence shows a critical outage, loss of the published post set or broken revenue integration.
+- **P1 — Search Console validation:** submit/revalidate the corrected sitemap and inspect the priority URLs already listed in the report.
+- **P1 — AdSense placement/CLS:** use supported account preview/excluded-area controls for the top insertion and comparison-table placement; do not hide ads with CSS.
+- **P1 — Amazon exact-listing verification:** validate US listings and tracking through SiteStripe before replacing any of the 111 correctly tagged search links.
+- **P1 — media rights:** document rights or provide owned/licensed replacements for the 11 uncertain images and the wider undocumented image set.
+- **P2 — analytics, accessibility and template polish:** add/validate business events once, fix scoped orange-link contrast and duplicate home footer through supported controls, and complete field performance/accessibility checks.
+- **P2 — discovery cleanup:** review orphan-topic linking, repeated paginated archive metadata and inconclusive external citations only where evidence warrants a change.
+- **P3 — Pinterest and empty taxonomy cleanup:** keep `pinterest-connect` low priority as requested; review its callback/sitemap treatment and the empty `amazon-deals` category separately from the resolved post sitemap.
 
 ## Validated and unresolved
 
-Validated: the previous guarded releases and backups in the table; final REST/XML and Amazon/disclosure comparison; targeted viewport/CLS/contrast/analytics browser QA. No new public write or backup was needed for the latest read-only diagnostics. The sitemap inconsistency is still live. Eleven media alt values remain blank pending accurate images, all 38 media licenses are undocumented, and 18 external citation responses remain inconclusive (not declared broken). The 320px document overflow was not reproduced in 24 new reloads; in-table ad placement and top-ad CLS were. A single unthrottled lab run is not field CWV; INP, full accessibility, orange-link/pagination contrast, account analytics events and Astra footer remain unresolved. Sitewide internal GET link status has been audited. Do not call the entire Phase 5 complete until admin actions are validated publicly.
+Validated: the previous guarded releases and backups in the table; final REST/XML and Amazon/disclosure comparison; targeted viewport/CLS/contrast/analytics browser QA; and the post-sitemap reconciliation to 38/38 with a changed XML hash. Eleven media alt values remain blank pending accurate images, all 38 media licenses are undocumented, and 18 external citation responses remain inconclusive (not declared broken). The 320px document overflow was not reproduced in 24 new reloads; in-table ad placement and top-ad CLS were. A single unthrottled lab run is not field CWV; INP, full accessibility, orange-link/pagination contrast, account analytics events and Astra footer remain unresolved. Sitewide internal GET link status has been audited. These follow-ups do not prevent operational closure of Phase 5; each remains subject to its own supported access and validation.
