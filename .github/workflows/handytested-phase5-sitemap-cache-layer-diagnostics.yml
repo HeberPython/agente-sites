@@ -49,6 +49,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          remote_evidence="${RUNNER_TEMP}/handytested-remote-evidence.log"
           ssh \
             -i "${HOME}/.ssh/handytested_hostinger" \
             -p "${HT_SSH_PORT}" \
@@ -56,7 +57,8 @@ jobs:
             -o IdentitiesOnly=yes \
             -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=20 \
-            "${HT_SSH_USER}@${HT_SSH_HOST}" 'bash -s' <<'REMOTE_DIAGNOSTICS'
+            "${HT_SSH_USER}@${HT_SSH_HOST}" 'bash -s' \
+            <<'REMOTE_DIAGNOSTICS' | tee "${remote_evidence}"
           set -euo pipefail
 
           wp_configs="$(
@@ -114,8 +116,10 @@ jobs:
             --skip-column-names)"
           if [ -n "${rank_math_transients}" ]; then
             printf '%s\n' "${rank_math_transients}"
+            echo "HT_EVIDENCE|rank_math_cache|found|Rank Math or sitemap transient rows exist in wp_options."
           else
             echo "(none in the options table; this does not exclude an external object cache)"
+            echo "HT_EVIDENCE|rank_math_cache|none|No matching Rank Math or sitemap transient row was found in wp_options."
           fi
 
           echo
@@ -199,11 +203,20 @@ jobs:
           else
             echo "WP_CACHE: (not defined)"
           fi
-          wp_read eval '
+          object_cache_state="$(wp_read eval '
             global $wp_object_cache;
             echo "External object cache: " . (wp_using_ext_object_cache() ? "true" : "false") . "\n";
             echo "Object cache class: " . (is_object($wp_object_cache) ? get_class($wp_object_cache) : "none") . "\n";
-          '
+          ')"
+          printf '%s\n' "${object_cache_state}"
+          case "${object_cache_state}" in
+            *'External object cache: true'*)
+              echo "HT_EVIDENCE|wordpress_object_cache|found|WordPress reports an external object cache."
+              ;;
+            *)
+              echo "HT_EVIDENCE|wordpress_object_cache|none|WordPress does not report an external object cache."
+              ;;
+          esac
 
           echo
           echo "WordPress drop-ins:"
@@ -227,6 +240,14 @@ jobs:
               else
                 echo "(no selected identity header matched)"
               fi
+              case "${dropin}" in
+                object-cache.php)
+                  echo "HT_EVIDENCE|wordpress_object_cache|found|The object-cache.php drop-in exists."
+                  ;;
+                advanced-cache.php)
+                  echo "HT_EVIDENCE|hostinger_server_cache|found|The advanced-cache.php page-cache drop-in exists."
+                  ;;
+              esac
             else
               printf '%s: absent\n' "${dropin}"
             fi
@@ -238,6 +259,10 @@ jobs:
             --fields=name,status,version --format=csv \
             | awk 'NR == 1 || tolower($0) ~ /cache|litespeed|hostinger|redis|memcache|performance|cdn/')"
           printf '%s\n' "${cache_plugins}"
+          cache_plugin_count="$(printf '%s\n' "${cache_plugins}" | awk 'NF { count++ } END { print count + 0 }')"
+          if [ "${cache_plugin_count}" -gt 1 ]; then
+            echo "HT_EVIDENCE|hostinger_server_cache|found|At least one cache or hosting integration plugin is installed."
+          fi
 
           echo
           echo "Database transient rows for common cache providers (values omitted):"
@@ -246,6 +271,7 @@ jobs:
             --skip-column-names)"
           if [ -n "${provider_transients}" ]; then
             printf '%s\n' "${provider_transients}"
+            echo "HT_EVIDENCE|wordpress_object_cache|found|Cache-provider transient rows exist in wp_options."
           else
             echo "(none in the options table)"
           fi
@@ -266,8 +292,10 @@ jobs:
             | awk 'NR <= 250 { print }')"
           if [ -n "${cache_directories}" ]; then
             printf '%s\n' "${cache_directories}"
+            echo "HT_EVIDENCE|hostinger_server_cache|found|Cache-related directories exist under wp-content; their presence alone does not prove ownership of stale XML."
           else
             echo "(none)"
+            echo "HT_EVIDENCE|hostinger_server_cache|inconclusive|No cache-related directory was found under wp-content."
           fi
 
           echo
@@ -303,6 +331,7 @@ jobs:
           if ! wp_read rewrite list --format=count; then
             echo "Unavailable from this WP-CLI build."
           fi
+          echo "HT_EVIDENCE|rewrite_permalink|inconclusive|Permalink and rewrite state was collected without a flush; collection alone does not prove a rewrite fault."
 
           echo
           echo "Selected .htaccess directives related to rewrite/cache only:"
@@ -330,11 +359,15 @@ jobs:
               | awk 'NR <= 400 { print }')"
             if [ -n "${source_matches}" ]; then
               printf '%s\n' "${source_matches}"
+              echo "HT_EVIDENCE|rank_math_configuration|found|Filtered settings and installed source references for sitemap generation or invalidation were collected."
+              echo "HT_EVIDENCE|rank_math_cache|inconclusive|Installed Rank Math source contains cache or invalidation references; this alone does not prove an active stale cache."
             else
               echo "(no selected source pattern matched)"
+              echo "HT_EVIDENCE|rank_math_configuration|inconclusive|Settings were collected, but no selected generation or invalidation source pattern matched."
             fi
           else
             echo "Rank Math source directory is unavailable."
+            echo "HT_EVIDENCE|rank_math_configuration|inconclusive|Rank Math source directory was unavailable for inspection."
           fi
 
           echo
@@ -346,8 +379,15 @@ jobs:
             || true)"
           if [ -n "${cron_matches}" ]; then
             printf '%s\n' "${cron_matches}"
+            cron_count="$(printf '%s\n' "${cron_matches}" | awk 'NF { count++ } END { print count + 0 }')"
+            if [ "${cron_count}" -gt 1 ]; then
+              echo "HT_EVIDENCE|other_cause|found|Relevant cron hooks were found."
+            else
+              echo "HT_EVIDENCE|other_cause|none|No relevant cron hook was found."
+            fi
           else
             echo "(none or cron listing unavailable)"
+            echo "HT_EVIDENCE|other_cause|inconclusive|Cron evidence was absent or unavailable."
           fi
           REMOTE_DIAGNOSTICS
 
@@ -358,6 +398,8 @@ jobs:
           python - <<'PYTHON_DIAGNOSTICS'
           import hashlib
           import json
+          import os
+          import urllib.error
           import urllib.request
 
           base = "https://handytested.com"
@@ -382,66 +424,185 @@ jobs:
               "x-litespeed-cache-control",
           )
 
+          def safe_headers(response):
+              headers = getattr(response, "headers", None)
+              if headers is None:
+                  return {}
+              return {
+                  name: headers.get(name)
+                  for name in selected_headers
+                  if headers.get(name) is not None
+              }
+
           def read(url):
               request = urllib.request.Request(
                   url,
                   headers={"User-Agent": "HandyTested read-only cache-layer diagnostics"},
               )
-              with urllib.request.urlopen(request, timeout=30) as response:
-                  body = response.read()
-                  headers = {
-                      name: response.headers.get(name)
-                      for name in selected_headers
-                      if response.headers.get(name) is not None
+              try:
+                  with urllib.request.urlopen(request, timeout=30) as response:
+                      body = response.read()
+                      return {
+                          "outcome": "success",
+                          "status": response.status,
+                          "final_url": response.geturl(),
+                          "bytes": len(body),
+                          "sha256": hashlib.sha256(body).hexdigest(),
+                          "selected_headers": safe_headers(response),
+                          "diagnostic": "Public XML was returned normally.",
+                      }
+              except urllib.error.HTTPError as error:
+                  if error.code == 403:
+                      diagnostic = (
+                          "Possible WAF/CDN/Hostinger blocking of the identifiable "
+                          "GitHub Actions runner request. No bypass was attempted."
+                      )
+                  elif error.code == 429:
+                      diagnostic = (
+                          "The public endpoint rate-limited the diagnostic request. "
+                          "No retry or bypass was attempted."
+                      )
+                  elif 500 <= error.code <= 599:
+                      diagnostic = (
+                          "The public endpoint returned a server-side error. "
+                          "No retry or bypass was attempted."
+                      )
+                  else:
+                      diagnostic = "The public endpoint returned an HTTP error."
+                  return {
+                      "outcome": "http_error",
+                      "status": error.code,
+                      "final_url": error.geturl(),
+                      "selected_headers": safe_headers(error),
+                      "diagnostic": diagnostic,
                   }
-                  return response.status, response.geturl(), body, headers
+              except (urllib.error.URLError, TimeoutError) as error:
+                  return {
+                      "outcome": "transport_error",
+                      "status": None,
+                      "final_url": url,
+                      "selected_headers": {},
+                      "diagnostic": f"Transport error: {type(error).__name__}",
+                  }
 
-          print("== Public XML headers and hashes: normal GET requests only ==")
+          print("== Public XML headers and hashes: one normal GET per URL ==")
+          results = []
           for name in sitemap_names:
               url = f"{base}/{name}"
-              first_status, first_url, first_body, first_headers = read(url)
-              second_status, second_url, second_body, second_headers = read(url)
-              print(
-                  json.dumps(
-                      {
-                          "sitemap": name,
-                          "first": {
-                              "status": first_status,
-                              "final_url": first_url,
-                              "bytes": len(first_body),
-                              "sha256": hashlib.sha256(first_body).hexdigest(),
-                              "selected_headers": first_headers,
-                          },
-                          "second": {
-                              "status": second_status,
-                              "final_url": second_url,
-                              "bytes": len(second_body),
-                              "sha256": hashlib.sha256(second_body).hexdigest(),
-                              "selected_headers": second_headers,
-                          },
-                          "same_body": first_body == second_body,
-                      },
-                      sort_keys=True,
-                  )
-              )
+              result = {"sitemap": name, **read(url)}
+              results.append(result)
+              print(json.dumps(result, sort_keys=True))
+
+          output_path = os.path.join(
+              os.environ["RUNNER_TEMP"], "handytested-http-evidence.json"
+          )
+          with open(output_path, "w", encoding="utf-8") as output:
+              json.dump(results, output, sort_keys=True)
           PYTHON_DIAGNOSTICS
 
       - name: Summarize evidence categories
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
-          cat <<'SUMMARY'
-          Evidence sections collected for later classification:
-          1. Rank Math sitemap cache/transient
-          2. WordPress object cache/transient
-          3. Hostinger/server cache
-          4. rewrite/permalink
-          5. Rank Math configuration and installed-code behavior
-          6. other observed causes
+          python - <<'PYTHON_SUMMARY'
+          import json
+          import os
 
-          This workflow reports evidence only. It does not purge, flush, regenerate,
-          update, delete, install, activate, deactivate, or edit anything.
-          SUMMARY
+          remote_path = os.path.join(
+              os.environ["RUNNER_TEMP"], "handytested-remote-evidence.log"
+          )
+          http_path = os.path.join(
+              os.environ["RUNNER_TEMP"], "handytested-http-evidence.json"
+          )
+
+          markers = {}
+          if os.path.exists(remote_path):
+              with open(remote_path, encoding="utf-8", errors="replace") as source:
+                  for raw_line in source:
+                      line = raw_line.strip()
+                      if not line.startswith("HT_EVIDENCE|"):
+                          continue
+                      parts = line.split("|", 3)
+                      if len(parts) != 4:
+                          continue
+                      _, category, status, detail = parts
+                      markers.setdefault(category, []).append((status, detail))
+
+          http_results = []
+          if os.path.exists(http_path):
+              with open(http_path, encoding="utf-8") as source:
+                  http_results = json.load(source)
+
+          http_blocking = [
+              result
+              for result in http_results
+              if result.get("status") in (403, 429)
+              or (
+                  isinstance(result.get("status"), int)
+                  and 500 <= result["status"] <= 599
+              )
+          ]
+          if http_blocking:
+              details = "; ".join(
+                  f"{item['sitemap']}: HTTP {item.get('status')}"
+                  for item in http_blocking
+              )
+              markers.setdefault("hostinger_server_cache", []).append(
+                  (
+                      "found",
+                      "Public boundary returned blocking/server responses ("
+                      + details
+                      + "); this is evidence of a WAF/CDN/server layer, not proof "
+                      "that it owns the stale XML.",
+                  )
+              )
+
+          categories = (
+              ("rank_math_cache", "Rank Math sitemap cache/transient"),
+              ("wordpress_object_cache", "WordPress object cache/transient"),
+              ("hostinger_server_cache", "Hostinger/server cache"),
+              ("rewrite_permalink", "rewrite/permalink"),
+              ("rank_math_configuration", "configuração Rank Math"),
+              ("other_cause", "outra causa identificada"),
+          )
+          status_labels = {
+              "found": "evidência encontrada",
+              "none": "sem evidência",
+              "inconclusive": "inconclusivo",
+          }
+          priority = {"found": 3, "inconclusive": 2, "none": 1}
+
+          print("== Evidence classification ==")
+          for key, label in categories:
+              entries = markers.get(key, [])
+              if not entries:
+                  status = "inconclusive"
+                  details = "A etapa correspondente não produziu evidência utilizável."
+              else:
+                  status = max(entries, key=lambda item: priority.get(item[0], 0))[0]
+                  details = " ".join(detail for _, detail in entries)
+              print(f"{label}: {status_labels.get(status, 'inconclusivo')}")
+              print(f"  {details}")
+
+          if not http_results:
+              print(
+                  "HTTP público: inconclusivo; nenhum resultado HTTP estruturado "
+                  "ficou disponível para o resumo."
+              )
+          else:
+              print("HTTP público:")
+              for result in http_results:
+                  print(
+                      f"  {result['sitemap']}: status={result.get('status')} "
+                      f"outcome={result.get('outcome')} - {result.get('diagnostic')}"
+                  )
+
+          print(
+              "Read-only confirmation: no purge, flush, regeneration, update, "
+              "delete, install, activation, deactivation, or remote file edit was run."
+          )
+          PYTHON_SUMMARY
 
       - name: Remove temporary SSH material
         if: always()
