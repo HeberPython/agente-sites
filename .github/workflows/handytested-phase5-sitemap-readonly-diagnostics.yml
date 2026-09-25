@@ -1,0 +1,385 @@
+name: HandyTested - Phase 5 Sitemap Read-Only Diagnostics
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HT_SSH_HOST: ${{ secrets.HT_SSH_HOST }}
+      HT_SSH_PORT: ${{ secrets.HT_SSH_PORT }}
+      HT_SSH_USER: ${{ secrets.HT_SSH_USER }}
+      HT_SSH_PRIVATE_KEY: ${{ secrets.HT_SSH_PRIVATE_KEY }}
+
+    steps:
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate required SSH settings
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in HT_SSH_HOST HT_SSH_PORT HT_SSH_USER HT_SSH_PRIVATE_KEY; do
+            if [ -z "${!name:-}" ]; then
+              echo "Required repository secret is unavailable: ${name}" >&2
+              exit 1
+            fi
+          done
+
+      - name: Configure temporary SSH credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p "${HOME}/.ssh"
+          printf '%s\n' "${HT_SSH_PRIVATE_KEY}" > "${HOME}/.ssh/handytested_hostinger"
+          chmod 600 "${HOME}/.ssh/handytested_hostinger"
+          ssh-keyscan -p "${HT_SSH_PORT}" -H "${HT_SSH_HOST}" > "${HOME}/.ssh/known_hosts"
+          chmod 600 "${HOME}/.ssh/known_hosts"
+          echo "Temporary SSH credentials configured."
+
+      - name: Inspect WordPress and Rank Math sitemap state
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh \
+            -i "${HOME}/.ssh/handytested_hostinger" \
+            -p "${HT_SSH_PORT}" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=20 \
+            "${HT_SSH_USER}@${HT_SSH_HOST}" 'bash -s' <<'REMOTE_DIAGNOSTICS'
+          set -euo pipefail
+
+          wp_configs="$(
+            find "${HOME}" -maxdepth 8 -type f -name wp-config.php \
+              -path '*handytested.com*' -print 2>/dev/null
+          )"
+          if [ -z "${wp_configs}" ]; then
+            echo "No wp-config.php for handytested.com was found under the remote HOME." >&2
+            exit 1
+          fi
+          wp_config_count="$(printf '%s\n' "${wp_configs}" | awk 'NF { count++ } END { print count + 0 }')"
+          if [ "${wp_config_count}" -ne 1 ]; then
+            echo "Expected one HandyTested installation, found ${wp_config_count}; refusing to choose." >&2
+            exit 1
+          fi
+          wp_path="$(cd -- "$(dirname -- "${wp_configs}")" && pwd -P)"
+          printf 'WordPress path: %s\n' "${wp_path}"
+
+          if ! command -v wp >/dev/null 2>&1; then
+            echo "WP-CLI is not available in the remote PATH." >&2
+            exit 1
+          fi
+
+          wp_read() {
+            wp --path="${wp_path}" --skip-plugins --skip-themes "$@"
+          }
+
+          inspect_post() {
+            slug="$1"
+            echo
+            printf '== Post: %s ==\n' "${slug}"
+            post_ids="$(wp_read post list \
+              --post_type=any \
+              --post_status=any \
+              --name="${slug}" \
+              --field=ID)"
+            post_count="$(printf '%s\n' "${post_ids}" | awk 'NF { count++ } END { print count + 0 }')"
+            if [ "${post_count}" -eq 0 ]; then
+              echo "No matching WordPress post was found."
+              return
+            fi
+            if [ "${post_count}" -ne 1 ]; then
+              printf 'Multiple IDs found: %s\n' "${post_ids}"
+              return
+            fi
+
+            post_id="${post_ids}"
+            wp_read post get "${post_id}" \
+              --fields=ID,post_type,post_status,post_name,post_title,post_date,post_modified \
+              --format=table
+            printf 'Permalink: '
+            if ! wp_read post url "${post_id}"; then
+              echo "Unavailable for this status."
+            fi
+
+            echo "Relevant Rank Math and WordPress metadata:"
+            wp_read eval '
+              $post_id = (int) $args[0];
+              $all_meta = get_post_meta($post_id);
+              $found = false;
+              foreach ($all_meta as $key => $values) {
+                  if (strpos($key, "rank_math_") !== 0 && $key !== "_wp_old_slug") {
+                      continue;
+                  }
+                  foreach ($values as $value) {
+                      $decoded = maybe_unserialize($value);
+                      echo $key . "\t" . wp_json_encode($decoded) . "\n";
+                      $found = true;
+                  }
+              }
+              if (!$found) {
+                  echo "(none)\n";
+              }
+            ' "${post_id}"
+          }
+
+          for slug in \
+            best-robot-vacuums-for-pet-hair-under-300 \
+            best-indoor-hydroponic-gardening-systems-under-300 \
+            best-portable-outdoor-grills-under-300-for-2025 \
+            best-electric-lawn-mowers-under-300-for-2025 \
+            best-wireless-earbuds-under-300-for-2025 \
+            top-father-s-day-gifts-for-2026-great-deals-and-ideas-2026-07-31 \
+            discover-the-best-amazon-deals-this-summer-2026-08-05; do
+            inspect_post "${slug}"
+          done
+
+          echo
+          echo "== Rank Math sitemap options (allowlisted keys only) =="
+          wp_read eval '
+            $settings = get_option("rank_math_options_sitemap", array());
+            $allowed = array(
+                "items_per_page",
+                "include_images",
+                "pt_post_sitemap",
+                "pt_page_sitemap",
+                "tax_category_sitemap",
+                "exclude_posts",
+                "exclude_terms"
+            );
+            foreach ($allowed as $key) {
+                $value = array_key_exists($key, $settings) ? $settings[$key] : "(not set)";
+                echo $key . "\t" . wp_json_encode($value) . "\n";
+            }
+          '
+
+          echo
+          echo "== Rank Math robots defaults (allowlisted keys only) =="
+          wp_read eval '
+            $settings = get_option("rank_math_options_titles", array());
+            $allowed = array("pt_post_robots", "pt_page_robots", "tax_category_robots");
+            foreach ($allowed as $key) {
+                $value = array_key_exists($key, $settings) ? $settings[$key] : "(not set)";
+                echo $key . "\t" . wp_json_encode($value) . "\n";
+            }
+          '
+
+          echo
+          echo "== Rank Math redirections mentioning target slugs =="
+          db_prefix="$(wp_read db prefix)"
+          redirection_table="${db_prefix}rank_math_redirections"
+          table_exists="$(wp_read db query \
+            "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = '${redirection_table}'" \
+            --skip-column-names)"
+          if [ "${table_exists}" = "1" ]; then
+            wp_read db query \
+              "SELECT id, status, header_code, url_to, sources FROM ${redirection_table} WHERE sources REGEXP 'best-robot-vacuums-for-pet-hair-under-300|best-indoor-hydroponic-gardening-systems-under-300|best-portable-outdoor-grills-under-300-for-2025|best-electric-lawn-mowers-under-300-for-2025|best-wireless-earbuds-under-300-for-2025|top-father-s-day-gifts-for-2026-great-deals-and-ideas-2026-07-31|discover-the-best-amazon-deals-this-summer-2026-08-05' OR url_to REGEXP 'best-robot-vacuums-for-pet-hair-under-300|best-indoor-hydroponic-gardening-systems-under-300|best-portable-outdoor-grills-under-300-for-2025|best-electric-lawn-mowers-under-300-for-2025|best-wireless-earbuds-under-300-for-2025|top-father-s-day-gifts-for-2026-great-deals-and-ideas-2026-07-31|discover-the-best-amazon-deals-this-summer-2026-08-05'"
+          else
+            echo "Rank Math redirections table is not present."
+          fi
+
+          echo
+          echo "== Pinterest page =="
+          pinterest_id="$(wp_read post list \
+            --post_type=page --post_status=any --name=pinterest-connect --field=ID)"
+          if [ -n "${pinterest_id}" ]; then
+            wp_read post get "${pinterest_id}" \
+              --fields=ID,post_type,post_status,post_name,post_title,post_date,post_modified \
+              --format=table
+            wp_read eval '
+              $post_id = (int) $args[0];
+              foreach (get_post_meta($post_id) as $key => $values) {
+                  if (strpos($key, "rank_math_") !== 0) {
+                      continue;
+                  }
+                  foreach ($values as $value) {
+                      echo $key . "\t" . wp_json_encode(maybe_unserialize($value)) . "\n";
+                  }
+              }
+            ' "${pinterest_id}"
+          else
+            echo "Pinterest page was not found."
+          fi
+
+          echo
+          echo "== amazon-deals category =="
+          amazon_deals_id="$(wp_read term list category --slug=amazon-deals --field=term_id)"
+          if [ -n "${amazon_deals_id}" ]; then
+            wp_read term get category "${amazon_deals_id}" \
+              --fields=term_id,name,slug,count --format=table
+            wp_read eval '
+              $term_id = (int) $args[0];
+              foreach (get_term_meta($term_id) as $key => $values) {
+                  if (strpos($key, "rank_math_") !== 0) {
+                      continue;
+                  }
+                  foreach ($values as $value) {
+                      echo $key . "\t" . wp_json_encode(maybe_unserialize($value)) . "\n";
+                  }
+              }
+            ' "${amazon_deals_id}"
+          else
+            echo "amazon-deals category was not found."
+          fi
+          REMOTE_DIAGNOSTICS
+
+      - name: Compare public WordPress state with sitemap XML
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PYTHON_DIAGNOSTICS'
+          import hashlib
+          import json
+          import time
+          import urllib.request
+          import xml.etree.ElementTree as ET
+
+          base = "https://handytested.com"
+          target_post_slugs = (
+              "best-robot-vacuums-for-pet-hair-under-300",
+              "best-indoor-hydroponic-gardening-systems-under-300",
+              "best-portable-outdoor-grills-under-300-for-2025",
+              "best-electric-lawn-mowers-under-300-for-2025",
+              "best-wireless-earbuds-under-300-for-2025",
+              "top-father-s-day-gifts-for-2026-great-deals-and-ideas-2026-07-31",
+              "discover-the-best-amazon-deals-this-summer-2026-08-05",
+          )
+          sitemap_names = (
+              "sitemap_index.xml",
+              "post-sitemap.xml",
+              "page-sitemap.xml",
+              "category-sitemap.xml",
+          )
+          safe_headers = (
+              "cache-control",
+              "age",
+              "etag",
+              "last-modified",
+              "x-hcdn-cache-status",
+              "x-litespeed-cache",
+          )
+
+          def get(url):
+              request = urllib.request.Request(
+                  url,
+                  headers={"User-Agent": "HandyTested read-only sitemap diagnostics"},
+              )
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  return response.read(), {
+                      key: response.headers.get(key)
+                      for key in safe_headers
+                      if response.headers.get(key) is not None
+                  }
+
+          def locations(body):
+              root = ET.fromstring(body)
+              return {
+                  element.text
+                  for element in root.iter()
+                  if element.tag.endswith("loc") and element.text
+              }
+
+          print("== Public sitemap inventory ==")
+          xml_locations = {}
+          for name in sitemap_names:
+              body, headers = get(f"{base}/{name}")
+              locs = locations(body)
+              xml_locations[name] = locs
+              print(
+                  json.dumps(
+                      {
+                          "sitemap": name,
+                          "locations": len(locs),
+                          "sha256": hashlib.sha256(body).hexdigest(),
+                          "selected_cache_headers": headers,
+                      },
+                      sort_keys=True,
+                  )
+              )
+
+          posts_body, _ = get(
+              f"{base}/wp-json/wp/v2/posts?per_page=100&status=publish&_fields=link,slug,status"
+          )
+          published_posts = json.loads(posts_body)
+          published_urls = {post["link"] for post in published_posts}
+          post_sitemap_urls = xml_locations["post-sitemap.xml"]
+
+          print("== Public REST versus post sitemap ==")
+          print(f"Published REST posts: {len(published_urls)}")
+          print(f"Post sitemap URLs: {len(post_sitemap_urls)}")
+          for url in sorted(published_urls - post_sitemap_urls):
+              print(f"Missing published URL: {url}")
+          for url in sorted(post_sitemap_urls - published_urls):
+              print(f"Extra sitemap URL: {url}")
+
+          print("== Target URL presence ==")
+          for slug in target_post_slugs:
+              url = f"{base}/{slug}/"
+              print(
+                  json.dumps(
+                      {
+                          "slug": slug,
+                          "published_rest": url in published_urls,
+                          "post_sitemap": url in post_sitemap_urls,
+                      },
+                      sort_keys=True,
+                  )
+              )
+
+          pinterest_url = f"{base}/pinterest-connect/"
+          amazon_deals_url = f"{base}/category/amazon-deals/"
+          print(
+              json.dumps(
+                  {
+                      "pinterest_connect_in_page_sitemap": (
+                          pinterest_url in xml_locations["page-sitemap.xml"]
+                      ),
+                      "amazon_deals_in_category_sitemap": (
+                          amazon_deals_url in xml_locations["category-sitemap.xml"]
+                      ),
+                  },
+                  sort_keys=True,
+              )
+          )
+
+          print("== Cache-busted post sitemap comparison ==")
+          cache_busted_body, cache_busted_headers = get(
+              f"{base}/post-sitemap.xml?ht_read_only_check={int(time.time())}"
+          )
+          cache_busted_urls = locations(cache_busted_body)
+          print(
+              json.dumps(
+                  {
+                      "same_url_set": cache_busted_urls == post_sitemap_urls,
+                      "locations": len(cache_busted_urls),
+                      "sha256": hashlib.sha256(cache_busted_body).hexdigest(),
+                      "selected_cache_headers": cache_busted_headers,
+                  },
+                  sort_keys=True,
+              )
+          )
+          PYTHON_DIAGNOSTICS
+
+      - name: Remove temporary SSH material
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          key="${HOME}/.ssh/handytested_hostinger"
+          known_hosts="${HOME}/.ssh/known_hosts"
+          if [ -f "${key}" ]; then
+            shred -u "${key}"
+          fi
+          if [ -f "${known_hosts}" ]; then
+            shred -u "${known_hosts}"
+          fi
