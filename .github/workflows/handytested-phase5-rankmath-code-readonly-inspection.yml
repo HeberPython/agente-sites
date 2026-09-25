@@ -246,6 +246,33 @@ jobs:
           fi
 
           echo
+          echo "== Exact sitemap cache implementation ranges =="
+          cache_class="${plugin_dir}/includes/modules/sitemap/class-cache.php"
+          cache_watcher="${plugin_dir}/includes/modules/sitemap/class-cache-watcher.php"
+          sitemap_class="${plugin_dir}/includes/modules/sitemap/class-sitemap.php"
+          cli_class="${plugin_dir}/includes/cli/class-commands.php"
+          plugin_bootstrap="${plugin_dir}/rank-math.php"
+          for required_file in \
+            "${cache_class}" "${cache_watcher}" "${sitemap_class}" \
+            "${cli_class}" "${plugin_bootstrap}"; do
+            if [ ! -f "${required_file}" ]; then
+              echo "Expected Rank Math source file is missing: ${required_file#"${plugin_dir}"/}" >&2
+              exit 1
+            fi
+          done
+
+          printf '\n-- class-cache.php lines 45-280 --\n'
+          awk 'NR >= 45 && NR <= 280 { printf "%d:%s\n", NR, $0 }' "${cache_class}"
+          printf '\n-- class-cache-watcher.php lines 57-354 --\n'
+          awk 'NR >= 57 && NR <= 354 { printf "%d:%s\n", NR, $0 }' "${cache_watcher}"
+          printf '\n-- class-sitemap.php clear_cache references --\n'
+          grep -nE -B 18 -A 18 'clear_cache|invalidate_storage' "${sitemap_class}" || true
+          printf '\n-- official CLI implementation --\n'
+          awk 'NR >= 20 && NR <= 48 { printf "%d:%s\n", NR, $0 }' "${cli_class}"
+          printf '\n-- official CLI registration --\n'
+          awk 'NR >= 442 && NR <= 458 { printf "%d:%s\n", NR, $0 }' "${plugin_bootstrap}"
+
+          echo
           echo "== Rank Math WP-CLI sitemap command declarations in installed source =="
           cli_declarations="$(grep -RInE -B 6 -A 12 --include='*.php' \
             'WP_CLI::add_command|sitemap[[:space:]]+generate' \
