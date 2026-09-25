@@ -1,0 +1,129 @@
+name: HandyTested - Hostinger SSH Diagnostics (Read Only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      HT_SSH_HOST: ${{ secrets.HT_SSH_HOST }}
+      HT_SSH_PORT: ${{ secrets.HT_SSH_PORT }}
+      HT_SSH_USER: ${{ secrets.HT_SSH_USER }}
+      HT_SSH_PRIVATE_KEY: ${{ secrets.HT_SSH_PRIVATE_KEY }}
+
+    steps:
+      - name: Validate required SSH settings
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in HT_SSH_HOST HT_SSH_PORT HT_SSH_USER HT_SSH_PRIVATE_KEY; do
+            if [ -z "${!name:-}" ]; then
+              echo "Required repository secret is unavailable: ${name}" >&2
+              exit 1
+            fi
+          done
+
+      - name: Configure temporary SSH credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p "${HOME}/.ssh"
+          printf '%s\n' "${HT_SSH_PRIVATE_KEY}" > "${HOME}/.ssh/handytested_hostinger"
+          chmod 600 "${HOME}/.ssh/handytested_hostinger"
+          ssh-keyscan -p "${HT_SSH_PORT}" -H "${HT_SSH_HOST}" > "${HOME}/.ssh/known_hosts"
+          chmod 600 "${HOME}/.ssh/known_hosts"
+          echo "SSH credentials configured in the temporary GitHub runner."
+
+      - name: Run read-only Hostinger and WordPress diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh \
+            -i "${HOME}/.ssh/handytested_hostinger" \
+            -p "${HT_SSH_PORT}" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=20 \
+            "${HT_SSH_USER}@${HT_SSH_HOST}" 'bash -s' <<'REMOTE_DIAGNOSTICS'
+          set -euo pipefail
+
+          echo "== Remote identity =="
+          printf 'Remote user: '
+          id -un
+          printf 'Remote HOME: %s\n' "${HOME}"
+
+          echo "== WordPress discovery =="
+          mapfile -t wp_configs < <(
+            find "${HOME}" -maxdepth 8 -type f -name wp-config.php \
+              -path '*handytested.com*' -print 2>/dev/null
+          )
+
+          if [ "${#wp_configs[@]}" -eq 0 ]; then
+            echo "No wp-config.php for handytested.com was found under the remote HOME." >&2
+            exit 1
+          fi
+          if [ "${#wp_configs[@]}" -ne 1 ]; then
+            echo "Multiple HandyTested wp-config.php files were found; refusing to choose automatically:" >&2
+            printf '%s\n' "${wp_configs[@]}" >&2
+            exit 1
+          fi
+
+          wp_config="${wp_configs[0]}"
+          wp_path="$(cd -- "$(dirname -- "${wp_config}")" && pwd -P)"
+          printf 'WordPress path: %s\n' "${wp_path}"
+
+          echo "== WP-CLI availability =="
+          if ! command -v wp >/dev/null 2>&1; then
+            echo "WP-CLI is not available in the remote PATH." >&2
+            exit 1
+          fi
+          wp --info
+
+          echo "== WordPress read-only checks =="
+          printf 'WordPress version: '
+          wp --path="${wp_path}" --skip-plugins --skip-themes core version
+          printf 'Site URL: '
+          wp --path="${wp_path}" --skip-plugins --skip-themes option get siteurl
+          printf 'Home URL: '
+          wp --path="${wp_path}" --skip-plugins --skip-themes option get home
+
+          echo "== Rank Math plugin status =="
+          for plugin in seo-by-rank-math seo-by-rank-math-pro; do
+            if wp --path="${wp_path}" --skip-plugins --skip-themes plugin is-installed "${plugin}"; then
+              wp --path="${wp_path}" --skip-plugins --skip-themes \
+                plugin get "${plugin}" --fields=name,status,version --format=table
+            else
+              printf '%s: not installed\n' "${plugin}"
+            fi
+          done
+
+          echo "== Rank Math-related WP-CLI commands =="
+          if wp --path="${wp_path}" --skip-themes cli cmd-dump --format=json \
+            | grep -oiE '"[^" ]*rank[-_ ]?math[^" ]*"' \
+            | sort -u; then
+            echo "Rank Math-related command names are shown above."
+          else
+            echo "No Rank Math-related WP-CLI commands were registered."
+          fi
+          REMOTE_DIAGNOSTICS
+
+      - name: Remove temporary SSH material
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          key="${HOME}/.ssh/handytested_hostinger"
+          known_hosts="${HOME}/.ssh/known_hosts"
+          if [ -f "${key}" ]; then
+            shred -u "${key}"
+          fi
+          if [ -f "${known_hosts}" ]; then
+            shred -u "${known_hosts}"
+          fi
