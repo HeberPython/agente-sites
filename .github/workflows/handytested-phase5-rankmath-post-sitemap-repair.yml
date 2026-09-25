@@ -203,6 +203,71 @@ jobs:
             wp --path="${wp_path}" --skip-plugins --skip-themes "$@"
           }
 
+          rank_math_runtime_php="$(cat <<'PHP'
+          $class = \RankMath\Sitemap\Cache::class;
+          $method = 'invalidate_storage';
+          $module = class_exists( \RankMath\Helper::class )
+              && \RankMath\Helper::is_module_active( 'sitemap' );
+          $exists = class_exists( $class ) && method_exists( $class, $method );
+          $public = false;
+          $static = false;
+          if ( $exists ) {
+              $reflection = new ReflectionMethod( $class, $method );
+              $public = $reflection->isPublic();
+              $static = $reflection->isStatic();
+          }
+          printf(
+              "HT_RANK_MATH_RUNTIME:%d|%d|%d|%d\n",
+              $module ? 1 : 0,
+              $exists ? 1 : 0,
+              $public ? 1 : 0,
+              $static ? 1 : 0
+          );
+          PHP
+          )"
+
+          option_summary_php="$(cat <<'PHP'
+          $value = get_option( 'rank_math_sitemap_cache_files', null );
+          if ( ! is_array( $value ) ) {
+              echo 'type=' . gettype( $value ) . "\n";
+              return;
+          }
+          ksort( $value );
+          echo 'entries=' . count( $value ) . "\n";
+          foreach ( $value as $file => $type ) {
+              $safe_file = preg_match( '~^rank_math_[a-f0-9]{32}[.](?:xml|html)$~', $file )
+                  ? $file
+                  : '[unexpected filename sha256=' . hash( 'sha256', (string) $file ) . ']';
+              echo $safe_file . ' => ' . sanitize_key( (string) $type ) . "\n";
+          }
+          PHP
+          )"
+
+          invalidation_php="$(cat <<'PHP'
+          $class = \RankMath\Sitemap\Cache::class;
+          if ( ! class_exists( $class ) ) {
+              throw new RuntimeException( 'Rank Math sitemap cache class unavailable.' );
+          }
+          if ( ! is_callable( array( $class, 'invalidate_storage' ) ) ) {
+              throw new RuntimeException( 'Rank Math sitemap invalidation method unavailable.' );
+          }
+          add_filter( 'rank_math/pre_clear_cache', '__return_true' );
+          \RankMath\Sitemap\Cache::invalidate_storage( 'post' );
+          \RankMath\Sitemap\Cache::invalidate_storage( '1' );
+          PHP
+          )"
+
+          lint_php() {
+            label="$1"
+            code="$2"
+            printf '<?php\n%s\n' "${code}" | php -l >/dev/null \
+              || fail "PHP syntax validation failed for ${label}."
+          }
+          lint_php 'Rank Math runtime preflight' "${rank_math_runtime_php}"
+          lint_php 'sitemap cache option summary' "${option_summary_php}"
+          lint_php 'authorized sitemap invalidation' "${invalidation_php}"
+          echo 'All embedded PHP snippets passed php -l without execution.'
+
           site_url="$(wp_read option get siteurl)"
           home_url="$(wp_read option get home)"
           site_url="${site_url%/}"
@@ -220,27 +285,8 @@ jobs:
             || fail "Unexpected Rank Math version: ${plugin_version}."
 
           rank_math_runtime="$(
-            wp --path="${wp_path}" --skip-themes --quiet eval '
-              $class = "\\RankMath\\Sitemap\\Cache";
-              $method = "invalidate_storage";
-              $module = class_exists("\\RankMath\\Helper")
-                  && \\RankMath\\Helper::is_module_active("sitemap");
-              $exists = class_exists($class) && method_exists($class, $method);
-              $public = false;
-              $static = false;
-              if ($exists) {
-                  $reflection = new ReflectionMethod($class, $method);
-                  $public = $reflection->isPublic();
-                  $static = $reflection->isStatic();
-              }
-              printf(
-                  "HT_RANK_MATH_RUNTIME:%d|%d|%d|%d\n",
-                  $module ? 1 : 0,
-                  $exists ? 1 : 0,
-                  $public ? 1 : 0,
-                  $static ? 1 : 0
-              );
-            '
+            wp --path="${wp_path}" --skip-themes --quiet eval \
+              "${rank_math_runtime_php}"
           )" || fail 'Rank Math runtime inspection failed.'
           runtime_marker="$(
             printf '%s\n' "${rank_math_runtime}" \
@@ -335,36 +381,12 @@ jobs:
             || fail "Initial sitemap has ${actual_extra_count} extra URLs, expected 2."
 
           echo 'rank_math_sitemap_cache_files summary:'
-          wp_read eval '
-            $value = get_option("rank_math_sitemap_cache_files", null);
-            if (!is_array($value)) {
-                echo "type=" . gettype($value) . "\n";
-                return;
-            }
-            ksort($value);
-            echo "entries=" . count($value) . "\n";
-            foreach ($value as $file => $type) {
-                $safe_file = preg_match("/^rank_math_[a-f0-9]{32}\\.(xml|html)$/", $file)
-                    ? $file
-                    : "[unexpected filename sha256=" . hash("sha256", (string) $file) . "]";
-                echo $safe_file . " => " . sanitize_key((string) $type) . "\n";
-            }
-          '
+          wp_read eval "${option_summary_php}"
 
           echo 'PRECHECK PASSED: all read-only guards match the authorized initial state.'
 
           echo '== Phase 2: single authorized intervention =='
-          wp --path="${wp_path}" --skip-themes eval '
-          if ( ! class_exists( "\RankMath\Sitemap\Cache" ) ) {
-              throw new RuntimeException( "Rank Math sitemap cache class unavailable." );
-          }
-          if ( ! is_callable( array( "\RankMath\Sitemap\Cache", "invalidate_storage" ) ) ) {
-              throw new RuntimeException( "Rank Math sitemap invalidation method unavailable." );
-          }
-          add_filter( "rank_math/pre_clear_cache", "__return_true" );
-          \RankMath\Sitemap\Cache::invalidate_storage( "post" );
-          \RankMath\Sitemap\Cache::invalidate_storage( "1" );
-          '
+          wp --path="${wp_path}" --skip-themes eval "${invalidation_php}"
           echo 'Authorized Rank Math post and index sitemap storage invalidation completed once.'
 
           echo '== Phase 3: normal GET reconstruction =='
