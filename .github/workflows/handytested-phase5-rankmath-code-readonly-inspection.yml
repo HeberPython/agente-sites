@@ -282,6 +282,11 @@ jobs:
           else
             echo "(no matching Helper methods)"
           fi
+          helper_class="${plugin_dir}/includes/class-helper.php"
+          if [ -f "${helper_class}" ]; then
+            printf '\n-- Helper::clear_cache complete range --\n'
+            awk 'NR >= 220 && NR <= 340 { printf "%d:%s\n", NR, $0 }' "${helper_class}"
+          fi
 
           echo
           echo "== Rank Math WP-CLI sitemap command declarations in installed source =="
