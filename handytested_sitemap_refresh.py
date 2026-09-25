@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import time
 import urllib.request
 import xml.etree.ElementTree as ET
 
@@ -19,10 +20,11 @@ def read(url: str) -> bytes:
         return response.read()
 
 
-def compare() -> tuple[set[str], set[str]]:
+def compare(*, cache_bust: bool = False) -> tuple[set[str], set[str]]:
     posts = json.loads(read(BASE + "/wp-json/wp/v2/posts?per_page=100&_fields=link,status"))
     published = {post["link"] for post in posts if post["status"] == "publish"}
-    root = ET.fromstring(read(BASE + "/post-sitemap.xml"))
+    suffix = f"?ht_sitemap_check={int(time.time())}" if cache_bust else ""
+    root = ET.fromstring(read(BASE + "/post-sitemap.xml" + suffix))
     sitemap = {element.text for element in root.iter() if element.tag.endswith("loc")}
     missing = published - sitemap
     extra = sitemap - published
@@ -33,13 +35,13 @@ def compare() -> tuple[set[str], set[str]]:
     return missing, extra
 
 
-def clear_rank_math_transients() -> None:
+def rank_math_action(action: str) -> None:
     token = base64.b64encode(
         f"hebergravano@gmail.com:{os.environ['HT_WP_PASS']}".encode()
     ).decode()
     request = urllib.request.Request(
         BASE + "/wp-json/rankmath/v1/toolsAction",
-        data=json.dumps({"action": "clear_transients"}).encode(),
+        data=json.dumps({"action": action}).encode(),
         method="POST",
         headers={
             "Authorization": f"Basic {token}",
@@ -48,7 +50,7 @@ def clear_rank_math_transients() -> None:
         },
     )
     with urllib.request.urlopen(request, timeout=30) as response:
-        print("Rank Math response:", response.read().decode()[:500])
+        print(f"Rank Math {action} response:", response.read().decode()[:500])
 
 
 def main() -> None:
@@ -59,9 +61,13 @@ def main() -> None:
     if not any(before):
         print("Sitemap already matches published posts")
         return
-    clear_rank_math_transients()
-    print("After transient clear:")
-    compare()
+    rank_math_action("flushPermalinks")
+    rank_math_action("clear_transients")
+    time.sleep(10)
+    print("After permalink and transient refresh:")
+    after = compare(cache_bust=True)
+    if any(after):
+        raise RuntimeError("Post sitemap still does not match published posts")
 
 
 if __name__ == "__main__":
