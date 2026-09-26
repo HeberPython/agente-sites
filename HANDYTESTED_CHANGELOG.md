@@ -1,5 +1,12 @@
 # HandyTested changelog
 
+## 2026-09-26: Phase 5 homepage mobile LCP delivery
+
+- Optimized the existing homepage hero without redesigning it: the same image, overlay, crop, text and dimensions now use a responsive decorative `<img>` with intrinsic dimensions, `srcset`, `sizes`, `fetchpriority="high"`, async decoding and no lazy loading. This removes the CSS-background discovery limitation while preserving the rendered identity.
+- Added `handytested_phase5_mobile_performance.py`, focused unit tests and the manual-only `HandyTested - Phase 5 Mobile LCP Optimization` workflow in commit `866958a`. Dry-run [36246259444](https://github.com/HeberPython/agente-sites/actions/runs/36246259444) and apply [36246292734](https://github.com/HeberPython/agente-sites/actions/runs/36246292734) passed; original page backup artifact `10908105183` was created.
+- Guarded validation preserved title, canonical, one H1, JSON-LD, disclosure, Amazon/link signals, AdSense, Analytics and the reconciled 38/38 post sitemap. Playwright found no mobile/desktop overflow or hero geometry regression. Lighthouse stopped flagging LCP request discovery and the paired request-discovery delay fell from about 890 ms to 660 ms.
+- One post-change lab sample measured mobile 66/FCP 3.2 s/LCP 6.0 s/TBT 270 ms/CLS 0 and desktop 95/FCP 0.9 s/LCP 1.3 s/TBT 30 ms/CLS 0. Mobile FCP/LCP improved against the supplied baseline, but score/TBT variation prevents claiming a guaranteed gain; repeat PSI and field data remain necessary. No AdSense, Analytics, Rank Math, permalink, sitemap or editorial change was made.
+
 ## 2026-09-25: Phase 5 Rank Math post-sitemap reconciliation
 
 - Resolved the primary sitemap inconsistency through `HandyTested - Phase 5 Rank Math Post Sitemap Repair` at commit `d83991c`. Read-only diagnostics had confirmed stale Rank Math generated sitemap storage: WordPress had 38 published posts while `post-sitemap.xml` had 35 URLs, omitting five published guides and retaining two draft promotions.
