@@ -1,0 +1,49 @@
+{
+  "name": "HandyTested - Phase 5 Mobile LCP Optimization",
+  "on": {
+    "workflow_dispatch": {
+      "inputs": {
+        "mode": {
+          "description": "Dry-run before the guarded homepage release",
+          "required": true,
+          "default": "dry-run",
+          "type": "choice",
+          "options": ["dry-run", "apply"]
+        }
+      }
+    }
+  },
+  "jobs": {
+    "homepage-lcp": {
+      "runs-on": "ubuntu-latest",
+      "timeout-minutes": 15,
+      "steps": [
+        {"uses": "actions/checkout@v4"},
+        {"uses": "actions/setup-python@v5", "with": {"python-version": "3.12"}},
+        {
+          "name": "Validate release code",
+          "run": "python -m py_compile handytested_phase5_mobile_performance.py test_handytested_phase5_mobile_performance.py\npython -m unittest test_handytested_phase5_mobile_performance.py"
+        },
+        {
+          "name": "Check baseline and optionally publish",
+          "env": {
+            "HT_WP_PASS": "${{ secrets.HT_WP_PASS }}",
+            "MODE": "${{ github.event.inputs.mode }}",
+            "BACKUP_DIR": "handytested-phase5-mobile-performance-backup"
+          },
+          "run": "python handytested_phase5_mobile_performance.py"
+        },
+        {
+          "name": "Preserve pre-write backup",
+          "if": "${{ always() && github.event.inputs.mode == 'apply' }}",
+          "uses": "actions/upload-artifact@v4",
+          "with": {
+            "name": "handytested-phase5-mobile-performance-backup",
+            "path": "handytested-phase5-mobile-performance-backup/",
+            "retention-days": 30
+          }
+        }
+      ]
+    }
+  }
+}
