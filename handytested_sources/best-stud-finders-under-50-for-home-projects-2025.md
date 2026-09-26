@@ -101,3 +101,13 @@ Approved title: Stud Finders for Drywall and Home Layout. SEO title: Stud Finder
 Publication decision: APPROVED only after guarded validation, backup, publish and live verification.
 
 Phase 5 citation correction (2026-09-21): the old WordPress-upload manual URL returned 400 in the automated check and redirected to a generic Zircon learning page in a public browser. The article now links the current official e50 instruction PDF; model and safety caveats remain unchanged.
+
+## Controlled GSC SEO experiment (2026-09-26)
+
+- Scope: SEO title, meta description, WordPress title/H1 and the opening section before the existing comparison only.
+- Target SEO title: `Best Stud Finders for DIY Projects: Budget Picks for 2026`.
+- Target H1: `Best Stud Finders for DIY Home Projects`.
+- Target meta description: `Compare stud finders for DIY home projects, including Franklin, Zircon and CRAFTSMAN. See key features, limitations and which model fits your needs.`
+- Reason: align the existing article with observed GSC intent around DIY home-improvement projects, budget stud finders and product comparison without repeating an awkward exact query.
+- The existing `/best-stud-finders-under-50-for-home-projects-2025/` URL, canonical, three product selections, Amazon links/tag, citations, safety content, FAQ and internal links are intentionally preserved.
+- Opening claims remain limited to official manufacturer specifications. No hands-on test, current under-$50 price, rating or availability claim is introduced.
