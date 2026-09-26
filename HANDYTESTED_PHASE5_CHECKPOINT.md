@@ -23,6 +23,7 @@
 - Targeted 25-combination browser QA at 320/375/768/1280/1920px (home, Cordless Drills, Tools category, search, How We Review): no document-level overflow, one H1, parseable sampled JSON-LD, one GA and AdSense loader each; self-canonicals on publishable pages, article disclosure/CTA and internal table scroll intact. Search is noindex with no canonical in sample. This was not a new 57-URL crawl.
 - Rank Math post-sitemap repair completed through `HandyTested - Phase 5 Rank Math Post Sitemap Repair` at commit `d83991c`. After read-only guards confirmed the known 38/35 state, the workflow called `RankMath\Sitemap\Cache::invalidate_storage("post")` and `invalidate_storage("1")` with `rank_math/pre_clear_cache` preventing external cache cleanup. The rebuilt XML has a new hash and exactly matches all 38 published posts: the five omitted guides were added, both draft promotion URLs were removed, and no legitimate published URL disappeared. Hostinger purge and rewrite/permalink flush were not needed and must not be run for this resolved incident.
 - Homepage mobile LCP delivery was optimized through `HandyTested - Phase 5 Mobile LCP Optimization` at commit `866958a`. The same hero image, overlay, crop, copy and dimensions were preserved, but the CSS background was replaced with a responsive decorative `<img>` carrying dimensions, `srcset`, `sizes`, `fetchpriority="high"` and no lazy-loading. Dry-run `36246259444` and apply `36246292734` passed; backup artifact `10908105183` was created. Public checks retained title, canonical, one H1, JSON-LD, disclosure, AdSense, Analytics, links and the 38/38 sitemap. Lighthouse no longer flags LCP request discovery; measured resource-load delay fell from 890 ms to 660 ms in the paired lab samples. Mobile scores remained variable, so no guaranteed score gain is claimed.
+- Controlled GSC SEO experiment completed for `/best-stud-finders-under-50-for-home-projects-2025/`. Only the SEO title, meta description, WordPress title/H1 and opening before the existing comparison changed. The slug/canonical, products, three tagged Amazon links, citations, safety guidance, FAQ, internal links, AdSense and Analytics were preserved. Dry-run `36265546867` and apply `36265568657` passed; backup artifact `10914161703` was created. Product claims remain constrained to official manufacturer specifications and explicitly disclaim hands-on testing.
 
 ## Published, validated and backups
 
@@ -40,6 +41,7 @@
 | Circular-saw citation, post 59 | 35664239512 | 35664268982 | 10667913924 | public post REST |
 | Zircon e50 citation, post 44 | 35664519210 | 35664552610 | 10668966322 | public post REST |
 | Homepage responsive LCP hero image | 36246259444 | 36246292734 | 10908105183 | public browser/Playwright, PSI and 38/38 sitemap |
+| Stud Finder controlled GSC SEO experiment | 36265546867 | 36265568657 | 10914161703 | public REST/HTML and Playwright at 375/1440px |
 
 ## Next exact action
 

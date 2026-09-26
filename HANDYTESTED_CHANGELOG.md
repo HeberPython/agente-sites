@@ -1,5 +1,12 @@
 # HandyTested changelog
 
+## 2026-09-26: Controlled Stud Finder GSC SEO experiment
+
+- Updated only the SEO title, meta description, WordPress title/H1 and opening section of `https://handytested.com/best-stud-finders-under-50-for-home-projects-2025/` to align with observed GSC intent around DIY projects, budget choices and product comparison. The old-year/price wording remains intentionally in the unchanged URL to preserve the established slug and canonical.
+- New SEO title: `Best Stud Finders for DIY Projects: Budget Picks for 2026`; H1: `Best Stud Finders for DIY Home Projects`. The opening uses the approved copy and limits Franklin M90, Zircon e50 and CRAFTSMAN CMHT77621 claims to official manufacturer specifications, with an explicit no-hands-on-testing statement.
+- Dry-run [36265546867](https://github.com/HeberPython/agente-sites/actions/runs/36265546867) and apply [36265568657](https://github.com/HeberPython/agente-sites/actions/runs/36265568657) passed; backup artifact `10914161703` was created. A first dry-run received HTTP 403 before any write, and a second exposed a stale revision timestamp guard; the guard was corrected to the public REST revision before the successful dry-run.
+- Public validation confirmed HTTP/REST publish state, exact SEO title/description, one intended H1, unchanged canonical, no noindex, three existing Amazon links with `handytested0d-20`, disclosure, products, FAQ, sources, related links, one AdSense loader and one Analytics loader. Playwright at 375px and 1440px found no document overflow; the comparison table remains internally scrollable on mobile. No second experiment was started.
+
 ## 2026-09-26: Phase 5 homepage mobile LCP delivery
 
 - Optimized the existing homepage hero without redesigning it: the same image, overlay, crop, text and dimensions now use a responsive decorative `<img>` with intrinsic dimensions, `srcset`, `sizes`, `fetchpriority="high"`, async decoding and no lazy loading. This removes the CSS-background discovery limitation while preserving the rendered identity.

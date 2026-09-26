@@ -111,3 +111,4 @@ Phase 5 citation correction (2026-09-21): the old WordPress-upload manual URL re
 - Reason: align the existing article with observed GSC intent around DIY home-improvement projects, budget stud finders and product comparison without repeating an awkward exact query.
 - The existing `/best-stud-finders-under-50-for-home-projects-2025/` URL, canonical, three product selections, Amazon links/tag, citations, safety content, FAQ and internal links are intentionally preserved.
 - Opening claims remain limited to official manufacturer specifications. No hands-on test, current under-$50 price, rating or availability claim is introduced.
+- Published after dry-run `36265546867`; apply/backup run `36265568657`, artifact `10914161703`. Public REST/HTML and Playwright validation passed at 375px and 1440px. Repository commits: `259131f` and revision-guard correction `d999c52`.
