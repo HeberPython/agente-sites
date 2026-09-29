@@ -1,11 +1,11 @@
 """
-HandyTested PRO — Agente dedicado de alta qualidade
+HandyTested Revenue Agent — qualified affiliate sales
 - Pesquisa tendências Amazon por categoria
 - Artigos 1500-1800 palavras, padrão The Wirecutter
 - Rotação automática de categorias
 - Imagens Unsplash coerentes com o produto
 - SEO completo via Rank Math
-- Publica 1 artigo por run (3x/semana via GitHub Actions)
+- Revenue first: at most 1 new draft/week; qualified buyers before content volume
 """
 import urllib.request, urllib.error, urllib.parse
 import http.client, json, base64, os, time, datetime, re, random, socket
@@ -33,7 +33,7 @@ CATEGORY_DEFS = {
     "cleaning": ("Cleaning", "Vacuums, cleaning tools, laundry gear, and home maintenance products."),
     "office-gear": ("Office Gear", "Home office equipment, desk accessories, printers, monitors, and productivity gear."),
 }
-REVIEW_TAG_SLUGS = ["evergreen", "pinterest-safe", "review-guide"]
+REVIEW_TAG_SLUGS = ["evergreen", "pinterest-safe", "review-guide", "buyer-intent", "affiliate-revenue"]
 TERM_CACHE = {"categories": {}, "tags": {}}
 AUTH_HEADER = "Basic " + base64.b64encode(f"{WP_USER}:{WP_PASS}".encode()).decode()
 
@@ -223,7 +223,7 @@ def amazon_card(product, description="", price=""):
         f'<a href="{url}" rel="sponsored nofollow noopener" target="_blank" '
         'style="display:inline-block;background:#e8440a;color:#fff;padding:10px 22px;'
         'border-radius:6px;text-decoration:none;font-weight:bold;font-size:0.9em;">'
-        'Check Current Amazon Options &#8594;</a></div></div>'
+        'Check Current Amazon Options &#8594;</a><span class="ht-affiliate-note"> (paid link)</span></div></div>'
     )
 
 def gerar_topico(titulos_existentes, categoria):
@@ -232,17 +232,17 @@ def gerar_topico(titulos_existentes, categoria):
     allowed_categories = ", ".join(CATEGORIAS.keys())
     prompt = f"""You are an SEO strategist and Amazon market researcher for HandyTested, a product review site for American buyers.
 
-TASK — Two steps in one response:
+BUSINESS MISSION: maximize qualified Amazon purchase intent, not pageview volume. Prefer topics that help a buyer choose now. Never invent price, discount, availability, rating, testing, ASIN, or commission.\n\nTASK — Two steps in one response:
 
 STEP 1 — RESEARCH: Identify the 5 most in-demand product types in the "{categoria}" category on Amazon.com (2024-2025 market). Criteria:
-- High search volume on Amazon and Google
+- Strong commercial intent on Amazon and Google; comparison/shortlist/replacement/upgrade queries beat informational traffic
 - Price range $30-$300 (meaningful affiliate commissions)
 - Products where buyers need review guidance to make a decision
-- Mix of evergreen staples and trending items
+- Prefer evergreen demand and meaningful order value; avoid sale-event dependence and fleeting trends
 
 STEP 2 — TOPIC SELECTION: From your research, pick the BEST article topic that:
-- Is NOT already published (see list below)
-- Has buyer intent ("best X", "X vs Y", "top X under $Y")
+- Is NOT already published and does not cannibalize an existing guide (see list below)
+- Has explicit buyer intent ("best X for Y", "X vs Y", replacement or upgrade decisions)
 - Can feature 3-4 real, purchasable products at different price points
 - Matches how Americans actually search on Google
 
@@ -260,7 +260,7 @@ Return ONLY valid JSON (no explanation, no markdown):
     {{"nome": "Full Brand Model Name", "preco": "Budget/Mid-range/Premium", "melhor_para": "specific buyer type"}},
     {{"nome": "Full Brand Model Name", "preco": "Budget/Mid-range/Premium", "melhor_para": "specific buyer type"}}
   ],
-  "angulo": "unique hook or angle for this article"
+  "angulo": "unique purchase-decision hook for this article",\n  "revenue_reason": "why this topic should attract qualified buyers rather than informational traffic",\n  "buyer_stage": "comparison|shortlist|replacement|upgrade"
 }}
 
 Do not return current prices or discount percentages. Use broad budget tiers only."""
@@ -288,7 +288,7 @@ PRODUCTS:
 {REVIEW_STANDARDS}
 
 TARGET: 1400-1700 words. American English. Expert, conversational tone.
-VALUE FOCUS: Prioritize products with clear use cases and meaningful affiliate purchase intent.
+REVENUE FOCUS: Put decision-critical differences first. For each product explain who should buy it, who should skip it, and the trade-off that changes the purchase decision. Use clear Amazon CTAs without hype.\nVALUE FOCUS: Prioritize products with clear use cases and meaningful affiliate purchase intent.
 PRODUCT QUALITY: Describe buyer fit without assuming star ratings or review counts.
 
 OUTPUT RULES:
@@ -569,7 +569,7 @@ def telegram(msg):
 
 # ── MAIN ──────────────────────────────────────────────────────────────────
 log("=" * 55)
-log("HandyTested PRO — publicação de alta qualidade")
+log("HandyTested Revenue Agent — qualified clicks and affiliate revenue")
 log("=" * 55)
 
 log("Preparando categorias e tags editoriais...")
@@ -586,7 +586,7 @@ categoria = escolher_categoria(posts)
 log(f"Pesquisando tendências Amazon + gerando tópico ({categoria})...")
 topico = gerar_topico(titulos, categoria)
 log(f"Tópico: {topico['titulo']}")
-log(f"Keyword: {topico['palavra_chave']}")
+log(f"Keyword: {topico['palavra_chave']}")\nlog(f"Revenue reason: {topico.get('revenue_reason', 'n/a')} | Buyer stage: {topico.get('buyer_stage', 'n/a')}")
 log(f"Produtos: {[p['nome'] for p in topico.get('produtos', [])]}")
 
 log("Gerando artigo (1500-1800 palavras, padrão The Wirecutter)...")
