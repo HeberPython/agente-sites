@@ -1,16 +1,14 @@
-name: HandyTested PRO — Publicação Inteligente
+name: HandyTested Revenue Agent — Qualified Buyers
 
 on:
   schedule:
-    - cron: "0 13 * * 1"   # Segunda-feira 10h (Brasília)
-    - cron: "0 13 * * 3"   # Quarta-feira  10h (Brasília)
-    - cron: "0 13 * * 5"   # Sexta-feira   10h (Brasília)
+    - cron: "0 13 * * 1"   # Monday 10:00 America/Sao_Paulo
   workflow_dispatch:
 
 jobs:
-  publicar:
+  revenue-cycle:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -23,9 +21,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Publicar artigo PRO
+      - name: Run qualified-buyer revenue cycle
         env:
           OPENAI_API_KEY:   ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL:     ${{ secrets.OPENAI_MODEL }}
           HT_WP_PASS:       ${{ secrets.HT_WP_PASS }}
           HT_AMAZON_TAG:    ${{ secrets.HT_AMAZON_TAG }}
           HT_AMAZON_DOMAIN: www.amazon.com
@@ -33,4 +32,6 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           UNSPLASH_KEY:     ${{ secrets.UNSPLASH_KEY }}
           HT_WP_RETRIES:    8
+          HT_POST_STATUS:   draft
+          HT_REVENUE_FIRST: "1"
         run: python pub_ht_pro.py
