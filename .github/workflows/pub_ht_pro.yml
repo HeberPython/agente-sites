@@ -1,8 +1,8 @@
 name: HandyTested Revenue Agent — Qualified Buyers
 
 on:
-  schedule:
-    - cron: "0 13 * * 1"   # Monday 10:00 America/Sao_Paulo
+  # Automatic publishing is intentionally gated by commercial-opportunity tracking.
+  # Re-enable schedule only after a US buyer-intent cluster is validated.
   workflow_dispatch:
 
 jobs:
