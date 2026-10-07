@@ -51,4 +51,4 @@ jobs:
           PROMO_EXPIRE_PUBLISHED_POSTS: "1"
           PROMO_DEFAULT_FEATURED_MEDIA: "129"
           PROMO_WP_RETRIES:   "5"
-        run: python handytested_amazon_promo_agent.py
+        run: python handytested_amazon_promo_agent_safe.py
