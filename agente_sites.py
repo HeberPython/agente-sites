@@ -15,6 +15,7 @@ import re
 import time
 import datetime
 import random
+import html as html_lib
 
 # ============================================================
 #  CONFIGURAÇÃO — lida de variáveis de ambiente
@@ -199,7 +200,7 @@ def telegram_send(msg):
 #  ANTHROPIC (GERAÇÃO DE CONTEÚDO)
 # ============================================================
 
-def claude(prompt, max_tokens=2800):
+def claude(prompt, max_tokens=2800, *, diagnostico=False):
     """Gera texto pela OpenAI mantendo a interface antiga do agente."""
     data = json.dumps({
         "model": OPENAI_MODEL,
@@ -220,7 +221,12 @@ def claude(prompt, max_tokens=2800):
             raise Exception(f"OpenAI {resp.status}: {body[:300]}")
 
         payload = json.loads(body)
-        result = payload["choices"][0]["message"]["content"].strip()
+        choice = payload["choices"][0]
+        if diagnostico:
+            log(f"  OpenAI model={payload.get('model', OPENAI_MODEL)} finish_reason={choice.get('finish_reason')} usage={payload.get('usage', {})}")
+            if choice.get("finish_reason") not in ("stop", None):
+                raise ValueError(f"OpenAI resposta incompleta: {choice.get('finish_reason')}")
+        result = (choice["message"].get("content") or "").strip()
         if not result:
             raise Exception("OpenAI retornou texto vazio")
         return result
@@ -429,6 +435,7 @@ STRUCTURE (900-1100 words):
 def gerar_artigo(site, topico):
     """Gera artigo PT-BR em 2 chamadas: HTML direto + meta separado."""
     diferencial = site.get("diferencial_editorial", "conteúdo original, útil e específico")
+    links_internos = ("Use links internos relevantes destas páginas: https://temrazao.com.br/fontes-e-metodologia/ https://temrazao.com.br/category/como-funciona/ https://temrazao.com.br/category/tecnologia/ https://temrazao.com.br/category/ciencia/" if site["id"] == "temrazao" else "Use apenas links internos verificados do próprio site; se não conhecer a URL, omita o link.")
     prompt_html = f"""Você é um especialista com mais de 10 anos de experiência em {site['nicho']}, escrevendo para "{site['name']}".
 
 ARTIGO: "{topico['titulo']}"
@@ -445,11 +452,7 @@ REGRAS DE QUALIDADE PARA ADSENSE E GOOGLE:
 - Inclua pelo menos 2 exemplos práticos do Brasil ou do cotidiano.
 - Explique o mecanismo em etapas, com causa e efeito.
 - Inclua limitações, riscos, privacidade, segurança ou custos quando fizer sentido.
-- Acrescente 2 links internos naturais usando estas URLs quando relevantes:
-  https://temrazao.com.br/fontes-e-metodologia/
-  https://temrazao.com.br/category/como-funciona/
-  https://temrazao.com.br/category/tecnologia/
-  https://temrazao.com.br/category/ciencia/
+- {links_internos}
 - Se citar uma fonte externa, use apenas nome da entidade e contexto; não invente URL.
 
 ESTRUTURA (1200-1600 palavras):
@@ -466,9 +469,13 @@ ESTRUTURA (1200-1600 palavras):
 <h2>Conclusão</h2>
 <p>Próximos passos concretos para o leitor</p>"""
 
+    html_bruto = ""
     for tentativa in range(3):
         try:
-            html_bruto = claude(prompt_html, max_tokens=2800)
+            instrucao = prompt_html
+            if html_bruto:
+                instrucao += "\nReescreva integralmente o rascunho abaixo, ampliando cada seção com exemplos e explicações específicas. Entregue 1400-1600 palavras reais, sem repetição ou preenchimento artificial.\nRASCUNHO:\n" + html_bruto
+            html_bruto = claude(instrucao, max_tokens=6500, diagnostico=True)
             html, palavras = _validar_html(html_bruto, min_palavras=1100)
             log(f"  HTML artigo: {palavras} palavras | {len(html)} chars")
             meta = _gerar_meta(topico["titulo"], topico["palavra_chave"], idioma="pt")
@@ -483,8 +490,9 @@ ESTRUTURA (1200-1600 palavras):
             }
         except Exception as e:
             if tentativa < 2:
-                log(f"  Artigo tentativa {tentativa+1}/3 falhou: {e}. Retry em 10s...")
-                time.sleep(10)
+                espera = 10 * (2 ** tentativa) + random.uniform(0, 3)
+                log(f"  Artigo tentativa {tentativa+1}/3 falhou: {e}. Retry em {espera:.1f}s...")
+                time.sleep(espera)
             else:
                 raise Exception(f"Falha ao gerar artigo após 3 tentativas: {e}")
 
@@ -747,7 +755,7 @@ def rodar_agente():
             linhas.append("⚠️ Nenhum artigo publicado")
         if r["erros"]:
             for e in r["erros"]:
-                linhas.append(f"❌ {e[:80]}")
+                linhas.append(f"❌ {html_lib.escape(e[:350])}")
         linhas.append("")
 
     total_pub = sum(len(r["publicados"]) for r in resumo_total)
@@ -755,6 +763,8 @@ def rodar_agente():
 
     telegram_send("\n".join(linhas))
     log(f"\nAgente finalizado. Total: {total_pub} artigo(s)")
+    if any(r["erros"] for r in resumo_total if r["site"] in ("Obra e Prática", "Tem Razão")):
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
