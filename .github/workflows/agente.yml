@@ -1,6 +1,9 @@
 name: Agente de Conteúdo
 
 on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/agente.yml']
   schedule:
     # Toda segunda-feira as 09:00 no horario de Brasilia (12:00 UTC).
     # Publica 1 artigo no Obra e Pratica e 1 artigo no Tem Razao.
