@@ -53,44 +53,43 @@ def test_search_console(credentials):
         cache_discovery=False,
     )
 
-    request = {
-        "startDate": start_date.isoformat(),
-        "endDate": end_date.isoformat(),
-        "dimensions": ["query", "page"],
-        "rowLimit": 10,
-        "dataState": "final",
-    }
-
-    response = (
-        service.searchanalytics()
-        .query(siteUrl=SITE_URL, body=request)
-        .execute()
-    )
-
-    rows = response.get("rows", [])
-
-    print(
-        f"GSC_OK periodo={start_date}..{end_date} "
-        f"linhas={len(rows)}"
-    )
-
-    for row in rows:
-        keys = row.get("keys", ["", ""])
-
-        print(
-            "GSC_ROW",
-            json.dumps(
-                {
-                    "query": keys[0],
-                    "page": keys[1],
+    for period, first, last in (
+        ("current", start_date, end_date),
+        ("previous", start_date - timedelta(days=28), start_date - timedelta(days=1)),
+    ):
+        offset = 0
+        page_size = 25000
+        while True:
+            request = {
+                "startDate": first.isoformat(),
+                "endDate": last.isoformat(),
+                "dimensions": ["query", "page"],
+                "dimensionFilterGroups": [{"filters": [
+                    {"dimension": "country", "operator": "equals", "expression": "usa"}
+                ]}],
+                "type": "web",
+                "rowLimit": page_size,
+                "startRow": offset,
+                "dataState": "final",
+            }
+            response = service.searchanalytics().query(
+                siteUrl=SITE_URL, body=request
+            ).execute()
+            rows = response.get("rows", [])
+            for row in rows:
+                query, page = row["keys"]
+                print("GSC_ROW", json.dumps({
+                    "period": period, "country": "usa",
+                    "query": query, "page": page,
                     "clicks": row.get("clicks", 0),
                     "impressions": row.get("impressions", 0),
                     "ctr": row.get("ctr", 0),
                     "position": row.get("position", 0),
-                },
-                ensure_ascii=False,
-            ),
-        )
+                }, ensure_ascii=False))
+            offset += len(rows)
+            if len(rows) < page_size:
+                break
+        print(f"GSC_OK country=usa period={period} dates={first}..{last} rows={offset}")
 
 
 def test_ga4(credentials):
